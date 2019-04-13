@@ -1,4 +1,6 @@
-require "proforma/version"
+# frozen_string_literal: true
+
+require 'proforma/version'
 
 module Proforma
   class Error < StandardError; end
