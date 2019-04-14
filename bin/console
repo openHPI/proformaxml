@@ -8,7 +8,7 @@ require "proforma"
 
 # (If you use this, don't forget to add pry to your Gemfile!)
 require "pry"
+@a=Proforma::Importer.new(File.open('../example.xml'))
 Pry.start
-
 # require "irb"
 # IRB.start(__FILE__)
