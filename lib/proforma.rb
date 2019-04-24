@@ -9,5 +9,4 @@ module Proforma
   SCHEMA_PATH = 'assets/schemas/proforma.xsd'
 
   class Error < StandardError; end
-  # Your code goes here...
 end
