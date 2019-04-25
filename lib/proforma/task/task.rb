@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'proforma/task/task_file'
+require 'proforma/task/test'
 
 module Proforma
   class Task
