@@ -2,6 +2,7 @@
 
 require 'proforma/task/task_file'
 require 'proforma/task/test'
+require 'proforma/task/model_solution'
 
 module Proforma
   class Task

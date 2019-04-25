@@ -40,7 +40,7 @@ module Proforma
       # set_submission_restrictions
       set_files
       # set_external_resources
-      # set_model_solutions
+      set_model_solutions
       set_tests
       # set_grading_hints
       # hard_meta_values = %w[submission-restrictions files external-resources model-solutions tests grading-hints]
@@ -69,6 +69,23 @@ module Proforma
       @task_node.search('tests//test').each do |test_node|
         add_test test_node
       end
+    end
+
+    def set_model_solutions
+      @task.model_solutions = []
+      @task_node.search('model-solutions//model-solution').each do |model_solution_node|
+        add_model_solution model_solution_node
+      end
+    end
+
+    def add_model_solution(model_solution_node)
+      model_solution = ModelSolution.new
+      model_solution.id = model_solution_node.attributes['id'].value
+      model_solution.files = files_from_filerefs(model_solution_node.search('filerefs'))
+      model_solution.description = model_solution_node.at('description')&.text
+      model_solution.internal_description = model_solution_node.at('internal-description')&.text
+
+      @task.model_solutions << model_solution
     end
 
     def add_file(file_node)
@@ -118,8 +135,12 @@ module Proforma
     end
 
     def test_files_from_test_configuration(test_configuration_node)
+      files_from_filerefs(test_configuration_node.search('filerefs'))
+    end
+
+    def files_from_filerefs(filerefs_node)
       files = []
-      test_configuration_node.search('filerefs//fileref').each do |fileref_node|
+      filerefs_node.search('fileref').each do |fileref_node|
         fileref = fileref_node.attributes['refid'].value
         files << @task.files[fileref]
       end
@@ -127,7 +148,6 @@ module Proforma
     end
 
     # def set_external_resources; end
-    # def set_model_solutions; end
     # def set_grading_hints; end
 
     def validate
