@@ -9,8 +9,8 @@ require "proforma"
 # (If you use this, don't forget to add pry to your Gemfile!)
 require "pry"
 # @a=Proforma::Importer.new(File.open('../example.zip'))
+`zip ../example.zip ../example/* -j`
 @a = Proforma::Importer.new('../example.zip')
-
 Pry.start
 # require "irb"
 # IRB.start(__FILE__)

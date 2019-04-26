@@ -5,7 +5,7 @@ require 'zip'
 
 module Proforma
   class Importer
-    # attr_accessor :doc, :files, :task
+    attr_accessor :doc, :files, :task
 
     def initialize(zip)
       @zip = zip
@@ -13,6 +13,7 @@ module Proforma
 
       xml = filestring_from_zip('example.xml')
       @doc = Nokogiri::XML(xml, &:noblanks)
+      self.doc = @doc
       @task = Task.new
     end
 
@@ -131,6 +132,7 @@ module Proforma
       test.internal_description = test_node.at('internal-description')&.text
       test.test_type = test_node.at('test-type')&.text
       test.files = test_files_from_test_configuration(test_node.at('test-configuration'))
+      test.meta_data = custom_meta_data(test_node.at('test-configuration').at('test-meta-data'))
       @task.tests << test
     end
 
@@ -145,6 +147,16 @@ module Proforma
         files << @task.files[fileref]
       end
       files
+    end
+
+    def custom_meta_data(meta_data_node)
+      meta_data = {}
+      return meta_data if meta_data_node.nil?
+
+      meta_data_node.children.each do |meta_data_tag|
+        meta_data[meta_data_tag.name] = meta_data_tag.children.first.text
+      end
+      meta_data
     end
 
     # def set_external_resources; end
