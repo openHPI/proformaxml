@@ -11,6 +11,7 @@ require "pry"
 # @a=Proforma::Importer.new(File.open('../example.zip'))
 `zip ../example.zip ../example/* -j`
 @a = Proforma::Importer.new('../example.zip')
+@b = Proforma::Exporter.new(Proforma::Task.new)
 Pry.start
 # require "irb"
 # IRB.start(__FILE__)
