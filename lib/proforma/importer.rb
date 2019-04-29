@@ -55,7 +55,8 @@ module Proforma
       @task.title = @task_node.at('title').text
       @task.description = @task_node.at('description').text
       @task.internal_description = @task_node.at('internal-description').text
-      @task.proglang = @task_node.at('proglang').text
+      @task.proglang = { name: @task_node.at('proglang').text,
+                         version: @task_node.at('proglang').attributes['version'].value }
     end
 
     def set_files
