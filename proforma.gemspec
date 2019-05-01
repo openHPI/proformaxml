@@ -39,6 +39,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activemodel', '~> 5.2.3'
   spec.add_dependency 'nokogiri', '~> 1.10.2'
+  spec.add_dependency 'rubyzip', '~> 1.2.2'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'pry', '~> 0.12.2'
@@ -46,5 +47,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.67.2'
-  spec.add_development_dependency 'rubyzip', '~> 1.2.2'
 end

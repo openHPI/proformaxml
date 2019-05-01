@@ -24,7 +24,7 @@ task.internal_description = 'Dolle internal_description'
 task.proglang = {name: 'Dolle proglang', version: '5.0'}
 task.uuid = SecureRandom.uuid
 task.parent_uuid = SecureRandom.uuid
-task.language = 'DE-de'
+task.language = 'de'
 # :id, :content, :filename, :used_by_grader, :visible, :usage_by_lms
 file1 = Proforma::TaskFile.new(
   id: SecureRandom.uuid,

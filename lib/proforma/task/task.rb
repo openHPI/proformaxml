@@ -4,7 +4,7 @@ module Proforma
   class Task
     include Base
     attr_accessor :title, :description, :internal_description, :proglang, :files,
-                  :tests, :uuid, :parent_uuid, :language, :model_solutions, :binary
+                  :tests, :uuid, :parent_uuid, :language, :model_solutions
     # :submission_restriction, :external_resources, :grading_hints
 
     def all_files

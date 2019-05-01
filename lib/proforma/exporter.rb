@@ -34,7 +34,7 @@ module Proforma
             end
           end
           xml.send('model-solutions') do
-            @task.model_solutions.each do |model_solution|
+            @task.model_solutions&.each do |model_solution|
               xml.send('model-solution', id: model_solution.id) do
                 xml.filerefs do
                   model_solution.files.each do |file|
@@ -47,7 +47,7 @@ module Proforma
             end
           end
           xml.tests do
-            @task.tests.each do |test|
+            @task.tests&.each do |test|
               xml.test(id: test.id) do
                 xml.title test.title
                 xml.description test.description
