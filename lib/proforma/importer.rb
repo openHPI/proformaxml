@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'nokogiri'
-require 'zip'
-require 'base64'
-
 module Proforma
   class Importer
     attr_accessor :doc, :files, :task

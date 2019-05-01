@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require 'proforma/task/task_file'
-require 'proforma/task/test'
-require 'proforma/task/model_solution'
-
 module Proforma
   class Task
+    include Base
     attr_accessor :title, :description, :internal_description, :proglang, :files,
                   :tests, :uuid, :parent_uuid, :language, :model_solutions, :binary
     # :submission_restriction, :external_resources, :grading_hints

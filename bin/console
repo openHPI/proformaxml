@@ -10,6 +10,10 @@ require 'securerandom'
 # (If you use this, don't forget to add pry to your Gemfile!)
 require "pry"
 # @a=Proforma::Importer.new(File.open('../example.zip'))
+
+
+
+
 `zip ../example.zip ../example/* -j`
 a = Proforma::Importer.new('../example.zip')
 task = Proforma::Task.new
@@ -118,6 +122,9 @@ test2 = Proforma::Test.new(
 )
 task.tests = [test1, test2]
 b = Proforma::Exporter.new(task)
+
+
+
 Pry.start
 # require "irb"
 # IRB.start(__FILE__)

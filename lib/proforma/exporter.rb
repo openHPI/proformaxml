@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'nokogiri'
-require 'securerandom'
-require 'zip'
-require 'base64'
-
 module Proforma
   class Exporter
     attr_accessor :doc, :files, :task

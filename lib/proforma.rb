@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
+require 'active_model'
+require 'nokogiri'
+require 'zip'
+require 'base64'
+require 'securerandom'
+
 require 'proforma/version'
+
 require 'proforma/importer'
 require 'proforma/exporter'
 require 'proforma/task'
