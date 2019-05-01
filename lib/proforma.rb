@@ -2,6 +2,7 @@
 
 require 'proforma/version'
 require 'proforma/importer'
+require 'proforma/exporter'
 require 'proforma/task'
 
 module Proforma

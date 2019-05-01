@@ -5,11 +5,11 @@ AllCops:
   Exclude:
     - bin/*
 
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
 Metrics/LineLength:
   Max: 140
-
-Style/Documentation:
-  Enabled: false
 
 Metrics/BlockLength:
   Exclude:
@@ -18,3 +18,6 @@ Metrics/BlockLength:
 
 RSpec/NestedGroups:
   Max: 5
+
+Style/Documentation:
+  Enabled: false
