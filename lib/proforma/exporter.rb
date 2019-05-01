@@ -3,6 +3,7 @@
 require 'nokogiri'
 require 'securerandom'
 require 'zip'
+require 'base64'
 
 module Proforma
   class Exporter
@@ -22,49 +23,52 @@ module Proforma
     def perform
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         xml.task(headers) do
-          xml.title 'title'
-          xml.description 'Description'
-          xml.send('internal-description', 'InternalDescription')
-          xml.proglang({version: '2.6'}, 'Ruby')
+          xml.title @task.title
+          xml.description @task.description
+          xml.send('internal-description', @task.internal_description)
+          xml.proglang({version: @task.proglang[:version]}, @task.proglang[:name])
           xml.files do
-            xml.file(id: 'file1', 'used-by-grader' => '1', visible: 'no') do
-              xml.send 'embedded-bin-file', {filename: 'bin/Filename'}, 'MTAxMDAxMTAxMCBmaWxlYmluY29uZW50'
-            end
-            xml.file(id: 'file2', 'used-by-grader' => '1','mimetype' => 'dunno', visible: 'yes') do
-              xml.send 'embedded-bin-file', {filename: 'bin/Filename2'}, 'ZmlsZWJvbmNvbmVudCAxMDEwMDExMDEw'
-            end
-            xml.file(id: 'file3', 'used-by-grader' => '1', visible: 'delayed') do
-              xml.send 'embedded-txt-file', {filename: 'txt/Filename'}, 'textiger text'
-            end
-            xml.file(id: 'file4', 'used-by-grader' => '1','usage-by-lms' => 'edit', visible: 'no') do
-              xml.send 'embedded-txt-file', {filename: 'Filename'}, 'TEXT'
+            @task.all_files.each do |file|
+              xml.file(id: file.id, 'used-by-grader' => file.used_by_grader, visible: file.visible) do
+                if file.binary
+                  xml.send 'embedded-bin-file', {filename: file.filename}, Base64.encode64(file.content)
+                else
+                  xml.send 'embedded-txt-file', {filename: file.filename}, file.content
+                end
+              end
             end
           end
           xml.send('model-solutions') do
-            xml.send('model-solution', id: 'msid1') do
-              xml.filerefs do
-                xml.fileref(refid: 'file2')
-              end
-            end
-            xml.send('model-solution', id: 'msid2') do
-              xml.filerefs do
-                xml.fileref(refid: 'file4')
+            @task.model_solutions.each do |model_solution|
+              xml.send('model-solution', id: model_solution.id) do
+                xml.filerefs do
+                  model_solution.files.each do |file|
+                    xml.fileref(refid: file.id) {}
+                  end
+                end
+                xml.description model_solution.description if model_solution.description
+                xml.send('internal-description', model_solution.internal_description) if model_solution.internal_description
               end
             end
           end
           xml.tests do
-            xml.test(id: 'test1') do
-              xml.title 'Testtestfile'
-              xml.description 'TestDescription'
-              xml.send('test-type', 'TestYpe')
-              xml.send('test-configuration') do
-                xml.filerefs do
-                  xml.fileref refid: 'file1'
-                end
-                xml.send('test-meta-data') do
-                  xml.send('c:feedback-message', 'Feedbackmessage')
-                  xml.send('c:testing-framework', 'Rspec')
-                  xml.send('c:testing-framework-version', '1')
+            @task.tests.each do |test|
+              xml.test(id: test.id) do
+                xml.title test.title
+                xml.description test.description
+                xml.send('internal-description', test.internal_description)
+                xml.send('test-type', test.test_type)
+                xml.send('test-configuration') do
+                  xml.filerefs do
+                    test.files.each do |file|
+                      xml.fileref refid: file.id
+                    end
+                  end
+                  xml.send('test-meta-data') do
+                    test.meta_data.each do |key, value|
+                      xml['c'].send(key, value)
+                    end
+                  end
                 end
               end
             end
@@ -99,9 +103,9 @@ module Proforma
         'xmlns' => 'urn:proforma:v2.0.1',
         'xmlns:c' => 'codeharbor',
         'xsi:schemaLocation' => 'urn:proforma:v2.0.1 schema.xsd',
-        'uuid' => SecureRandom.uuid,
-        # 'parent-uuid' => 'string',
-        # 'lang' => @task.language,
+        'uuid' => @task.uuid,
+        'parent-uuid' => @task.parent_uuid,
+        'lang' => @task.language,
         'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
       }
     end

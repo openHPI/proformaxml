@@ -2,6 +2,7 @@
 
 require 'nokogiri'
 require 'zip'
+require 'base64'
 
 module Proforma
   class Importer
@@ -102,26 +103,28 @@ module Proforma
     end
 
     def embedded_file_attributes(attributes, file_tag)
-      shared_file_attributes(attributes).merge(
+      shared = shared_file_attributes(attributes, file_tag)
+      shared.merge(
         filename: file_tag.attributes['filename']&.value,
-        content: file_tag.text
+        content: shared[:binary] ? Base64.decode64(file_tag.text) : file_tag.text
       )
     end
 
     def attached_file_attributes(attributes, file_tag)
       filename = file_tag.text
-      shared_file_attributes(attributes).merge(
+      shared_file_attributes(attributes, file_tag).merge(
         filename: filename,
         content: filestring_from_zip(filename)
       )
     end
 
-    def shared_file_attributes(attributes)
+    def shared_file_attributes(attributes, file_tag)
       {
         id: attributes['id']&.value,
         used_by_grader: attributes['used-by-grader']&.value,
         usage_by_lms: attributes['usage-by-lms']&.value,
-        visible: attributes['visible']&.value
+        visible: attributes['visible']&.value,
+        binary: /-bin-file/.match?(file_tag.name)
       }
     end
 

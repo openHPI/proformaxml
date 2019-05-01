@@ -2,6 +2,7 @@
 
 require "bundler/setup"
 require "proforma"
+require 'securerandom'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
@@ -10,8 +11,113 @@ require "proforma"
 require "pry"
 # @a=Proforma::Importer.new(File.open('../example.zip'))
 `zip ../example.zip ../example/* -j`
-@a = Proforma::Importer.new('../example.zip')
-@b = Proforma::Exporter.new(Proforma::Task.new)
+a = Proforma::Importer.new('../example.zip')
+task = Proforma::Task.new
+# :title, :description, :internal_description, :proglang, :files, :tests, :uuid, :parent_uuid, :lang, :model_solutions
+task.title = 'Doller Ditel'
+task.description = 'Dolle description'
+task.internal_description = 'Dolle internal_description'
+task.proglang = {name: 'Dolle proglang', version: '5.0'}
+task.uuid = SecureRandom.uuid
+task.parent_uuid = SecureRandom.uuid
+task.language = 'DE-de'
+# :id, :content, :filename, :used_by_grader, :visible, :usage_by_lms
+file1 = Proforma::TaskFile.new(
+  id: SecureRandom.uuid,
+  content: 'all your base are belong to us',
+  filename: 'bases.mine',
+  used_by_grader: true,
+  visible: 'yes',
+  usage_by_lms: 'edit'
+)
+file2 = Proforma::TaskFile.new(
+  id: SecureRandom.uuid,
+  content: 'asd/.f,jethe r tiewrtogndf aregea wrgfgfff42',
+  filename: 'spam',
+  used_by_grader: false,
+  visible: 'no',
+  usage_by_lms: 'display'
+)
+task.files = [file1, file2]
+# :id, :files, :description, :internal_description
+model_solution_file1 = Proforma::TaskFile.new(
+  id: SecureRandom.uuid,
+  content: 'public static void main bla',
+  filename: 'die einzig wahre Loesung.java',
+  used_by_grader: false,
+  visible: 'delayed',
+  usage_by_lms: 'download'
+)
+model_solution = Proforma::ModelSolution.new(
+  id: SecureRandom.uuid,
+  files: [model_solution_file1],
+  description: 'MS Descrebdtion',
+  internal_description: 'internoel Descrebdtion'
+)
+task.model_solutions = [model_solution]
+
+# :id, :title, :description, :internal_description, :test_type, :files, :meta_data
+test_file1 = Proforma::TaskFile.new(
+  id: SecureRandom.uuid,
+  content: 'assert that 1 == 1',
+  filename: 'tests/tollertest.java',
+  used_by_grader: true,
+  visible: 'no',
+)
+
+test_file2 = Proforma::TaskFile.new(
+  id: SecureRandom.uuid,
+  content: 'assert that 7 != 6',
+  filename: 'tests/supertest.java',
+  used_by_grader: true,
+  visible: 'no',
+)
+
+test1 = Proforma::Test.new(
+  id: SecureRandom.uuid,
+  title: 'Toestteitel',
+  description: 'Doeskrueption',
+  internal_description: 'int dis',
+  test_type: 'junit',
+  files: [test_file1, test_file2],
+  meta_data: {
+    'feedback-message' => 'FEEDBACK',
+    'testing-framework' => 'JUnit',
+    'testing-framework-version' => '0.1'
+  }
+)
+
+test_file3 = Proforma::TaskFile.new(
+  id: SecureRandom.uuid,
+  content: 'assert that a == b',
+  filename: 'tests/aaatollertest.java',
+  used_by_grader: true,
+  visible: 'no',
+)
+
+test_file4 = Proforma::TaskFile.new(
+  id: SecureRandom.uuid,
+  content: 'assert that asdf != fdsa',
+  filename: 'tests/bbbsupertest.java',
+  used_by_grader: true,
+  visible: 'no',
+)
+
+test2 = Proforma::Test.new(
+  id: SecureRandom.uuid,
+  title: 'Bla',
+  description: 'Blubb',
+  internal_description: 'Baum',
+  test_type: 'jonit',
+  files: [test_file3, test_file4],
+  meta_data: {
+    'feedback-message' => 'Backfeed',
+    'testing-framework' => 'Jo-nit',
+    'testing-framework-version' => '4'
+  }
+)
+task.tests = [test1, test2]
+b = Proforma::Exporter.new(task)
 Pry.start
 # require "irb"
 # IRB.start(__FILE__)
