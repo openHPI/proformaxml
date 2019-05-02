@@ -9,10 +9,19 @@ module Proforma
       @files = {}
       @task = task
 
+      add_placeholders
 
       # xml = filestring_from_zip('example.xml')
       # @doc = Nokogiri::XML(xml, &:noblanks)
       # self.doc = @doc
+    end
+
+    def add_placeholders
+      return if @task.model_solutions&.any?
+
+      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no')
+      model_solution = ModelSolution.new(id: 'ms-placeholder', files: [file])
+      @task.model_solutions = [model_solution]
     end
 
     def perform
@@ -89,7 +98,7 @@ module Proforma
         #   end
         # end
       end
-      File.open('tesfile.zip', 'wb') { |file| file.write(stringio.string) }
+      File.open('../testfile.zip', 'wb') { |file| file.write(stringio.string) }
       stringio
     end
 
