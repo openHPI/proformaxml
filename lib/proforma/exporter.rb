@@ -33,7 +33,12 @@ module Proforma
           xml.proglang({version: @task.proglang[:version]}, @task.proglang[:name])
           xml.files do
             @task.all_files.each do |file|
-              xml.file(id: file.id, 'used-by-grader' => file.used_by_grader, visible: file.visible) do
+              xml.file({
+                id: file.id,
+                'used-by-grader' => file.used_by_grader,
+                visible: file.visible,
+                'usage-by-lms' => file.usage_by_lms
+              }.compact) do
                 if file.embed?
                   if file.binary
                     xml.send 'embedded-bin-file', {filename: file.filename}, Base64.encode64(file.content)
@@ -63,8 +68,8 @@ module Proforma
             @task.tests&.each do |test|
               xml.test(id: test.id) do
                 xml.title test.title
-                xml.description test.description
-                xml.send('internal-description', test.internal_description)
+                xml.description test.description unless test.description.blank?
+                xml.send('internal-description', test.internal_description) unless test.internal_description.blank?
                 xml.send('test-type', test.test_type)
                 xml.send('test-configuration') do
                   xml.filerefs do
