@@ -34,10 +34,14 @@ module Proforma
           xml.files do
             @task.all_files.each do |file|
               xml.file(id: file.id, 'used-by-grader' => file.used_by_grader, visible: file.visible) do
-                if file.binary
-                  xml.send 'embedded-bin-file', {filename: file.filename}, Base64.encode64(file.content)
+                if file.embed?
+                  if file.binary
+                    xml.send 'embedded-bin-file', {filename: file.filename}, Base64.encode64(file.content)
+                  else
+                    xml.send 'embedded-txt-file', {filename: file.filename}, file.content
+                  end
                 else
-                  xml.send 'embedded-txt-file', {filename: file.filename}, file.content
+                  xml.send "attached-#{file.binary ? 'bin' : 'txt'}-file", file.filename
                 end
               end
             end
@@ -91,12 +95,12 @@ module Proforma
       stringio = Zip::OutputStream.write_buffer do |zio|
         zio.put_next_entry('task.xml')
         zio.write xmldoc
-        # exercise.exercise_files.each do |file|
-        #   if file.attachment.original_filename
-        #     zio.put_next_entry(file.attachment.original_filename)
-        #     zio.write Paperclip.io_adapters.for(file.attachment).read
-        #   end
-        # end
+        @task.all_files.each do |file|
+          next if file.embed?
+
+          zio.put_next_entry(file.filename)
+          zio.write file.content
+        end
       end
       File.open('../testfile.zip', 'wb') { |file| file.write(stringio.string) }
       stringio
