@@ -52,8 +52,8 @@ module Proforma
       @task.title = @task_node.at('title').text
       @task.description = @task_node.at('description').text
       @task.internal_description = @task_node.at('internal-description').text
-      @task.proglang = { name: @task_node.at('proglang').text,
-                         version: @task_node.at('proglang').attributes['version'].value }
+      @task.proglang = {name: @task_node.at('proglang').text,
+                        version: @task_node.at('proglang').attributes['version'].value}
     end
 
     def set_files
@@ -120,7 +120,8 @@ module Proforma
         used_by_grader: attributes['used-by-grader']&.value,
         usage_by_lms: attributes['usage-by-lms']&.value,
         visible: attributes['visible']&.value,
-        binary: /-bin-file/.match?(file_tag.name)
+        binary: /-bin-file/.match?(file_tag.name),
+        internal_description: file_tag.parent.at('internal-description').text
       }
     end
 

@@ -48,6 +48,7 @@ module Proforma
                 else
                   xml.send "attached-#{file.binary ? 'bin' : 'txt'}-file", file.filename
                 end
+                xml.send 'internal-description', file.internal_description
               end
             end
           end
