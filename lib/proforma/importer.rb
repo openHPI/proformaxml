@@ -8,7 +8,7 @@ module Proforma
       @zip = zip
       @files = {}
 
-      xml = filestring_from_zip('example.xml')
+      xml = filestring_from_zip('task.xml')
       @doc = Nokogiri::XML(xml, &:noblanks)
       self.doc = @doc
       @task = Task.new
@@ -28,7 +28,7 @@ module Proforma
     private
 
     def filestring_from_zip(filename)
-      Zip::File.open(@zip) do |zip_file|
+      Zip::File.open(@zip.path) do |zip_file|
         return zip_file.glob(filename).first.get_input_stream.read
       end
     end
