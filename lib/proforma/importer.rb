@@ -8,7 +8,7 @@ module Proforma
       @zip = zip
       @files = {}
 
-      xml = filestring_from_zip('task.xml')
+      xml = filestring_from_zip('task.xml') # use any xml if only one present else use task.xml else break
       @doc = Nokogiri::XML(xml, &:noblanks)
       self.doc = @doc
       @task = Task.new
@@ -121,7 +121,8 @@ module Proforma
         usage_by_lms: attributes['usage-by-lms']&.value,
         visible: attributes['visible']&.value,
         binary: /-bin-file/.match?(file_tag.name),
-        internal_description: file_tag.parent.at('internal-description').text
+        internal_description: file_tag.parent.at('internal-description').text,
+        mimetype: attributes['mimetype']&.value
       }
     end
 
