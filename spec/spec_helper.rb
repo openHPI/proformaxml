@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+SimpleCov.start
+
 require 'bundler/setup'
 require 'proforma'
+require 'rspec/collection_matchers'
+
+Dir['./spec/shared_examples/**/*.rb'].each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

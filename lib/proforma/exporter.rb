@@ -2,26 +2,11 @@
 
 module Proforma
   class Exporter
-    attr_accessor :doc, :files, :task
-
     def initialize(task)
-      # @zip = zip
       @files = {}
       @task = task
 
       add_placeholders
-
-      # xml = filestring_from_zip('example.xml')
-      # @doc = Nokogiri::XML(xml, &:noblanks)
-      # self.doc = @doc
-    end
-
-    def add_placeholders
-      return if @task.model_solutions&.any?
-
-      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no')
-      model_solution = ModelSolution.new(id: 'ms-placeholder', files: [file])
-      @task.model_solutions = [model_solution]
     end
 
     def perform
@@ -92,7 +77,7 @@ module Proforma
         end
       end
       xmldoc = builder.to_xml
-      doc = Nokogiri::XML(xmldoc)
+      # doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
       if errors.any?
         puts 'errors: '
@@ -111,6 +96,16 @@ module Proforma
       end
       # File.open('../testfile.zip', 'wb') { |file| file.write(stringio.string) }
       stringio
+    end
+
+    private
+
+    def add_placeholders
+      return if @task.model_solutions&.any?
+
+      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no')
+      model_solution = ModelSolution.new(id: 'ms-placeholder', files: [file])
+      @task.model_solutions = [model_solution]
     end
 
     def headers
