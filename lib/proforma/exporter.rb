@@ -94,7 +94,7 @@ module Proforma
           zio.write file.content
         end
       end
-      # File.open('../testfile.zip', 'wb') { |file| file.write(stringio.string) }
+      File.open('../testfile.zip', 'wb') { |file| file.write(stringio.string) }
       stringio
     end
 
