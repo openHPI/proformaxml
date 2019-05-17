@@ -6,13 +6,12 @@ RSpec.describe Proforma::TaskFile do
   describe '#embed?' do
     subject { task_file.embed? }
 
-    let(:task_file) { described_class.new content: content }
-    let(:content) { 'test' }
+    let(:task_file) { build(:task_file, :small_content) }
 
     it { is_expected.to be true }
 
     context 'when content is very large' do
-      let(:content) { 'test' * 10**5 }
+      let(:task_file) { build(:task_file, :large_content) }
 
       it { is_expected.to be false }
     end

@@ -6,43 +6,43 @@ RSpec.describe Proforma::Task do
   describe '#all_files' do
     subject { task.all_files }
 
-    let(:task) { described_class.new }
+    let(:task) { build :task }
 
     context 'when task has no files' do
       it { is_expected.to be_empty }
     end
 
     context 'when task has files' do
-      let(:task) { described_class.new files: files }
-      let(:files) { [Proforma::TaskFile.new, Proforma::TaskFile.new] }
+      let(:task) { build :task, files: files }
+      let(:files) { build_list :task_file, 2 }
 
       it { is_expected.to contain_exactly(*files) }
     end
 
     context 'when task has a model_solution' do
-      let(:task) { described_class.new model_solutions: model_solutions }
-      let(:model_solutions) { [Proforma::ModelSolution.new(files: files)] }
-      let(:files) { [Proforma::TaskFile.new, Proforma::TaskFile.new] }
+      let(:task) { build :task, model_solutions: model_solutions }
+      let(:model_solutions) { [build(:model_solution, files: files)] }
+      let(:files) { build_list :task_file, 2 }
 
       it { is_expected.to contain_exactly(*files) }
     end
 
     context 'when task has a test' do
-      let(:task) { described_class.new tests: tests }
-      let(:tests) { [Proforma::Test.new(files: files)] }
-      let(:files) { [Proforma::TaskFile.new, Proforma::TaskFile.new] }
+      let(:task) { build :task, tests: tests }
+      let(:tests) { [build(:test, files: files)] }
+      let(:files) { build_list :task_file, 2 }
 
       it { is_expected.to contain_exactly(*files) }
     end
 
     context 'when task has files, model_solutions and tests' do
-      let(:task) { described_class.new files: task_files, model_solutions: model_solutions, tests: tests }
-      let(:model_solutions) { [Proforma::ModelSolution.new(files: model_solution_files)] }
-      let(:tests) { [Proforma::Test.new(files: test_files)] }
+      let(:task) { build :task, files: task_files, model_solutions: model_solutions, tests: tests }
+      let(:model_solutions) { [build(:model_solution, files: model_solution_files)] }
+      let(:tests) { [build(:test, files: test_files)] }
 
-      let(:task_files) { [Proforma::TaskFile.new, Proforma::TaskFile.new] }
-      let(:model_solution_files) { [Proforma::TaskFile.new, Proforma::TaskFile.new] }
-      let(:test_files) { [Proforma::TaskFile.new, Proforma::TaskFile.new] }
+      let(:task_files) { build_list :task_file, 2 }
+      let(:model_solution_files) { build_list :task_file, 2 }
+      let(:test_files) { build_list :task_file, 2 }
 
       it { is_expected.to contain_exactly(*(task_files + model_solution_files + test_files)) }
 

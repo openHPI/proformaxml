@@ -14,8 +14,8 @@ module Proforma
         xml.task(headers) do
           xml.title @task.title
           xml.description @task.description
-          xml.send('internal-description', @task.internal_description)
-          xml.proglang({version: @task.proglang[:version]}, @task.proglang[:name])
+          xml.send('internal-description', @task.internal_description) unless @task.internal_description.blank?
+          xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
           xml.files do
             @task.all_files.each do |file|
               xml.file({
@@ -34,7 +34,7 @@ module Proforma
                 else
                   xml.send "attached-#{file.binary ? 'bin' : 'txt'}-file", file.filename
                 end
-                xml.send 'internal-description', file.internal_description
+                xml.send 'internal-description', file.internal_description unless file.internal_description.blank?
               end
             end
           end
@@ -46,8 +46,8 @@ module Proforma
                     xml.fileref(refid: file.id) {}
                   end
                 end
-                xml.description model_solution.description if model_solution.description
-                xml.send('internal-description', model_solution.internal_description) if model_solution.internal_description
+                xml.description model_solution.description unless model_solution.description.blank?
+                xml.send('internal-description', model_solution.internal_description) unless model_solution.internal_description.blank?
               end
             end
           end
@@ -77,7 +77,7 @@ module Proforma
         end
       end
       xmldoc = builder.to_xml
-      # doc = Nokogiri::XML(xmldoc)
+      doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
       if errors.any?
         puts 'errors: '
@@ -111,13 +111,14 @@ module Proforma
     def headers
       {
         'xmlns' => 'urn:proforma:v2.0.1',
-        'xmlns:c' => 'codeharbor',
-        'xsi:schemaLocation' => 'urn:proforma:v2.0.1 schema.xsd',
-        'uuid' => @task.uuid,
-        'parent-uuid' => @task.parent_uuid,
-        'lang' => @task.language,
-        'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
-      }
+        'uuid' => @task.uuid
+        # 'xsi:schemaLocation' => 'urn:proforma:v2.0.1 schema.xsd',
+        # 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
+      }.tap do |h|
+        h['xmlns:c'] = 'codeharbor' if @task.tests&.any?
+        h['lang'] = @task.language unless @task.language.blank?
+        h['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
+      end
     end
 
     def validate(doc)

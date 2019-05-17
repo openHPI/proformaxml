@@ -4,7 +4,7 @@ RSpec.describe Proforma::Exporter do
   describe '.new' do
     subject(:exporter) { described_class.new(task) }
 
-    let(:task) { Proforma::Task.new }
+    let(:task) { build(:task) }
 
     it 'assigns task' do
       expect(exporter.instance_variable_get(:@task)).to be task
@@ -23,6 +23,30 @@ RSpec.describe Proforma::Exporter do
         id: 'ms-placeholder',
         files: contain_exactly(have_attributes(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no'))
       )
+    end
+  end
+
+  describe '#perform' do
+    subject(:perform) { exporter.perform }
+
+    let(:exporter) { described_class.new(task) }
+    let(:task) { build(:task) }
+    let(:xml_string) { Zip::InputStream.open(perform) { |io| io.get_next_entry.get_input_stream.read } }
+    let(:xml) { Nokogiri::XML(xml_string, &:noblanks) }
+    let(:xml_task) { xml.xpath('/ns:task', 'ns' => Proforma::XML_NAMESPACE) }
+
+    it { is_expected.to be_a StringIO }
+
+    it 'contains the zipped xml-file' do
+      expect { xml_string }.not_to raise_error
+    end
+
+    it 'contains through schema validatable xml' do
+      expect(Nokogiri::XML::Schema(File.open(Proforma::SCHEMA_PATH)).validate(xml)).to be_empty
+    end
+
+    it do
+      binding.pry
     end
   end
 end

@@ -6,6 +6,8 @@ SimpleCov.start
 require 'bundler/setup'
 require 'proforma'
 require 'rspec/collection_matchers'
+require 'factory_bot'
+require 'pry-byebug'
 
 Dir['./spec/shared_examples/**/*.rb'].each { |f| require f }
 
@@ -18,5 +20,11 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
   end
 end

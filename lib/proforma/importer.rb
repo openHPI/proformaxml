@@ -54,6 +54,7 @@ module Proforma
       @task.internal_description = @task_node.at('internal-description').text
       @task.proglang = {name: @task_node.at('proglang').text,
                         version: @task_node.at('proglang').attributes['version'].value}
+      @task.language = @task_node.attributes('lang')
     end
 
     def set_files
