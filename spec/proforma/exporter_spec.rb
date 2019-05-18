@@ -34,15 +34,17 @@ RSpec.describe Proforma::Exporter do
 
     let(:exporter) { described_class.new(task) }
     let(:task) { build(:task) }
+
     let(:zip_files) do
-      file_hash = {}
-      Zip::InputStream.open(perform) do |io|
-        while (entry = io.get_next_entry)
-          file_hash[entry.name] = entry.get_input_stream.read
+      {}.tap do |hash|
+        Zip::InputStream.open(perform) do |io|
+          while (entry = io.get_next_entry)
+            hash[entry.name] = entry.get_input_stream.read
+          end
         end
       end
-      file_hash
     end
+
     let(:doc) { Nokogiri::XML(zip_files['task.xml'], &:noblanks) }
     let(:xml) { doc.remove_namespaces! }
 
