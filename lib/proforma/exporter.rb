@@ -65,7 +65,7 @@ module Proforma
                     end
                   end
                   xml.send('test-meta-data') do
-                    test.meta_data.each do |key, value|
+                    test.meta_data&.each do |key, value|
                       xml['c'].send(key, value)
                     end
                   end

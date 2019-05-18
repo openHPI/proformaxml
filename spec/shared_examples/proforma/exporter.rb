@@ -105,12 +105,13 @@ RSpec.shared_examples 'task node with attached file' do |text_bin|
     expect(zip_files["filename.#{text_bin}"]).not_to be nil
   end
 end
-
-RSpec.shared_examples 'task node with file' do |text_bin, att_emb|
+RSpec.shared_examples 'task node without model-solution with file' do
   it 'adds file nodes to files' do
     expect(xml.xpath('/task/files/file')).to have(2).items
   end
+end
 
+RSpec.shared_examples 'task node with file' do |text_bin, att_emb|
   it 'adds id to attributes of file node' do
     expect(xml.xpath("/task/files/file[@id!='ms-placeholder-file']").attribute('id').value).to match(/file_\d+/)
   end

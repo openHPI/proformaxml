@@ -4,8 +4,10 @@ FactoryBot.define do
   factory :task_file, class: Proforma::TaskFile do
     trait(:populated) do
       sequence(:id) { |n| "file_#{n}" }
-      sequence(:binary, &:even?)
-      sequence(:content) { |n| [0, 3].include?(n % 4) ? ('test' * 10**5) : 'test' }
+      # 1st: test, 2nd binary, ... not used rn
+      # sequence(:binary, &:even?)
+      # 1st & 2nd: small, 3rd & 4th large, ... not used rn
+      # sequence(:content) { |n| [0, 3].include?(n % 4) ? ('test' * 10**5) : 'test' }
       filename { "filename.#{binary ? 'bin' : 'txt'}" }
       used_by_grader { true }
       visible { 'yes' }
@@ -19,4 +21,3 @@ FactoryBot.define do
     trait(:large_content) { content { 'test' * 10**5 } }
   end
 end
-# attr_accessor :usage_by_lms, :internal_description, :mimetype

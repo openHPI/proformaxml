@@ -26,6 +26,9 @@ RSpec.describe Proforma::Exporter do
     end
   end
 
+  ### all the unless tests are still missing ###
+  ### multiple elements per node are missing ###
+  ### refactor eqls to use variables ###
   describe '#perform' do
     subject(:perform) { exporter.perform }
 
@@ -40,7 +43,7 @@ RSpec.describe Proforma::Exporter do
       end
       file_hash
     end
-    let(:doc) { Nokogiri::XML(zip_files['task.xml']) }
+    let(:doc) { Nokogiri::XML(zip_files['task.xml'], &:noblanks) }
     let(:xml) { doc.remove_namespaces! }
 
     it_behaves_like 'task node'
@@ -91,6 +94,7 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
       it_behaves_like 'task node with embedded file', 'txt'
+      it_behaves_like 'task node without model-solution with file'
     end
 
     context 'when a populated task with embedded binary file is supplied' do
@@ -99,6 +103,7 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
       it_behaves_like 'task node with embedded file', 'bin'
+      it_behaves_like 'task node without model-solution with file'
     end
 
     context 'when a populated task with attached text file is supplied' do
@@ -107,6 +112,7 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
       it_behaves_like 'task node with attached file', 'txt'
+      it_behaves_like 'task node without model-solution with file'
     end
 
     context 'when a populated task with attached binary file is supplied' do
@@ -115,6 +121,101 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
       it_behaves_like 'task node with attached file', 'bin'
+      it_behaves_like 'task node without model-solution with file'
+    end
+
+    context 'when a populated task with a model-solution is supplied' do
+      let(:task) { build(:task, :populated, :with_model_solution) }
+
+      it_behaves_like 'task node'
+      it_behaves_like 'populated task node'
+      it_behaves_like 'task node with embedded file', 'txt'
+
+      it 'adds id attribute to model-solution node' do
+        expect(xml.xpath('/task/model-solutions/model-solution').attribute('id').value).to eql 'id'
+      end
+
+      it 'adds correct refid attribute to fileref' do
+        expect(
+          xml.xpath('/task/model-solutions/model-solution/filerefs/fileref').attribute('refid').value
+        ).to eql xml.xpath('/task/files/file').attribute('id').value
+      end
+
+      it 'adds description attribute to model-solution' do
+        expect(xml.xpath('/task/model-solutions/model-solution/description').text).to eql 'description'
+      end
+
+      it 'adds internal-description attribute to model-solution' do
+        expect(xml.xpath('/task/model-solutions/model-solution/internal-description').text).to eql 'internal_description'
+      end
+    end
+
+    # test without required params (eg files are not required by schema)
+    context 'when a populated task with a test is supplied' do
+      let(:task) { build(:task, :populated, :with_test) }
+
+      it_behaves_like 'task node'
+      it_behaves_like 'populated task node'
+      it_behaves_like 'task node with embedded file', 'txt'
+      it_behaves_like 'task node without model-solution with file'
+
+      it 'adds test node to tests' do
+        expect(xml.xpath('/task/tests/test')).to have(1).item
+      end
+
+      it 'adds id attribute to test node' do
+        expect(xml.xpath('/task/tests/test').attribute('id').value).to eql 'id'
+      end
+
+      it 'adds content to title node' do
+        expect(xml.xpath('/task/tests/test/title').text).to eql 'title'
+      end
+
+      it 'adds content to description node' do
+        expect(xml.xpath('/task/tests/test/description').text).to eql 'description'
+      end
+
+      it 'adds content to internal-description node' do
+        expect(xml.xpath('/task/tests/test/internal-description').text).to eql 'internal_description'
+      end
+
+      it 'adds content to test-type node' do
+        expect(xml.xpath('/task/tests/test/test-type').text).to eql 'test_type'
+      end
+
+      it 'adds test-configuration node to test node' do
+        expect(xml.xpath('/task/tests/test/test-configuration')).to have(1).item
+      end
+
+      it 'adds filerefs node to test-configuration node' do
+        expect(xml.xpath('/task/tests/test/test-configuration/filerefs')).to have(1).item
+      end
+
+      it 'adds fileref node to fileref node' do
+        expect(xml.xpath('/task/tests/test/test-configuration/filerefs/fileref')).to have(1).item
+      end
+
+      it 'adds corresponding file to files' do
+        expect(
+          xml.xpath("/task/files/file[@id='#{xml.xpath('/task/tests/test/test-configuration/filerefs/fileref').attribute('refid').value}']")
+        ).to have(1).item
+      end
+
+      it 'adds test-meta-data node to test-configuration node' do
+        expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(1).item
+      end
+
+      it 'adds meta-data nodes to test-meta-data node' do
+        expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data').children).to have(task.tests.first.meta_data.count).items
+      end
+
+      it 'adds namespace to task' do
+        expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
+      end
+
+      it 'adds correct meta-data to meta-data nodes' do
+        expect(xml.xpath("/task/tests/test/test-configuration/test-meta-data/#{task.tests.first.meta_data.first[0]}").text).to eql task.tests.first.meta_data.first[1]
+      end
     end
   end
 end
