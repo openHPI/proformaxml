@@ -19,5 +19,7 @@ FactoryBot.define do
     # trait(:with_files) { files { build_list(:task_file, 4, :populated) } }
     trait(:with_model_solution) { model_solutions { build_list(:model_solution, 1, :populated) } }
     trait(:with_test) { tests { build_list(:test, 1, :populated) } }
+
+    trait(:invalid) { files { build_list(:task_file, 1, :invalid) } }
   end
 end

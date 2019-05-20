@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :model_solution, class: Proforma::ModelSolution do
+    files { build_list(:task_file, 1, id: 'model_solution_file_id') }
+
     trait(:populated) do
       id { 'id' }
       description { 'description' }

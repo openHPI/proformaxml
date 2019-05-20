@@ -79,11 +79,9 @@ module Proforma
       xmldoc = builder.to_xml
       doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
-      if errors.any?
-        puts 'errors: '
-        puts errors
-        raise 'voll nicht valide und so'
-      end
+
+      raise PostGenerateValidationError, errors if errors.any?
+
       stringio = Zip::OutputStream.write_buffer do |zio|
         zio.put_next_entry('task.xml')
         zio.write xmldoc

@@ -26,9 +26,7 @@ RSpec.describe Proforma::Exporter do
     end
   end
 
-  ### all the unless tests are still missing ###
   ### multiple elements per node are missing ###
-  ### refactor eqls to use variables ###
   describe '#perform' do
     subject(:perform) { exporter.perform }
 
@@ -47,6 +45,8 @@ RSpec.describe Proforma::Exporter do
 
     let(:doc) { Nokogiri::XML(zip_files['task.xml'], &:noblanks) }
     let(:xml) { doc.remove_namespaces! }
+    let(:placeholder_file) { task.all_files.filter { |file| file.id == 'ms-placeholder-file' }.first }
+    let(:model_solution) { task.model_solutions.first }
 
     it_behaves_like 'task node'
 
@@ -64,23 +64,25 @@ RSpec.describe Proforma::Exporter do
       expect(xml.xpath('/task/proglang').attribute('version').value).to eql ''
     end
     it 'adds id attribute to file node' do
-      expect(xml.xpath('/task/files/file').attribute('id').value).to eql 'ms-placeholder-file'
+      expect(xml.xpath('/task/files/file').attribute('id').value).to eql placeholder_file.id
     end
 
     it 'adds used-by-grader attribute to file node' do
-      expect(xml.xpath('/task/files/file').attribute('used-by-grader').value).to eql 'false'
+      expect(xml.xpath('/task/files/file').attribute('used-by-grader').value).to eql placeholder_file.used_by_grader.to_s
     end
 
     it 'adds visible attribute to file node' do
-      expect(xml.xpath('/task/files/file').attribute('visible').value).to eql 'no'
+      expect(xml.xpath('/task/files/file').attribute('visible').value).to eql placeholder_file.visible
     end
 
     it 'adds id attribute to model-solution node' do
-      expect(xml.xpath('/task/model-solutions/model-solution').attribute('id').value).to eql 'ms-placeholder'
+      expect(xml.xpath('/task/model-solutions/model-solution').attribute('id').value).to eql model_solution.id
     end
 
     it 'adds refid attribute to fileref' do
-      expect(xml.xpath('/task/model-solutions/model-solution/filerefs/fileref').attribute('refid').value).to eql 'ms-placeholder-file'
+      expect(
+        xml.xpath('/task/model-solutions/model-solution/filerefs/fileref').attribute('refid').value
+      ).to eql model_solution.files.first.id
     end
 
     context 'when a populated task is supplied' do
@@ -92,6 +94,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with embedded text file is supplied' do
       let(:task) { build(:task, :populated, :with_embedded_txt_file) }
+      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -101,6 +104,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with embedded binary file is supplied' do
       let(:task) { build(:task, :populated, :with_embedded_bin_file) }
+      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -110,6 +114,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with attached text file is supplied' do
       let(:task) { build(:task, :populated, :with_attached_txt_file) }
+      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -119,6 +124,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with attached binary file is supplied' do
       let(:task) { build(:task, :populated, :with_attached_bin_file) }
+      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -128,13 +134,14 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with a model-solution is supplied' do
       let(:task) { build(:task, :populated, :with_model_solution) }
+      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
       it_behaves_like 'task node with embedded file', 'txt'
 
       it 'adds id attribute to model-solution node' do
-        expect(xml.xpath('/task/model-solutions/model-solution').attribute('id').value).to eql 'id'
+        expect(xml.xpath('/task/model-solutions/model-solution').attribute('id').value).to eql model_solution.id
       end
 
       it 'adds correct refid attribute to fileref' do
@@ -144,17 +151,19 @@ RSpec.describe Proforma::Exporter do
       end
 
       it 'adds description attribute to model-solution' do
-        expect(xml.xpath('/task/model-solutions/model-solution/description').text).to eql 'description'
+        expect(xml.xpath('/task/model-solutions/model-solution/description').text).to eql model_solution.description
       end
 
       it 'adds internal-description attribute to model-solution' do
-        expect(xml.xpath('/task/model-solutions/model-solution/internal-description').text).to eql 'internal_description'
+        expect(xml.xpath('/task/model-solutions/model-solution/internal-description').text).to eql model_solution.internal_description
       end
     end
 
     # test without required params (eg files are not required by schema)
     context 'when a populated task with a test is supplied' do
       let(:task) { build(:task, :populated, :with_test) }
+      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+      let(:test) { task.tests.first }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -166,23 +175,23 @@ RSpec.describe Proforma::Exporter do
       end
 
       it 'adds id attribute to test node' do
-        expect(xml.xpath('/task/tests/test').attribute('id').value).to eql 'id'
+        expect(xml.xpath('/task/tests/test').attribute('id').value).to eql test.id
       end
 
       it 'adds content to title node' do
-        expect(xml.xpath('/task/tests/test/title').text).to eql 'title'
+        expect(xml.xpath('/task/tests/test/title').text).to eql test.title
       end
 
       it 'adds content to description node' do
-        expect(xml.xpath('/task/tests/test/description').text).to eql 'description'
+        expect(xml.xpath('/task/tests/test/description').text).to eql test.description
       end
 
       it 'adds content to internal-description node' do
-        expect(xml.xpath('/task/tests/test/internal-description').text).to eql 'internal_description'
+        expect(xml.xpath('/task/tests/test/internal-description').text).to eql test.internal_description
       end
 
       it 'adds content to test-type node' do
-        expect(xml.xpath('/task/tests/test/test-type').text).to eql 'test_type'
+        expect(xml.xpath('/task/tests/test/test-type').text).to eql test.test_type
       end
 
       it 'adds test-configuration node to test node' do
@@ -216,7 +225,60 @@ RSpec.describe Proforma::Exporter do
       end
 
       it 'adds correct meta-data to meta-data nodes' do
-        expect(xml.xpath("/task/tests/test/test-configuration/test-meta-data/#{task.tests.first.meta_data.first[0]}").text).to eql task.tests.first.meta_data.first[1]
+        expect(
+          xml.xpath("/task/tests/test/test-configuration/test-meta-data/#{task.tests.first.meta_data.first[0]}").text
+        ).to eql task.tests.first.meta_data.first[1]
+      end
+    end
+
+    context 'when task is invalid' do
+      let(:task) { build(:task, :invalid) }
+
+      it 'raises an error' do
+        expect { perform }.to raise_error Proforma::PostGenerateValidationError
+      end
+    end
+
+    context 'when task is minimal and has minimal child objects' do
+      let(:task) do
+        build(
+          :task,
+          files: build_list(:task_file, 1),
+          tests: build_list(:test, 1),
+          model_solutions: build_list(:model_solution, 1)
+        )
+      end
+
+      it 'does not set lang-attribute for task' do
+        expect(xml.xpath('/task').attribute('lang')).to be nil
+      end
+
+      it 'does not set parent-uuid-attribute for task' do
+        expect(xml.xpath('/task').attribute('parent-uuid')).to be nil
+      end
+
+      it 'does not set internal-description for task' do
+        expect(xml.xpath('/task/internal-description')).to be_empty
+      end
+
+      it 'does not set internal-description for the files' do
+        expect(xml.xpath('/task/files/file/internal-description')).to be_empty
+      end
+
+      it 'does not set description for model_solution' do
+        expect(xml.xpath('/task/model-solutions/model-solution/description')).to be_empty
+      end
+
+      it 'does not set internal-description for model_solution' do
+        expect(xml.xpath('/task/model-solutions/model-solution/internal-description')).to be_empty
+      end
+
+      it 'does not set description for test' do
+        expect(xml.xpath('/task/tests/test/description')).to be_empty
+      end
+
+      it 'does not set internal-description for test' do
+        expect(xml.xpath('/task/tests/test/internal-description')).to be_empty
       end
     end
   end

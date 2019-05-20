@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :test, class: Proforma::Test do
+    files { build_list(:task_file, 1, id: 'test_file_id') }
+
     trait(:populated) do
       id { 'id' }
       title { 'title' }
