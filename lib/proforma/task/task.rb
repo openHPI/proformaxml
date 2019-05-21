@@ -9,8 +9,8 @@ module Proforma
 
     def all_files
       task_files = files || []
-      model_solution_files = model_solutions&.map(&:files) || []
-      test_files = tests&.map(&:files) || []
+      model_solution_files = model_solutions&.map(&:files)&.filter(&:present?) || []
+      test_files = tests&.map(&:files)&.filter(&:present?) || []
       (task_files + model_solution_files + test_files).flatten.uniq
     end
   end

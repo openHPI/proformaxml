@@ -59,14 +59,18 @@ module Proforma
                 xml.send('internal-description', test.internal_description) unless test.internal_description.blank?
                 xml.send('test-type', test.test_type)
                 xml.send('test-configuration') do
-                  xml.filerefs do
-                    test.files.each do |file|
-                      xml.fileref refid: file.id
+                  if test.files
+                    xml.filerefs do
+                      test.files.each do |file|
+                        xml.fileref refid: file.id
+                      end
                     end
                   end
-                  xml.send('test-meta-data') do
-                    test.meta_data&.each do |key, value|
-                      xml['c'].send(key, value)
+                  if test.meta_data
+                    xml.send('test-meta-data') do
+                      test.meta_data&.each do |key, value|
+                        xml['c'].send(key, value)
+                      end
                     end
                   end
                 end

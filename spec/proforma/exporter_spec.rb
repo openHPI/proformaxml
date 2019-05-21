@@ -26,7 +26,6 @@ RSpec.describe Proforma::Exporter do
     end
   end
 
-  ### multiple elements per node are missing ###
   describe '#perform' do
     subject(:perform) { exporter.perform }
 
@@ -132,6 +131,17 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'task node without model-solution with file'
     end
 
+    context 'when a populated task with multiple files is supplied' do
+      let(:task) { build(:task, :populated, files: build_list(:task_file, 2)) }
+
+      it_behaves_like 'task node'
+      it_behaves_like 'populated task node'
+
+      it 'add two file-nodes to files' do
+        expect(xml.xpath('/task/files/file')).to have(3).items
+      end
+    end
+
     context 'when a populated task with a model-solution is supplied' do
       let(:task) { build(:task, :populated, :with_model_solution) }
       let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
@@ -157,9 +167,27 @@ RSpec.describe Proforma::Exporter do
       it 'adds internal-description attribute to model-solution' do
         expect(xml.xpath('/task/model-solutions/model-solution/internal-description').text).to eql model_solution.internal_description
       end
+
+      context 'when model-solution has multiple files' do
+        let(:task) { build(:task, :populated, model_solutions: build_list(:model_solution, 1, files: build_list(:task_file, 2))) }
+        let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+
+        it 'adds correct refid attribute to fileref' do
+          expect(xml.xpath('/task/files/file')).to have(2).items
+        end
+      end
     end
 
-    # test without required params (eg files are not required by schema)
+    context 'when a populated task with multiple model-solutions is supplied' do
+      let(:task) { build(:task, :populated, model_solutions: build_list(:model_solution, 2)) }
+
+      it_behaves_like 'populated task node'
+
+      it 'add two model-solution-nodes to model-solutions' do
+        expect(xml.xpath('/task/model-solutions/model-solution')).to have(2).items
+      end
+    end
+
     context 'when a populated task with a test is supplied' do
       let(:task) { build(:task, :populated, :with_test) }
       let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
@@ -170,33 +198,7 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'task node with embedded file', 'txt'
       it_behaves_like 'task node without model-solution with file'
 
-      it 'adds test node to tests' do
-        expect(xml.xpath('/task/tests/test')).to have(1).item
-      end
-
-      it 'adds id attribute to test node' do
-        expect(xml.xpath('/task/tests/test').attribute('id').value).to eql test.id
-      end
-
-      it 'adds content to title node' do
-        expect(xml.xpath('/task/tests/test/title').text).to eql test.title
-      end
-
-      it 'adds content to description node' do
-        expect(xml.xpath('/task/tests/test/description').text).to eql test.description
-      end
-
-      it 'adds content to internal-description node' do
-        expect(xml.xpath('/task/tests/test/internal-description').text).to eql test.internal_description
-      end
-
-      it 'adds content to test-type node' do
-        expect(xml.xpath('/task/tests/test/test-type').text).to eql test.test_type
-      end
-
-      it 'adds test-configuration node to test node' do
-        expect(xml.xpath('/task/tests/test/test-configuration')).to have(1).item
-      end
+      it_behaves_like 'task node with test'
 
       it 'adds filerefs node to test-configuration node' do
         expect(xml.xpath('/task/tests/test/test-configuration/filerefs')).to have(1).item
@@ -212,22 +214,48 @@ RSpec.describe Proforma::Exporter do
         ).to have(1).item
       end
 
-      it 'adds test-meta-data node to test-configuration node' do
-        expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(1).item
+      context 'when test has no referenced file' do
+        let(:task) { build(:task, :populated, tests: build_list(:test, 1, :populated, :no_file)) }
+
+        it_behaves_like 'task node with test'
+
+        it 'does not add filerefs node to test-configuration node' do
+          expect(xml.xpath('/task/tests/test/test-configuration/filerefs')).to have(0).items
+        end
       end
 
-      it 'adds meta-data nodes to test-meta-data node' do
-        expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data').children).to have(task.tests.first.meta_data.count).items
+      context 'when test has multiple referenced files' do
+        let(:task) { build(:task, :populated, tests: build_list(:test, 1, :populated, files: build_list(:task_file, 2))) }
+
+        it_behaves_like 'task node with test'
+
+        it 'does not add filerefs node to test-configuration node' do
+          expect(xml.xpath('/task/tests/test/test-configuration/filerefs')).to have(1).items
+        end
+
+        it 'adds fileref node to fileref node' do
+          expect(xml.xpath('/task/tests/test/test-configuration/filerefs/fileref')).to have(2).item
+        end
       end
 
-      it 'adds namespace to task' do
-        expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
-      end
+      context 'when test has no meta-data' do
+        let(:task) { build(:task, :populated, tests: build_list(:test, 1)) }
 
-      it 'adds correct meta-data to meta-data nodes' do
-        expect(
-          xml.xpath("/task/tests/test/test-configuration/test-meta-data/#{task.tests.first.meta_data.first[0]}").text
-        ).to eql task.tests.first.meta_data.first[1]
+        it_behaves_like 'task node with test'
+
+        it 'adds test-meta-data node to test-configuration node' do
+          expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(0).items
+        end
+      end
+    end
+
+    context 'when a populated task with multiple tests is supplied' do
+      let(:task) { build(:task, :populated, tests: build_list(:test, 2)) }
+
+      it_behaves_like 'populated task node'
+
+      it 'add two test-nodes to tests' do
+        expect(xml.xpath('/task/tests/test')).to have(2).items
       end
     end
 

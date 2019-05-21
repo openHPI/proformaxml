@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :model_solution, class: Proforma::ModelSolution do
-    files { build_list(:task_file, 1, id: 'model_solution_file_id') }
+    sequence(:id) { |n| "file_#{n}" }
+    sequence(:files) { |n| build_list(:task_file, 1, id: "model_solution_file_#{n}") }
 
     trait(:populated) do
       id { 'id' }

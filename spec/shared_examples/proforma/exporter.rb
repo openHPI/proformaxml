@@ -140,3 +140,55 @@ RSpec.shared_examples 'task node with file' do |text_bin, att_emb|
     expect(xml.xpath("/task/files/file[@id!='ms-placeholder-file']/#{text_bin}-#{att_emb}-file")).to have(1).item
   end
 end
+
+RSpec.shared_examples 'task node with populated test' do
+  it_behaves_like 'task node with test'
+
+  it 'adds content to description node' do
+    expect(xml.xpath('/task/tests/test/description').text).to eql test.description
+  end
+
+  it 'adds content to internal-description node' do
+    expect(xml.xpath('/task/tests/test/internal-description').text).to eql test.internal_description
+  end
+
+  it 'adds test-meta-data node to test-configuration node' do
+    expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(1).item
+  end
+
+  it 'adds meta-data nodes to test-meta-data node' do
+    expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data').children).to have(task.tests.first.meta_data.count).items
+  end
+
+  it 'adds correct meta-data to meta-data nodes' do
+    expect(
+      xml.xpath("/task/tests/test/test-configuration/test-meta-data/#{task.tests.first.meta_data.first[0]}").text
+    ).to eql task.tests.first.meta_data.first[1]
+  end
+end
+
+RSpec.shared_examples 'task node with test' do
+  it 'adds test node to tests' do
+    expect(xml.xpath('/task/tests/test')).to have(1).item
+  end
+
+  it 'adds id attribute to test node' do
+    expect(xml.xpath('/task/tests/test').attribute('id').value).to eql test.id
+  end
+
+  it 'adds content to title node' do
+    expect(xml.xpath('/task/tests/test/title').text).to eql test.title
+  end
+
+  it 'adds content to test-type node' do
+    expect(xml.xpath('/task/tests/test/test-type').text).to eql test.test_type
+  end
+
+  it 'adds test-configuration node to test node' do
+    expect(xml.xpath('/task/tests/test/test-configuration')).to have(1).item
+  end
+
+  it 'adds namespace to task' do
+    expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
+  end
+end

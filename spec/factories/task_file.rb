@@ -2,13 +2,12 @@
 
 FactoryBot.define do
   factory :task_file, class: Proforma::TaskFile do
-    id { 'file_id' }
+    sequence(:id) { |n| "file_#{n}" }
     content { '' }
     used_by_grader { true }
     visible { 'yes' }
 
     trait(:populated) do
-      sequence(:id) { |n| "file_#{n}" }
       # 1st: test, 2nd binary, ... not used rn
       # sequence(:binary, &:even?)
       # 1st & 2nd: small, 3rd & 4th large, ... not used rn
