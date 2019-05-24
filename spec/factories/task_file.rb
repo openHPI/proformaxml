@@ -6,6 +6,7 @@ FactoryBot.define do
     content { '' }
     used_by_grader { true }
     visible { 'yes' }
+    binary { false }
 
     trait(:populated) do
       # 1st: test, 2nd binary, ... not used rn

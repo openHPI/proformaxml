@@ -55,9 +55,9 @@ module Proforma
         @task.proglang = {name: @task_node.at('proglang').text,
                           version: @task_node.at('proglang').attributes['version'].value}
       end
-      @task.language = @task_node.attribute('lang').value unless @task_node.attribute('lang').blank?
-      @task.parent_uuid = @task_node.attribute('parent-uuid').value unless @task_node.attribute('parent-uuid').blank?
-      @task.uuid = @task_node.attribute('uuid').value unless @task_node.attribute('uuid').blank?
+      @task.language = @task_node.attribute('lang').value if @task_node.attribute('lang')&.value&.present?
+      @task.parent_uuid = @task_node.attribute('parent-uuid').value if @task_node.attribute('parent-uuid')&.value&.present?
+      @task.uuid = @task_node.attribute('uuid').value if @task_node.attribute('uuid')&.value&.present?
     end
 
     def set_files
@@ -137,11 +137,13 @@ module Proforma
       test = Test.new
       test.id = test_node.attributes['id'].value
       test.title = test_node.at('title').text
-      test.description = test_node.at('description')&.text
-      test.internal_description = test_node.at('internal-description')&.text
+      test.description = test_node.at('description')&.text unless test_node.at('description')&.text.blank?
+      test.internal_description = test_node.at('internal-description')&.text unless test_node.at('description')&.text.blank?
       test.test_type = test_node.at('test-type')&.text
       test.files = test_files_from_test_configuration(test_node.at('test-configuration'))
-      test.meta_data = custom_meta_data(test_node.at('test-configuration').at('test-meta-data'))
+      unless test_node.at('test-configuration').at('test-meta-data').blank?
+        test.meta_data = custom_meta_data(test_node.at('test-configuration').at('test-meta-data'))
+      end
       @task.tests << test
     end
 

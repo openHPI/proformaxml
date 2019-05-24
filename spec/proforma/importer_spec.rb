@@ -27,7 +27,8 @@ RSpec.describe Proforma::Importer do
   describe '#perform' do
     subject(:perform) { importer.perform }
 
-    let(:task) { build(:task, :populated, :with_embedded_txt_file, :with_model_solution, :with_test) }
+    let(:task) { build(:task) }
+    # let(:task) { build(:task) }
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
     let(:importer) { described_class.new(zip_file) }
 
@@ -36,8 +37,25 @@ RSpec.describe Proforma::Importer do
       zip_file.rewind
     end
 
-    it '' do
+    it 'imports an equal task' do
       expect(perform).to be_an_equal_task_as task
+    end
+
+    context 'when task is populated' do
+      let(:task) { build(:task, :populated) }
+
+      it 'imports an equal task' do
+        expect(perform).to be_an_equal_task_as task
+      end
+    end
+
+    context 'when task has a file' do
+      let(:task) { build(:task, :with_embedded_txt_file) }
+
+      it 'imports an equal task' do
+        binding.pry
+        expect(perform).to be_an_equal_task_as task#???????///
+      end
     end
   end
 end
