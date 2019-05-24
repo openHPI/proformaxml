@@ -6,7 +6,6 @@ module Proforma
 
     def initialize(zip)
       @zip = zip
-      @files = {}
 
       xml = filestring_from_zip('task.xml') # use any xml if only one present else use task.xml else break
       @doc = Nokogiri::XML(xml, &:noblanks)
@@ -49,16 +48,20 @@ module Proforma
     # end
 
     def set_meta_data
-      @task.title = @task_node.at('title').text
-      @task.description = @task_node.at('description').text
-      @task.internal_description = @task_node.at('internal-description').text
-      @task.proglang = {name: @task_node.at('proglang').text,
-                        version: @task_node.at('proglang').attributes['version'].value}
-      @task.language = @task_node.attributes('lang')
+      @task.title = @task_node.at('title').text unless @task_node.at('title').text.blank?
+      @task.description = @task_node.at('description').text unless @task_node.at('description').text.blank?
+      @task.internal_description = @task_node.at('internal-description')&.text unless @task_node.at('internal-description')&.text.blank?
+      if @task_node.at('proglang').text.present? || @task_node.at('proglang').attributes['version'].value.present?
+        @task.proglang = {name: @task_node.at('proglang').text,
+                          version: @task_node.at('proglang').attributes['version'].value}
+      end
+      @task.language = @task_node.attribute('lang').value unless @task_node.attribute('lang').blank?
+      @task.parent_uuid = @task_node.attribute('parent-uuid').value unless @task_node.attribute('parent-uuid').blank?
+      @task.uuid = @task_node.attribute('uuid').value unless @task_node.attribute('uuid').blank?
     end
 
     def set_files
-      @task.files = {}
+      @task.files = []
       @task_node.search('files//file').each do |file_node|
         add_file file_node
       end
@@ -82,9 +85,10 @@ module Proforma
       model_solution = ModelSolution.new
       model_solution.id = model_solution_node.attributes['id'].value
       model_solution.files = files_from_filerefs(model_solution_node.search('filerefs'))
-      model_solution.description = model_solution_node.at('description')&.text
-      model_solution.internal_description = model_solution_node.at('internal-description')&.text
-
+      model_solution.description = model_solution_node.at('description')&.text unless model_solution_node.at('description')&.text.blank?
+      unless model_solution_node.at('internal-description')&.text.blank?
+        model_solution.internal_description = model_solution_node.at('internal-description')&.text
+      end
       @task.model_solutions << model_solution
     end
 
@@ -96,15 +100,14 @@ module Proforma
       elsif /attached-(bin|txt)-file/.match? file_tag.name
         file = TaskFile.new(attached_file_attributes(file_node.attributes, file_tag))
       end
-      @task.files[file.id] = file
+      @task.files << file
     end
 
     def embedded_file_attributes(attributes, file_tag)
       shared = shared_file_attributes(attributes, file_tag)
       shared.merge(
-        filename: file_tag.attributes['filename']&.value,
         content: shared[:binary] ? Base64.decode64(file_tag.text) : file_tag.text
-      )
+      ).tap { |hash| hash[:filename] = file_tag.attributes['filename']&.value unless file_tag.attributes['filename']&.value.blank? }
     end
 
     def attached_file_attributes(attributes, file_tag)
@@ -118,13 +121,16 @@ module Proforma
     def shared_file_attributes(attributes, file_tag)
       {
         id: attributes['id']&.value,
-        used_by_grader: attributes['used-by-grader']&.value,
-        usage_by_lms: attributes['usage-by-lms']&.value,
+        used_by_grader: attributes['used-by-grader']&.value == 'true',
         visible: attributes['visible']&.value,
-        binary: /-bin-file/.match?(file_tag.name),
-        internal_description: file_tag.parent.at('internal-description').text,
-        mimetype: attributes['mimetype']&.value
-      }
+        binary: /-bin-file/.match?(file_tag.name)
+      }.tap do |hash|
+        hash[:usage_by_lms] = attributes['usage-by-lms']&.value unless attributes['usage-by-lms']&.value.blank?
+        unless file_tag.parent.at('internal-description')&.text.blank?
+          hash[:internal_description] = file_tag.parent.at('internal-description')&.text
+        end
+        hash[:mimetype] = attributes['mimetype']&.value unless attributes['mimetype']&.value.blank?
+      end
     end
 
     def add_test(test_node)
@@ -147,7 +153,7 @@ module Proforma
       files = []
       filerefs_node.search('fileref').each do |fileref_node|
         fileref = fileref_node.attributes['refid'].value
-        files << @task.files[fileref]
+        files << @task.files.delete(@task.files.detect { |file| file.id == fileref })
       end
       files
     end

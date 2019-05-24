@@ -102,10 +102,11 @@ module Proforma
 
     private
 
+    # ms-placeholder should be able to go as soon as profoma 2.1 is released https://github.com/ProFormA/proformaxml/issues/5
     def add_placeholders
       return if @task.model_solutions&.any?
 
-      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no')
+      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no', binary: false)
       model_solution = ModelSolution.new(id: 'ms-placeholder', files: [file])
       @task.model_solutions = [model_solution]
     end

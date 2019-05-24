@@ -141,31 +141,31 @@ RSpec.shared_examples 'task node with file' do |text_bin, att_emb|
   end
 end
 
-RSpec.shared_examples 'task node with populated test' do
-  it_behaves_like 'task node with test'
+# RSpec.shared_examples 'task node with populated test' do
+#   it_behaves_like 'task node with test'
 
-  it 'adds content to description node' do
-    expect(xml.xpath('/task/tests/test/description').text).to eql test.description
-  end
+#   it 'adds content to description node' do
+#     expect(xml.xpath('/task/tests/test/description').text).to eql test.description
+#   end
 
-  it 'adds content to internal-description node' do
-    expect(xml.xpath('/task/tests/test/internal-description').text).to eql test.internal_description
-  end
+#   it 'adds content to internal-description node' do
+#     expect(xml.xpath('/task/tests/test/internal-description').text).to eql test.internal_description
+#   end
 
-  it 'adds test-meta-data node to test-configuration node' do
-    expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(1).item
-  end
+#   it 'adds test-meta-data node to test-configuration node' do
+#     expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(1).item
+#   end
 
-  it 'adds meta-data nodes to test-meta-data node' do
-    expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data').children).to have(task.tests.first.meta_data.count).items
-  end
+#   it 'adds meta-data nodes to test-meta-data node' do
+#     expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data').children).to have(task.tests.first.meta_data.count).items
+#   end
 
-  it 'adds correct meta-data to meta-data nodes' do
-    expect(
-      xml.xpath("/task/tests/test/test-configuration/test-meta-data/#{task.tests.first.meta_data.first[0]}").text
-    ).to eql task.tests.first.meta_data.first[1]
-  end
-end
+#   it 'adds correct meta-data to meta-data nodes' do
+#     expect(
+#       xml.xpath("/task/tests/test/test-configuration/test-meta-data/#{task.tests.first.meta_data.first[0]}").text
+#     ).to eql task.tests.first.meta_data.first[1]
+#   end
+# end
 
 RSpec.shared_examples 'task node with test' do
   it 'adds test node to tests' do

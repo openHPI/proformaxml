@@ -3,6 +3,8 @@
 RSpec.describe Proforma::Task do
   it_behaves_like 'mass assignable',
                   %i[title description internal_description proglang files tests uuid parent_uuid language model_solutions]
+  it_behaves_like 'collections mass assignable', %i[files tests model_solutions]
+
   describe '#all_files' do
     subject { task.all_files }
 
