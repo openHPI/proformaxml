@@ -2,26 +2,11 @@
 
 module Proforma
   class Exporter
-    attr_accessor :doc, :files, :task
-
     def initialize(task)
-      # @zip = zip
       @files = {}
       @task = task
 
       add_placeholders
-
-      # xml = filestring_from_zip('example.xml')
-      # @doc = Nokogiri::XML(xml, &:noblanks)
-      # self.doc = @doc
-    end
-
-    def add_placeholders
-      return if @task.model_solutions&.any?
-
-      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no')
-      model_solution = ModelSolution.new(id: 'ms-placeholder', files: [file])
-      @task.model_solutions = [model_solution]
     end
 
     def perform
@@ -29,8 +14,8 @@ module Proforma
         xml.task(headers) do
           xml.title @task.title
           xml.description @task.description
-          xml.send('internal-description', @task.internal_description)
-          xml.proglang({version: @task.proglang[:version]}, @task.proglang[:name])
+          xml.send('internal-description', @task.internal_description) unless @task.internal_description.blank?
+          xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
           xml.files do
             @task.all_files.each do |file|
               xml.file({
@@ -49,7 +34,7 @@ module Proforma
                 else
                   xml.send "attached-#{file.binary ? 'bin' : 'txt'}-file", file.filename
                 end
-                xml.send 'internal-description', file.internal_description
+                xml.send 'internal-description', file.internal_description unless file.internal_description.blank?
               end
             end
           end
@@ -61,8 +46,8 @@ module Proforma
                     xml.fileref(refid: file.id) {}
                   end
                 end
-                xml.description model_solution.description if model_solution.description
-                xml.send('internal-description', model_solution.internal_description) if model_solution.internal_description
+                xml.description model_solution.description unless model_solution.description.blank?
+                xml.send('internal-description', model_solution.internal_description) unless model_solution.internal_description.blank?
               end
             end
           end
@@ -74,14 +59,18 @@ module Proforma
                 xml.send('internal-description', test.internal_description) unless test.internal_description.blank?
                 xml.send('test-type', test.test_type)
                 xml.send('test-configuration') do
-                  xml.filerefs do
-                    test.files.each do |file|
-                      xml.fileref refid: file.id
+                  if test.files
+                    xml.filerefs do
+                      test.files.each do |file|
+                        xml.fileref refid: file.id
+                      end
                     end
                   end
-                  xml.send('test-meta-data') do
-                    test.meta_data.each do |key, value|
-                      xml['c'].send(key, value)
+                  if test.meta_data
+                    xml.send('test-meta-data') do
+                      test.meta_data&.each do |key, value|
+                        xml['c'].send(key, value)
+                      end
                     end
                   end
                 end
@@ -94,11 +83,9 @@ module Proforma
       xmldoc = builder.to_xml
       doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
-      if errors.any?
-        puts 'errors: '
-        puts errors
-        raise 'voll nicht valide und so'
-      end
+
+      raise PostGenerateValidationError, errors if errors.any?
+
       stringio = Zip::OutputStream.write_buffer do |zio|
         zio.put_next_entry('task.xml')
         zio.write xmldoc
@@ -113,16 +100,26 @@ module Proforma
       stringio
     end
 
+    private
+
+    # ms-placeholder should be able to go as soon as profoma 2.1 is released https://github.com/ProFormA/proformaxml/issues/5
+    def add_placeholders
+      return if @task.model_solutions&.any?
+
+      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no', binary: false)
+      model_solution = ModelSolution.new(id: 'ms-placeholder', files: [file])
+      @task.model_solutions = [model_solution]
+    end
+
     def headers
       {
         'xmlns' => 'urn:proforma:v2.0.1',
-        'xmlns:c' => 'codeharbor',
-        'xsi:schemaLocation' => 'urn:proforma:v2.0.1 schema.xsd',
-        'uuid' => @task.uuid,
-        'parent-uuid' => @task.parent_uuid,
-        'lang' => @task.language,
-        'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
-      }
+        'uuid' => @task.uuid
+      }.tap do |h|
+        h['xmlns:c'] = 'codeharbor' if @task.tests&.any?
+        h['lang'] = @task.language unless @task.language.blank?
+        h['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
+      end
     end
 
     def validate(doc)
