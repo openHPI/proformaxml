@@ -98,7 +98,7 @@ RSpec.shared_examples 'task node with attached file' do |text_bin|
   it_behaves_like 'task node with file', 'attached', text_bin
 
   it 'adds filename to file node' do
-    expect(xml.xpath("/task/files/file[@id!='ms-placeholder-file']/attached-#{text_bin}-file").text).to eql "filename.#{text_bin}"
+    expect(xml.xpath("/task/files/file[@id!='ms-placeholder-file']/attached-#{text_bin}-file").text).to eql file.filename
   end
 
   it 'adds attached file to zip' do

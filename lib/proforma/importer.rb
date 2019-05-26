@@ -18,7 +18,7 @@ module Proforma
       puts errors
       raise 'voll nicht valide und so' if errors.any?
 
-      @task_node = @doc.xpath('/ns:task', 'ns' => XML_NAMESPACE)
+      @task_node = @doc.xpath('/xmlns:task')
 
       set_data
       @task
@@ -48,12 +48,12 @@ module Proforma
     # end
 
     def set_meta_data
-      @task.title = @task_node.at('title').text unless @task_node.at('title').text.blank?
-      @task.description = @task_node.at('description').text unless @task_node.at('description').text.blank?
-      @task.internal_description = @task_node.at('internal-description')&.text unless @task_node.at('internal-description')&.text.blank?
-      if @task_node.at('proglang').text.present? || @task_node.at('proglang').attributes['version'].value.present?
-        @task.proglang = {name: @task_node.at('proglang').text,
-                          version: @task_node.at('proglang').attributes['version'].value}
+      @task.title = @task_node.xpath('xmlns:title').text unless @task_node.xpath('xmlns:title').text.blank?
+      @task.description = @task_node.xpath('xmlns:description').text unless @task_node.xpath('xmlns:description').text.blank?
+      @task.internal_description = @task_node.xpath('xmlns:internal-description')&.text unless @task_node.xpath('xmlns:internal-description')&.text.blank?
+      if @task_node.xpath('xmlns:proglang').text.present? || @task_node.xpath('xmlns:proglang').attribute('version')&.value&.present?
+        @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
+                          version: @task_node.xpath('xmlns:proglang').attribute('version').value}
       end
       @task.language = @task_node.attribute('lang').value if @task_node.attribute('lang')&.value&.present?
       @task.parent_uuid = @task_node.attribute('parent-uuid').value if @task_node.attribute('parent-uuid')&.value&.present?
@@ -85,9 +85,9 @@ module Proforma
       model_solution = ModelSolution.new
       model_solution.id = model_solution_node.attributes['id'].value
       model_solution.files = files_from_filerefs(model_solution_node.search('filerefs'))
-      model_solution.description = model_solution_node.at('description')&.text unless model_solution_node.at('description')&.text.blank?
-      unless model_solution_node.at('internal-description')&.text.blank?
-        model_solution.internal_description = model_solution_node.at('internal-description')&.text
+      model_solution.description = model_solution_node.xpath('xmlns:description')&.text unless model_solution_node.xpath('xmlns:description')&.text.blank?
+      unless model_solution_node.xpath('xmlns:internal-description')&.text.blank?
+        model_solution.internal_description = model_solution_node.xpath('xmlns:internal-description')&.text
       end
       @task.model_solutions << model_solution
     end
@@ -126,8 +126,8 @@ module Proforma
         binary: /-bin-file/.match?(file_tag.name)
       }.tap do |hash|
         hash[:usage_by_lms] = attributes['usage-by-lms']&.value unless attributes['usage-by-lms']&.value.blank?
-        unless file_tag.parent.at('internal-description')&.text.blank?
-          hash[:internal_description] = file_tag.parent.at('internal-description')&.text
+        unless file_tag.parent.xpath('xmlns:internal-description')&.text.blank?
+          hash[:internal_description] = file_tag.parent.xpath('xmlns:internal-description')&.text
         end
         hash[:mimetype] = attributes['mimetype']&.value unless attributes['mimetype']&.value.blank?
       end
@@ -136,13 +136,13 @@ module Proforma
     def add_test(test_node)
       test = Test.new
       test.id = test_node.attributes['id'].value
-      test.title = test_node.at('title').text
-      test.description = test_node.at('description')&.text unless test_node.at('description')&.text.blank?
-      test.internal_description = test_node.at('internal-description')&.text unless test_node.at('description')&.text.blank?
-      test.test_type = test_node.at('test-type')&.text
-      test.files = test_files_from_test_configuration(test_node.at('test-configuration'))
-      unless test_node.at('test-configuration').at('test-meta-data').blank?
-        test.meta_data = custom_meta_data(test_node.at('test-configuration').at('test-meta-data'))
+      test.title = test_node.xpath('xmlns:title').text
+      test.description = test_node.xpath('xmlns:description').text unless test_node.xpath('xmlns:description')&.text.blank?
+      test.internal_description = test_node.xpath('xmlns:internal-description').text unless test_node.xpath('xmlns:description')&.text.blank?
+      test.test_type = test_node.xpath('xmlns:test-type').text
+      test.files = test_files_from_test_configuration(test_node.xpath('xmlns:test-configuration'))
+      unless test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data').blank?
+        test.meta_data = custom_meta_data(test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data'))
       end
       @task.tests << test
     end

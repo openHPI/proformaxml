@@ -17,6 +17,8 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   end
 
   def proforma_base_equal?(object, other)
+    return false unless object.instance_variables == other.instance_variables
+
     attributes(object).each do |k, v|
       return false unless equal?(v, other.send(k))
     end
@@ -26,7 +28,7 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   def array_equal?(object, other)
     return true if object == other # for []
 
-    object.product(other).map { |k, v| equal?(k, v) }.one?
+    object.product(other).map { |k, v| equal?(k, v) }.any?
   end
 
   def attributes(object)

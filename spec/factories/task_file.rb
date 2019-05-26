@@ -13,7 +13,7 @@ FactoryBot.define do
       # sequence(:binary, &:even?)
       # 1st & 2nd: small, 3rd & 4th large, ... not used rn
       # sequence(:content) { |n| [0, 3].include?(n % 4) ? ('test' * 10**5) : 'test' }
-      filename { "filename.#{binary ? 'bin' : 'txt'}" }
+      sequence(:filename) { |n| "filename_#{n}.#{binary ? 'bin' : 'txt'}" }
       used_by_grader { true }
       visible { 'yes' }
       usage_by_lms { 'display' }
