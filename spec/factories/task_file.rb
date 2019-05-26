@@ -9,10 +9,6 @@ FactoryBot.define do
     binary { false }
 
     trait(:populated) do
-      # 1st: test, 2nd binary, ... not used rn
-      # sequence(:binary, &:even?)
-      # 1st & 2nd: small, 3rd & 4th large, ... not used rn
-      # sequence(:content) { |n| [0, 3].include?(n % 4) ? ('test' * 10**5) : 'test' }
       sequence(:filename) { |n| "filename_#{n}.#{binary ? 'bin' : 'txt'}" }
       used_by_grader { true }
       visible { 'yes' }

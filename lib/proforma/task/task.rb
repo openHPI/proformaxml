@@ -5,7 +5,6 @@ module Proforma
     include Base
     attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid,
                   :language, :model_solutions, :files, :tests
-    # :submission_restriction, :external_resources, :grading_hints
 
     def initialize(attributes = {})
       super

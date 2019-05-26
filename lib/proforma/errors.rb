@@ -2,4 +2,5 @@
 
 module Proforma
   class PostGenerateValidationError < StandardError; end
+  class PreImportValidationError < StandardError; end
 end

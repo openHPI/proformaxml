@@ -115,8 +115,6 @@ module Proforma
       {
         'xmlns' => 'urn:proforma:v2.0.1',
         'uuid' => @task.uuid
-        # 'xsi:schemaLocation' => 'urn:proforma:v2.0.1 schema.xsd',
-        # 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
       }.tap do |h|
         h['xmlns:c'] = 'codeharbor' if @task.tests&.any?
         h['lang'] = @task.language unless @task.language.blank?

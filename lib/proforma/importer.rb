@@ -2,21 +2,18 @@
 
 module Proforma
   class Importer
-    attr_accessor :doc, :files, :task
-
     def initialize(zip)
       @zip = zip
 
-      xml = filestring_from_zip('task.xml') # use any xml if only one present else use task.xml else break
+      xml = filestring_from_zip('task.xml')
       @doc = Nokogiri::XML(xml, &:noblanks)
-      self.doc = @doc
       @task = Task.new
     end
 
     def perform
       errors = validate
       puts errors
-      raise 'voll nicht valide und so' if errors.any?
+      raise PreImportValidationError, errors if errors.any?
 
       @task_node = @doc.xpath('/xmlns:task')
 
@@ -34,18 +31,10 @@ module Proforma
 
     def set_data
       set_meta_data
-      # set_submission_restrictions
       set_files
-      # set_external_resources
       set_model_solutions
       set_tests
-      # set_grading_hints
-      # hard_meta_values = %w[submission-restrictions files external-resources model-solutions tests grading-hints]
     end
-
-    # describes restrictions to submissions by student - not used in codeharbor -> skipped
-    # def set_submission_restrictions
-    # end
 
     def set_meta_data
       @task.title = @task_node.xpath('xmlns:title').text unless @task_node.xpath('xmlns:title').text.blank?
@@ -169,9 +158,6 @@ module Proforma
       end
       meta_data
     end
-
-    # def set_external_resources; end
-    # def set_grading_hints; end
 
     def validate
       Nokogiri::XML::Schema(File.open(SCHEMA_PATH)).validate @doc
