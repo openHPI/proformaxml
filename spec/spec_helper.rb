@@ -9,7 +9,7 @@ require 'rspec/collection_matchers'
 require 'factory_bot'
 require 'pry-byebug'
 
-Dir['./spec/shared_examples/**/*.rb'].each { |f| require f }
+Dir['./spec/support/**/*.rb'].each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
