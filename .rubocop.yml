@@ -9,6 +9,9 @@ AllCops:
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
+Metrics/ClassLength:
+  Max: 150
+
 Metrics/LineLength:
   Max: 140
 

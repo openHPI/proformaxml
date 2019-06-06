@@ -11,74 +11,7 @@ module Proforma
 
     def perform
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-        xml.task(headers) do
-          xml.title @task.title
-          xml.description @task.description
-          xml.send('internal-description', @task.internal_description) unless @task.internal_description.blank?
-          xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
-          xml.files do
-            @task.all_files.each do |file|
-              xml.file({
-                id: file.id,
-                'used-by-grader' => file.used_by_grader,
-                visible: file.visible,
-                'usage-by-lms' => file.usage_by_lms,
-                mimetype: file.mimetype
-              }.compact) do
-                if file.embed?
-                  if file.binary
-                    xml.send 'embedded-bin-file', {filename: file.filename}, Base64.encode64(file.content)
-                  else
-                    xml.send 'embedded-txt-file', {filename: file.filename}, file.content
-                  end
-                else
-                  xml.send "attached-#{file.binary ? 'bin' : 'txt'}-file", file.filename
-                end
-                xml.send 'internal-description', file.internal_description unless file.internal_description.blank?
-              end
-            end
-          end
-          xml.send('model-solutions') do
-            @task.model_solutions&.each do |model_solution|
-              xml.send('model-solution', id: model_solution.id) do
-                xml.filerefs do
-                  model_solution.files.each do |file|
-                    xml.fileref(refid: file.id) {}
-                  end
-                end
-                xml.description model_solution.description unless model_solution.description.blank?
-                xml.send('internal-description', model_solution.internal_description) unless model_solution.internal_description.blank?
-              end
-            end
-          end
-          xml.tests do
-            @task.tests&.each do |test|
-              xml.test(id: test.id) do
-                xml.title test.title
-                xml.description test.description unless test.description.blank?
-                xml.send('internal-description', test.internal_description) unless test.internal_description.blank?
-                xml.send('test-type', test.test_type)
-                xml.send('test-configuration') do
-                  if test.files
-                    xml.filerefs do
-                      test.files.each do |file|
-                        xml.fileref refid: file.id
-                      end
-                    end
-                  end
-                  if test.meta_data
-                    xml.send('test-meta-data') do
-                      test.meta_data&.each do |key, value|
-                        xml['c'].send(key, value)
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
-          xml.send('meta-data')
-        end
+        xml_task(xml)
       end
       xmldoc = builder.to_xml
       doc = Nokogiri::XML(xmldoc)
@@ -86,21 +19,112 @@ module Proforma
 
       raise PostGenerateValidationError, errors if errors.any?
 
-      stringio = Zip::OutputStream.write_buffer do |zio|
-        zio.put_next_entry('task.xml')
-        zio.write xmldoc
-        @task.all_files.each do |file|
-          next if file.embed?
-
-          zio.put_next_entry(file.filename)
-          zio.write file.content
-        end
-      end
-      # File.open('../testfile.zip', 'wb') { |file| file.write(stringio.string) }
-      stringio
+      # File.open('../testfile.zip', 'wb') {|file| file.write(write_to_zip(xmldoc).string)}
+      write_to_zip(xmldoc)
     end
 
     private
+
+    def xml_task(xml)
+      xml.task(headers) do
+        xml.title @task.title
+        xml.description @task.description
+        add_internal_description_to_xml(xml, @task.internal_description)
+        xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
+
+        add_objects_to_xml(xml)
+
+        xml.send('meta-data')
+      end
+    end
+
+    def add_internal_description_to_xml(xml, internal_description)
+      xml.send('internal-description', internal_description) unless internal_description.blank?
+    end
+
+    def add_objects_to_xml(xml)
+      xml.files do
+        files(xml)
+      end
+      xml.send('model-solutions') do
+        model_solutions(xml)
+      end
+      xml.tests do
+        tests(xml)
+      end
+    end
+
+    def files(xml)
+      @task.all_files.each do |file|
+        xml.file({
+          id: file.id, 'used-by-grader' => file.used_by_grader, visible: file.visible,
+          'usage-by-lms' => file.usage_by_lms, mimetype: file.mimetype
+        }.compact) do
+          attach_file(xml, file)
+          add_internal_description_to_xml(xml, file.internal_description)
+        end
+      end
+    end
+
+    def attach_file(xml, file)
+      if file.embed?
+        if file.binary
+          xml.send 'embedded-bin-file', {filename: file.filename}, Base64.encode64(file.content)
+        else
+          xml.send 'embedded-txt-file', {filename: file.filename}, file.content
+        end
+      else
+        xml.send "attached-#{file.binary ? 'bin' : 'txt'}-file", file.filename
+      end
+    end
+
+    def model_solutions(xml)
+      @task.model_solutions&.each do |model_solution|
+        xml.send('model-solution', id: model_solution.id) do
+          add_filerefs(xml, model_solution)
+          add_description_to_xml(xml, model_solution.description)
+          add_internal_description_to_xml(xml, model_solution.internal_description)
+        end
+      end
+    end
+
+    def add_filerefs(xml, object)
+      xml.filerefs do
+        object.files.each do |file|
+          xml.fileref(refid: file.id) {}
+        end
+      end
+    end
+
+    def tests(xml)
+      @task.tests&.each do |test|
+        xml.test(id: test.id) do
+          xml.title test.title
+          add_description_to_xml(xml, test.description)
+          add_internal_description_to_xml(xml, test.internal_description)
+          xml.send('test-type', test.test_type)
+          add_test_configuration(xml, test)
+        end
+      end
+    end
+
+    def add_description_to_xml(xml, description)
+      xml.send('description', description) unless description.blank?
+    end
+
+    def add_test_configuration(xml, test)
+      xml.send('test-configuration') do
+        add_filerefs(xml, test) if test.files
+
+        if test.meta_data
+          xml.send('test-meta-data') do
+            test.meta_data&.each do |key, value|
+              xml['c'].send(key, value)
+            end
+          end
+        end
+      end
+    end
 
     # ms-placeholder should be able to go as soon as profoma 2.1 is released https://github.com/ProFormA/proformaxml/issues/5
     def add_placeholders
@@ -125,6 +149,19 @@ module Proforma
     def validate(doc)
       xsd = Nokogiri::XML::Schema(File.open(SCHEMA_PATH))
       xsd.validate(doc)
+    end
+
+    def write_to_zip(xmldoc)
+      Zip::OutputStream.write_buffer do |zio|
+        zio.put_next_entry('task.xml')
+        zio.write xmldoc
+        @task.all_files.each do |file|
+          next if file.embed?
+
+          zio.put_next_entry(file.filename)
+          zio.write file.content
+        end
+      end
     end
   end
 end

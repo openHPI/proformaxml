@@ -243,7 +243,7 @@ RSpec.describe Proforma::Exporter do
 
         it_behaves_like 'task node with test'
 
-        it 'adds test-meta-data node to test-configuration node' do
+        it 'adds no test-meta-data node to test-configuration node' do
           expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(0).items
         end
       end
