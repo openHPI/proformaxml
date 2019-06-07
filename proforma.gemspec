@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'activesupport', '~> 5.2.3'
   spec.add_dependency 'activemodel', '~> 5.2.3'
   spec.add_dependency 'nokogiri', '~> 1.10.2'
   spec.add_dependency 'rubyzip', '~> 1.2.2'

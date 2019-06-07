@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/string'
+
 module Proforma
   class Importer
     def initialize(zip)
@@ -37,18 +39,23 @@ module Proforma
     end
 
     def set_meta_data
-      @task.title = @task_node.xpath('xmlns:title').text unless @task_node.xpath('xmlns:title').text.blank?
-      @task.description = @task_node.xpath('xmlns:description').text unless @task_node.xpath('xmlns:description').text.blank?
-      unless @task_node.xpath('xmlns:internal-description')&.text.blank?
-        @task.internal_description = @task_node.xpath('xmlns:internal-description')&.text
-      end
-      if @task_node.xpath('xmlns:proglang').text.present? || @task_node.xpath('xmlns:proglang').attribute('version')&.value&.present?
+      set_value_if_present(object: @task, node: @task_node, name: 'title')
+      set_value_if_present(object: @task, node: @task_node, name: 'description')
+      set_value_if_present(object: @task, node: @task_node, name: 'internal-description')
+      if @task_node.xpath('xmlns:proglang').text.present? # || @task_node.xpath('xmlns:proglang').attribute('version')&.value&.present?
         @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
                           version: @task_node.xpath('xmlns:proglang').attribute('version').value}
       end
-      @task.language = @task_node.attribute('lang').value if @task_node.attribute('lang')&.value&.present?
-      @task.parent_uuid = @task_node.attribute('parent-uuid').value if @task_node.attribute('parent-uuid')&.value&.present?
-      @task.uuid = @task_node.attribute('uuid').value if @task_node.attribute('uuid')&.value&.present?
+      set_value_if_present(object: @task, node: @task_node, name: 'lang', attribute: true, overwrite_object_name: 'language')
+      set_value_if_present(object: @task, node: @task_node, name: 'parent-uuid', attribute: true)
+      set_value_if_present(object: @task, node: @task_node, name: 'uuid', attribute: true)
+    end
+
+    def set_value_if_present(object:, node:, name:, attribute: false, overwrite_object_name: nil)
+      value = attribute ? node.attribute(name)&.value : node.xpath("xmlns:#{name}").text
+      return unless value.present?
+
+      object.send("#{(overwrite_object_name || name).underscore}=", value)
     end
 
     def set_files
@@ -76,12 +83,8 @@ module Proforma
       model_solution = ModelSolution.new
       model_solution.id = model_solution_node.attributes['id'].value
       model_solution.files = files_from_filerefs(model_solution_node.search('filerefs'))
-      unless model_solution_node.xpath('xmlns:description')&.text.blank?
-        model_solution.description = model_solution_node.xpath('xmlns:description')&.text
-      end
-      unless model_solution_node.xpath('xmlns:internal-description')&.text.blank?
-        model_solution.internal_description = model_solution_node.xpath('xmlns:internal-description')&.text
-      end
+      set_value_if_present(object: model_solution, node: model_solution_node, name: 'description')
+      set_value_if_present(object: model_solution, node: model_solution_node, name: 'internal-description')
       @task.model_solutions << model_solution
     end
 
@@ -130,10 +133,8 @@ module Proforma
       test = Test.new
       test.id = test_node.attributes['id'].value
       test.title = test_node.xpath('xmlns:title').text
-      test.description = test_node.xpath('xmlns:description').text unless test_node.xpath('xmlns:description')&.text.blank?
-      unless test_node.xpath('xmlns:description')&.text.blank?
-        test.internal_description = test_node.xpath('xmlns:internal-description').text
-      end
+      set_value_if_present(object: test, node: test_node, name: 'description')
+      set_value_if_present(object: test, node: test_node, name: 'internal-description')
       test.test_type = test_node.xpath('xmlns:test-type').text
       test.files = test_files_from_test_configuration(test_node.xpath('xmlns:test-configuration'))
       unless test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data').blank?
