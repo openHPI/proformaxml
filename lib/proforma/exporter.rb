@@ -19,7 +19,7 @@ module Proforma
 
       raise PostGenerateValidationError, errors if errors.any?
 
-      # File.open('../testfile.zip', 'wb') {|file| file.write(write_to_zip(xmldoc).string)}
+      # File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
       write_to_zip(xmldoc)
     end
 
@@ -118,8 +118,8 @@ module Proforma
 
         if test.meta_data
           xml.send('test-meta-data') do
-            test.meta_data&.each do |key, value|
-              xml['c'].send(key, value)
+            test.meta_data.each do |key, value|
+              xml['c'].send(key.to_s + '_', value)
             end
           end
         end
