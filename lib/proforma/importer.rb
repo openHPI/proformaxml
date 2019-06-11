@@ -42,13 +42,41 @@ module Proforma
       set_value_from_xml(object: @task, node: @task_node, name: 'title')
       set_value_from_xml(object: @task, node: @task_node, name: 'description')
       set_value_from_xml(object: @task, node: @task_node, name: 'internal-description')
-      if @task_node.xpath('xmlns:proglang').text.present? # || @task_node.xpath('xmlns:proglang').attribute('version')&.value&.present?
-        @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
-                          version: @task_node.xpath('xmlns:proglang').attribute('version').value}
-      end
+      set_proglang
       set_value_from_xml(object: @task, node: @task_node, name: %w[lang language], attribute: true)
       set_value_from_xml(object: @task, node: @task_node, name: 'parent-uuid', attribute: true)
       set_value_from_xml(object: @task, node: @task_node, name: 'uuid', attribute: true)
+    end
+
+    def set_proglang
+      return unless @task_node.xpath('xmlns:proglang').text.present?
+
+      @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
+                        version: @task_node.xpath('xmlns:proglang').attribute('version').value.presence}.compact
+    end
+
+    def set_hash_value_if_present(hash:, name:, attributes: nil, value_overwrite: nil)
+      raise unless attributes || value_overwrite
+
+      value = value_overwrite || attributes[name.to_s]&.value
+      hash[name.underscore.to_sym] = value if value.present?
+    end
+
+    def set_value_from_xml(object:, node:, name:, attribute: false, check_presence: true)
+      xml_name = name.is_a?(Array) ? name[0] : name
+
+      value = attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
+      return if check_presence && !value.present?
+
+      set_value(object: object, name: (name.is_a?(Array) ? name[1] : name).underscore, value: value)
+    end
+
+    def set_value(object:, name:, value:)
+      if object.is_a? Hash
+        object[name] = value
+      else
+        object.send("#{name}=", value)
+      end
     end
 
     def set_files
@@ -101,10 +129,8 @@ module Proforma
 
     def attached_file_attributes(attributes, file_tag)
       filename = file_tag.text
-      shared_file_attributes(attributes, file_tag).merge(
-        filename: filename,
-        content: filestring_from_zip(filename)
-      )
+      shared_file_attributes(attributes, file_tag).merge(filename: filename,
+                                                         content: filestring_from_zip(filename))
     end
 
     def shared_file_attributes(attributes, file_tag)
@@ -117,30 +143,6 @@ module Proforma
         set_hash_value_if_present(hash: hash, name: 'usage-by-lms', attributes: attributes)
         set_value_from_xml(object: hash, node: file_tag.parent, name: 'internal-description')
         set_hash_value_if_present(hash: hash, name: 'mimetype', attributes: attributes)
-      end
-    end
-
-    def set_hash_value_if_present(hash:, name:, attributes: nil, value_overwrite: nil)
-      raise unless attributes || value_overwrite
-
-      value = value_overwrite || attributes[name.to_s]&.value
-      hash[name.underscore.to_sym] = value if value.present?
-    end
-
-    def set_value_from_xml(object:, node:, name:, attribute: false, check_presence: true)
-      xml_name = name.is_a?(Array) ? name[0] : name
-
-      value = attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
-      return if check_presence && !value.present?
-
-      set_value(object: object, name: (name.is_a?(Array) ? name[1] : name).underscore, value: value)
-    end
-
-    def set_value(object:, name:, value:)
-      if object.is_a? Hash
-        object[name] = value
-      else
-        object.send("#{name}=", value)
       end
     end
 

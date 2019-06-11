@@ -36,88 +36,72 @@ RSpec.describe Proforma::Importer do
       zip_file.rewind
     end
 
-    it 'imports an equal task' do
-      expect(perform).to be_an_equal_task_as task
-    end
+    it { is_expected.to be_an_equal_task_as task }
 
     context 'when task is populated' do
       let(:task) { build(:task, :populated) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
+    end
+
+    context 'when task has proglang, but no version' do
+      let(:task) { build(:task, proglang: {name: 'Ruby'}) }
+
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has an embedded text file' do
       let(:task) { build(:task, :with_embedded_txt_file) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has an embedded bin file' do
       let(:task) { build(:task, :with_embedded_bin_file) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has an attached text file' do
       let(:task) { build(:task, :with_attached_txt_file) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has an attached bin file' do
       let(:task) { build(:task, :with_attached_bin_file) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has a model_solution' do
       let(:task) { build(:task, :with_model_solution) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has a test' do
       let(:task) { build(:task, :with_test) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
 
       context 'when test is minimal' do
         let(:task) { build(:task, tests: build_list(:test, 1)) }
 
-        it 'imports an equal task' do
-          expect(perform).to be_an_equal_task_as task
-        end
+        it { is_expected.to be_an_equal_task_as task }
       end
     end
 
     context 'when task has a text and a model_solution' do
       let(:task) { build(:task, :with_test, :with_model_solution) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has a text, a model_solution and 10 embedded files' do
       let(:task) { build(:task, :with_test, :with_model_solution, files: build_list(:task_file, 10, :populated, :small_content, :text)) }
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
 
     context 'when task has everything set and multiples of every object' do
@@ -128,9 +112,7 @@ RSpec.describe Proforma::Importer do
         build_list(:model_solution, 2, :populated, files: build_list(:task_file, 2, :populated, :binary, :small_content))
       end
 
-      it 'imports an equal task' do
-        expect(perform).to be_an_equal_task_as task
-      end
+      it { is_expected.to be_an_equal_task_as task }
     end
   end
 end
