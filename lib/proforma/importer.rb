@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/string'
+
 module Proforma
   class Importer
     def initialize(zip)
@@ -37,18 +39,44 @@ module Proforma
     end
 
     def set_meta_data
-      @task.title = @task_node.xpath('xmlns:title').text unless @task_node.xpath('xmlns:title').text.blank?
-      @task.description = @task_node.xpath('xmlns:description').text unless @task_node.xpath('xmlns:description').text.blank?
-      unless @task_node.xpath('xmlns:internal-description')&.text.blank?
-        @task.internal_description = @task_node.xpath('xmlns:internal-description')&.text
+      set_value_from_xml(object: @task, node: @task_node, name: 'title')
+      set_value_from_xml(object: @task, node: @task_node, name: 'description')
+      set_value_from_xml(object: @task, node: @task_node, name: 'internal-description')
+      set_proglang
+      set_value_from_xml(object: @task, node: @task_node, name: %w[lang language], attribute: true)
+      set_value_from_xml(object: @task, node: @task_node, name: 'parent-uuid', attribute: true)
+      set_value_from_xml(object: @task, node: @task_node, name: 'uuid', attribute: true)
+    end
+
+    def set_proglang
+      return unless @task_node.xpath('xmlns:proglang').text.present?
+
+      @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
+                        version: @task_node.xpath('xmlns:proglang').attribute('version').value.presence}.compact
+    end
+
+    def set_hash_value_if_present(hash:, name:, attributes: nil, value_overwrite: nil)
+      raise unless attributes || value_overwrite
+
+      value = value_overwrite || attributes[name.to_s]&.value
+      hash[name.underscore.to_sym] = value if value.present?
+    end
+
+    def set_value_from_xml(object:, node:, name:, attribute: false, check_presence: true)
+      xml_name = name.is_a?(Array) ? name[0] : name
+
+      value = attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
+      return if check_presence && !value.present?
+
+      set_value(object: object, name: (name.is_a?(Array) ? name[1] : name).underscore, value: value)
+    end
+
+    def set_value(object:, name:, value:)
+      if object.is_a? Hash
+        object[name] = value
+      else
+        object.send("#{name}=", value)
       end
-      if @task_node.xpath('xmlns:proglang').text.present? || @task_node.xpath('xmlns:proglang').attribute('version')&.value&.present?
-        @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
-                          version: @task_node.xpath('xmlns:proglang').attribute('version').value}
-      end
-      @task.language = @task_node.attribute('lang').value if @task_node.attribute('lang')&.value&.present?
-      @task.parent_uuid = @task_node.attribute('parent-uuid').value if @task_node.attribute('parent-uuid')&.value&.present?
-      @task.uuid = @task_node.attribute('uuid').value if @task_node.attribute('uuid')&.value&.present?
     end
 
     def set_files
@@ -76,12 +104,8 @@ module Proforma
       model_solution = ModelSolution.new
       model_solution.id = model_solution_node.attributes['id'].value
       model_solution.files = files_from_filerefs(model_solution_node.search('filerefs'))
-      unless model_solution_node.xpath('xmlns:description')&.text.blank?
-        model_solution.description = model_solution_node.xpath('xmlns:description')&.text
-      end
-      unless model_solution_node.xpath('xmlns:internal-description')&.text.blank?
-        model_solution.internal_description = model_solution_node.xpath('xmlns:internal-description')&.text
-      end
+      set_value_from_xml(object: model_solution, node: model_solution_node, name: 'description')
+      set_value_from_xml(object: model_solution, node: model_solution_node, name: 'internal-description')
       @task.model_solutions << model_solution
     end
 
@@ -105,10 +129,8 @@ module Proforma
 
     def attached_file_attributes(attributes, file_tag)
       filename = file_tag.text
-      shared_file_attributes(attributes, file_tag).merge(
-        filename: filename,
-        content: filestring_from_zip(filename)
-      )
+      shared_file_attributes(attributes, file_tag).merge(filename: filename,
+                                                         content: filestring_from_zip(filename))
     end
 
     def shared_file_attributes(attributes, file_tag)
@@ -118,27 +140,22 @@ module Proforma
         visible: attributes['visible']&.value,
         binary: /-bin-file/.match?(file_tag.name)
       }.tap do |hash|
-        hash[:usage_by_lms] = attributes['usage-by-lms']&.value unless attributes['usage-by-lms']&.value.blank?
-        unless file_tag.parent.xpath('xmlns:internal-description')&.text.blank?
-          hash[:internal_description] = file_tag.parent.xpath('xmlns:internal-description')&.text
-        end
-        hash[:mimetype] = attributes['mimetype']&.value unless attributes['mimetype']&.value.blank?
+        set_hash_value_if_present(hash: hash, name: 'usage-by-lms', attributes: attributes)
+        set_value_from_xml(object: hash, node: file_tag.parent, name: 'internal-description')
+        set_hash_value_if_present(hash: hash, name: 'mimetype', attributes: attributes)
       end
     end
 
     def add_test(test_node)
       test = Test.new
-      test.id = test_node.attributes['id'].value
-      test.title = test_node.xpath('xmlns:title').text
-      test.description = test_node.xpath('xmlns:description').text unless test_node.xpath('xmlns:description')&.text.blank?
-      unless test_node.xpath('xmlns:description')&.text.blank?
-        test.internal_description = test_node.xpath('xmlns:internal-description').text
-      end
-      test.test_type = test_node.xpath('xmlns:test-type').text
+      set_value_from_xml(object: test, node: test_node, name: 'id', attribute: true, check_presence: false)
+      set_value_from_xml(object: test, node: test_node, name: 'title', check_presence: false)
+      set_value_from_xml(object: test, node: test_node, name: 'description')
+      set_value_from_xml(object: test, node: test_node, name: 'internal-description')
+      set_value_from_xml(object: test, node: test_node, name: 'test-type', check_presence: false)
       test.files = test_files_from_test_configuration(test_node.xpath('xmlns:test-configuration'))
-      unless test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data').blank?
-        test.meta_data = custom_meta_data(test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data'))
-      end
+      meta_data = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
+      test.meta_data = custom_meta_data(meta_data) unless meta_data.blank?
       @task.tests << test
     end
 
@@ -159,9 +176,7 @@ module Proforma
       meta_data = {}
       return meta_data if meta_data_node.nil?
 
-      meta_data_node.children.each do |meta_data_tag|
-        meta_data[meta_data_tag.name] = meta_data_tag.children.first.text
-      end
+      meta_data_node.children.each { |meta_data_tag| meta_data[meta_data_tag.name] = meta_data_tag.children.first.text }
       meta_data
     end
 

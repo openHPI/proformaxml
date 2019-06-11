@@ -238,12 +238,35 @@ RSpec.describe Proforma::Exporter do
         end
       end
 
+      context 'when test has meta-data' do
+        let(:task) { build(:task, :populated, tests: build_list(:test, 1, meta_data: {test: 'data', meta: 'data'})) }
+        let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration/xmlns:test-meta-data') }
+
+        it_behaves_like 'task node with test'
+
+        it 'adds test-meta-data node to test-configuration node' do
+          expect(meta_data_node).to have(1).items
+        end
+
+        it 'adds two children nodes to test-meta-data node' do
+          expect(meta_data_node.children).to have(2).items
+        end
+
+        it 'adds test node with correct namespace to test-meta-data node' do
+          expect(meta_data_node.xpath('c:test').text).to eql 'data'
+        end
+
+        it 'adds meta node with correct namespace to test-meta-data node' do
+          expect(meta_data_node.xpath('c:meta').text).to eql 'data'
+        end
+      end
+
       context 'when test has no meta-data' do
         let(:task) { build(:task, :populated, tests: build_list(:test, 1)) }
 
         it_behaves_like 'task node with test'
 
-        it 'adds test-meta-data node to test-configuration node' do
+        it 'adds no test-meta-data node to test-configuration node' do
           expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(0).items
         end
       end
