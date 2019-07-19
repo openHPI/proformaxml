@@ -19,5 +19,9 @@ module Proforma
       test_files = tests.map(&:files).filter(&:present?)
       (task_files + model_solution_files + test_files).flatten.uniq
     end
+
+    def checksum
+      Digest::MD5.hexdigest Marshal.dump(self)
+    end
   end
 end
