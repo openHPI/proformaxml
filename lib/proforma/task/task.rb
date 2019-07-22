@@ -4,7 +4,7 @@ module Proforma
   class Task
     include Base
     attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid,
-                  :language, :model_solutions, :files, :tests
+                  :language, :model_solutions, :files, :tests, :import_checksum, :checksum
 
     def initialize(attributes = {})
       super
@@ -20,7 +20,7 @@ module Proforma
       (task_files + model_solution_files + test_files).flatten.uniq
     end
 
-    def checksum
+    def generate_checksum
       Digest::MD5.hexdigest Marshal.dump(self)
     end
   end

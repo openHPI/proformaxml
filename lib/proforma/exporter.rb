@@ -19,7 +19,7 @@ module Proforma
 
       raise PostGenerateValidationError, errors if errors.any?
 
-      # File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
+      File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
       write_to_zip(xmldoc)
     end
 
@@ -33,8 +33,7 @@ module Proforma
         xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
 
         add_objects_to_xml(xml)
-
-        xml.send('meta-data')
+        add_meta_data(xml)
       end
     end
 
@@ -42,16 +41,17 @@ module Proforma
       xml.send('internal-description', internal_description) unless internal_description.blank?
     end
 
+    def add_meta_data(xml)
+      xml.send('meta-data') do
+        xml['c'].send('checksum', @task.generate_checksum)
+        xml['c'].send('import-checksum', @task.import_checksum) unless @task.import_checksum.blank?
+      end
+    end
+
     def add_objects_to_xml(xml)
-      xml.files do
-        files(xml)
-      end
-      xml.send('model-solutions') do
-        model_solutions(xml)
-      end
-      xml.tests do
-        tests(xml)
-      end
+      xml.files { files(xml) }
+      xml.send('model-solutions') { model_solutions(xml) }
+      xml.tests { tests(xml) }
     end
 
     def files(xml)
@@ -140,7 +140,7 @@ module Proforma
         'xmlns' => 'urn:proforma:v2.0.1',
         'uuid' => @task.uuid
       }.tap do |h|
-        h['xmlns:c'] = 'codeharbor' if @task.tests&.any?
+        h['xmlns:c'] = 'codeharbor'
         h['lang'] = @task.language unless @task.language.blank?
         h['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
       end

@@ -48,6 +48,14 @@ RSpec.shared_examples 'task node' do
   it 'adds meta-data node' do
     expect(xml.xpath('/task/meta-data')).to have(1).item
   end
+
+  it 'adds meta-data node' do
+    expect(xml.xpath('/task/meta-data/checksum')).to have(1).item
+  end
+
+  it 'adds namespace to task' do
+    expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
+  end
 end
 
 RSpec.shared_examples 'populated task node' do
@@ -160,9 +168,5 @@ RSpec.shared_examples 'task node with test' do
 
   it 'adds test-configuration node to test node' do
     expect(xml.xpath('/task/tests/test/test-configuration')).to have(1).item
-  end
-
-  it 'adds namespace to task' do
-    expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
   end
 end

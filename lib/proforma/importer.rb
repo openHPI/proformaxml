@@ -32,20 +32,28 @@ module Proforma
     end
 
     def set_data
-      set_meta_data
+      set_base_data
       set_files
       set_model_solutions
       set_tests
     end
 
-    def set_meta_data
+    def set_base_data
       set_value_from_xml(object: @task, node: @task_node, name: 'title')
       set_value_from_xml(object: @task, node: @task_node, name: 'description')
       set_value_from_xml(object: @task, node: @task_node, name: 'internal-description')
+      set_meta_data
       set_proglang
       set_value_from_xml(object: @task, node: @task_node, name: %w[lang language], attribute: true)
       set_value_from_xml(object: @task, node: @task_node, name: 'parent-uuid', attribute: true)
       set_value_from_xml(object: @task, node: @task_node, name: 'uuid', attribute: true)
+    end
+
+    def set_meta_data
+      meta_data_node = @task_node.xpath('xmlns:meta-data')
+      @task.checksum = meta_data_node.xpath('c:checksum').text
+      import_checksum = meta_data_node.xpath('c:import-checksum').text
+      @task.import_checksum = import_checksum unless import_checksum.blank?
     end
 
     def set_proglang
