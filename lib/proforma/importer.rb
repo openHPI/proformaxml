@@ -106,7 +106,7 @@ module Proforma
       model_solution.files = files_from_filerefs(model_solution_node.search('filerefs'))
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'description')
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'internal-description')
-      @task.model_solutions << model_solution
+      @task.model_solutions << model_solution unless model_solution.files.first.id == 'ms-placeholder-file'
     end
 
     def add_file(file_node)
