@@ -19,7 +19,7 @@ module Proforma
 
       raise PostGenerateValidationError, errors if errors.any?
 
-      File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
+      # File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
       write_to_zip(xmldoc)
     end
 

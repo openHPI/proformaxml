@@ -88,21 +88,14 @@ module Proforma
     end
 
     def set_files
-      @task.files = []
-      @task_node.search('files//file').each do |file_node|
-        add_file file_node
-      end
+      @task_node.search('files//file').each { |file_node| add_file file_node }
     end
 
     def set_tests
-      @task.tests = []
-      @task_node.search('tests//test').each do |test_node|
-        add_test test_node
-      end
+      @task_node.search('tests//test').each { |test_node| add_test test_node }
     end
 
     def set_model_solutions
-      @task.model_solutions = []
       @task_node.search('model-solutions//model-solution').each do |model_solution_node|
         add_model_solution model_solution_node
       end
@@ -172,20 +165,20 @@ module Proforma
     end
 
     def files_from_filerefs(filerefs_node)
-      files = []
-      filerefs_node.search('fileref').each do |fileref_node|
-        fileref = fileref_node.attributes['refid'].value
-        files << @task.files.delete(@task.files.detect { |file| file.id == fileref })
+      [].tap do |files|
+        filerefs_node.search('fileref').each do |fileref_node|
+          fileref = fileref_node.attributes['refid'].value
+          files << @task.files.delete(@task.files.detect { |file| file.id == fileref })
+        end
       end
-      files
     end
 
     def custom_meta_data(meta_data_node)
-      meta_data = {}
-      return meta_data if meta_data_node.nil?
+      {}.tap do |meta_data|
+        return meta_data if meta_data_node.nil?
 
-      meta_data_node.children.each { |meta_data_tag| meta_data[meta_data_tag.name] = meta_data_tag.children.first.text }
-      meta_data
+        meta_data_node.children.each { |meta_data_tag| meta_data[meta_data_tag.name] = meta_data_tag.children.first.text }
+      end
     end
 
     def validate
