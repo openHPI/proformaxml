@@ -40,7 +40,7 @@ RSpec.describe Proforma::Importer do
     it { is_expected.to be_an_equal_task_as ref_task }
 
     it 'sets checksum to correct value' do
-      expect(perform.checksum).to eql task.generate_checksum
+      expect(perform.checksum).to eql task.checksum
     end
 
     context 'when task is populated' do

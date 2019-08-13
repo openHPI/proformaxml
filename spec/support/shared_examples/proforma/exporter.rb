@@ -49,7 +49,7 @@ RSpec.shared_examples 'task node' do
     expect(xml.xpath('/task/meta-data')).to have(1).item
   end
 
-  it 'adds meta-data node' do
+  it 'adds checksum to meta-data node' do
     expect(xml.xpath('/task/meta-data/checksum')).to have(1).item
   end
 

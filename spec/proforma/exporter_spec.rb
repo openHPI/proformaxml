@@ -85,7 +85,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     it "adds the task's checksum to checksum node" do
-      expect(xml.xpath('/task/meta-data/checksum').text).to eql task.generate_checksum
+      expect(xml.xpath('/task/meta-data/checksum').text).to eql task.checksum
     end
 
     context 'when a populated task is supplied' do
