@@ -25,3 +25,7 @@ RSpec/NestedGroups:
 
 Style/Documentation:
   Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/custom_matchers/*

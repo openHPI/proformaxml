@@ -84,6 +84,10 @@ RSpec.describe Proforma::Exporter do
       ).to eql model_solution.files.first.id
     end
 
+    it "adds the task's checksum to checksum node" do
+      expect(xml.xpath('/task/meta-data/checksum').text).to eql task.checksum
+    end
+
     context 'when a populated task is supplied' do
       let(:task) { build(:task, :populated) }
 
@@ -330,6 +334,14 @@ RSpec.describe Proforma::Exporter do
 
       it 'does not set internal-description for test' do
         expect(xml.xpath('/task/tests/test/internal-description')).to be_empty
+      end
+    end
+
+    context 'when a task with an import_checksum is supplied' do
+      let(:task) { build(:task, import_checksum: 'ex4mp13ch3ck5um') }
+
+      it "adds the task's checksum to checksum node" do
+        expect(xml.xpath('/task/meta-data/import-checksum').text).to eql task.import_checksum
       end
     end
   end
