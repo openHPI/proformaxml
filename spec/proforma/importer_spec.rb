@@ -123,7 +123,7 @@ RSpec.describe Proforma::Importer do
     context 'when task has a import checksum' do
       let(:task) { build(:task, import_checksum: 'ex4mp13ch3ck5um') }
 
-      it { is_expected.to be_an_equal_task_as task }
+      it { is_expected.to be_an_equal_task_as ref_task }
     end
   end
 end
