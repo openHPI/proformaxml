@@ -8,6 +8,8 @@ module Proforma
       @zip = zip
 
       xml = filestring_from_zip('task.xml')
+      raise PreImportValidationError if xml.nil?
+
       @doc = Nokogiri::XML(xml, &:noblanks)
       @task = Task.new
     end
@@ -27,7 +29,7 @@ module Proforma
 
     def filestring_from_zip(filename)
       Zip::File.open(@zip.path) do |zip_file|
-        return zip_file.glob(filename).first.get_input_stream.read
+        return zip_file.glob(filename).first&.get_input_stream&.read
       end
     end
 
