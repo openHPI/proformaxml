@@ -62,6 +62,7 @@ RSpec.describe Proforma::Exporter do
     it 'adds version attribute to proglang node' do
       expect(xml.xpath('/task/proglang').attribute('version').value).to eql ''
     end
+
     it 'adds id attribute to file node' do
       expect(xml.xpath('/task/files/file').attribute('id').value).to eql placeholder_file.id
     end
