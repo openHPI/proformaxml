@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Proforma
-  class PostGenerateValidationError < StandardError; end
-  class PreImportValidationError < StandardError; end
+  class ProformaError < StandardError; end
+  class PostGenerateValidationError < ProformaError; end
+  class PreImportValidationError < ProformaError; end
 end
