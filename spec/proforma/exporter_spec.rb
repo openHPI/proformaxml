@@ -341,7 +341,7 @@ RSpec.describe Proforma::Exporter do
     context 'when a task with an import_checksum is supplied' do
       let(:task) { build(:task, import_checksum: 'ex4mp13ch3ck5um') }
 
-      it "adds the task's checksum to checksum node" do
+      it "adds the task's import_checksum to import-checksum node" do
         expect(xml.xpath('/task/meta-data/import-checksum').text).to eql task.import_checksum
       end
     end
