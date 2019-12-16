@@ -38,8 +38,4 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
     Hash[object.instance_variables.reject { |var| exceptions.include? var }
                .map { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }]
   end
-
-  def exceptions
-    %i[@checksum]
-  end
 end
