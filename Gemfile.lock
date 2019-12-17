@@ -95,7 +95,7 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
-    rubocop-rspec (1.36.0)
+    rubocop-rspec (1.37.1)
       rubocop (>= 0.68.1)
     ruby-progressbar (1.10.1)
     rubyzip (2.0.0)
@@ -127,7 +127,7 @@ DEPENDENCIES
   rspec (~> 3.0)
   rspec-collection_matchers (~> 1.2.0)
   rubocop (~> 0.77.0)
-  rubocop-rspec (~> 1.36.0)
+  rubocop-rspec (~> 1.37.1)
   simplecov (~> 0.17.0)
 
 BUNDLED WITH
