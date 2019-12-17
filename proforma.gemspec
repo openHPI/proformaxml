@@ -37,21 +37,21 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activemodel', '~> 5.2.3'
-  spec.add_dependency 'activesupport', '~> 5.2.3'
+  spec.add_dependency 'activemodel', '>= 5.2.3', '< 6.1.0'
+  spec.add_dependency 'activesupport', '>= 5.2.3', '< 6.1.0'
   spec.add_dependency 'nokogiri', '~> 1.10.2'
   spec.add_dependency 'rubyzip', '>= 1.2.2', '< 2.1.0'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'factory_bot', '~> 5.1.1'
-  spec.add_development_dependency 'guard', '~> 2.15.0'
+  spec.add_development_dependency 'guard', '~> 2.16.1'
   spec.add_development_dependency 'guard-rspec', '~> 4.7.3'
   spec.add_development_dependency 'pry', '~> 0.12.2'
   spec.add_development_dependency 'pry-byebug', '~> 3.7.0'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
-  spec.add_development_dependency 'rubocop', '~> 0.75.0'
-  spec.add_development_dependency 'rubocop-rspec', '~> 1.36.0'
+  spec.add_development_dependency 'rubocop', '~> 0.77.0'
+  spec.add_development_dependency 'rubocop-rspec', '~> 1.37.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.0'
 end
