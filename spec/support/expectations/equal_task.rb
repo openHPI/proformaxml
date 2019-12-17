@@ -17,10 +17,7 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   end
 
   def proforma_base_equal?(object, other)
-    unless object.instance_variables.reject { |var| exceptions.include? var } ==
-           other.instance_variables.reject { |var| exceptions.include? var }
-      return false
-    end
+    return false unless object.instance_variables == other.instance_variables
 
     attributes(object).each do |k, v|
       return false unless equal?(v, other.send(k))
@@ -35,7 +32,6 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   end
 
   def attributes(object)
-    Hash[object.instance_variables.reject { |var| exceptions.include? var }
-               .map { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }]
+    Hash[object.instance_variables.map { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }]
   end
 end
