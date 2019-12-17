@@ -3,20 +3,21 @@ PATH
   specs:
     proforma (0.3.2)
       activemodel (>= 5.2.3, < 6.1.0)
-      activesupport (~> 5.2.3)
+      activesupport (>= 5.2.3, < 6.1.0)
       nokogiri (~> 1.10.2)
       rubyzip (>= 1.2.2, < 2.1.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (5.2.4)
-      activesupport (= 5.2.4)
-    activesupport (5.2.4)
+    activemodel (6.0.2)
+      activesupport (= 6.0.2)
+    activesupport (6.0.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+      zeitwerk (~> 2.2)
     ast (2.4.0)
     byebug (11.0.1)
     coderay (1.1.2)
@@ -109,6 +110,7 @@ GEM
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unicode-display_width (1.6.0)
+    zeitwerk (2.2.2)
 
 PLATFORMS
   ruby
