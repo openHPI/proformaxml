@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    proforma (0.3.2)
+    proforma (0.4)
       activemodel (>= 5.2.3, < 6.1.0)
       activesupport (>= 5.2.3, < 6.1.0)
       nokogiri (~> 1.10.2)
