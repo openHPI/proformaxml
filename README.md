@@ -158,9 +158,6 @@ Generated XML from task above
       </test-configuration>
     </test>
   </tests>
-  <meta-data>
-    <c:checksum>e085fc03059217103d867d8ed1389fba</c:checksum>
-  </meta-data>
 </task>
 
 ```

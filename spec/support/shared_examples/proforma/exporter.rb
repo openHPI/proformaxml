@@ -49,10 +49,6 @@ RSpec.shared_examples 'task node' do
     expect(xml.xpath('/task/meta-data')).to have(1).item
   end
 
-  it 'adds checksum to meta-data node' do
-    expect(xml.xpath('/task/meta-data/checksum')).to have(1).item
-  end
-
   it 'adds namespace to task' do
     expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
   end

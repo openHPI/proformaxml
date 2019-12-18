@@ -5,7 +5,6 @@ module Proforma
     def initialize(task)
       @files = {}
       @task = task
-      @task.checksum = @task.generate_checksum
       add_placeholders
     end
 
@@ -42,10 +41,7 @@ module Proforma
     end
 
     def add_meta_data(xml)
-      xml.send('meta-data') do
-        xml['c'].send('checksum', @task.checksum)
-        xml['c'].send('import-checksum', @task.import_checksum) unless @task.import_checksum.blank?
-      end
+      xml.send('meta-data') {}
     end
 
     def add_objects_to_xml(xml)
