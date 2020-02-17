@@ -53,5 +53,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
   spec.add_development_dependency 'rubocop', '~> 0.77.0'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.37.1'
-  spec.add_development_dependency 'simplecov', '~> 0.17.0'
+  spec.add_development_dependency 'simplecov', '~> 0.18.2'
 end
