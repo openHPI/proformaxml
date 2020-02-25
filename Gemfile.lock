@@ -5,7 +5,7 @@ PATH
       activemodel (>= 5.2.3, < 6.1.0)
       activesupport (>= 5.2.3, < 6.1.0)
       nokogiri (~> 1.10.2)
-      rubyzip (>= 1.2.2, < 2.1.0)
+      rubyzip (>= 1.2.2, < 2.3.0)
 
 GEM
   remote: https://rubygems.org/
@@ -98,7 +98,7 @@ GEM
     rubocop-rspec (1.37.1)
       rubocop (>= 0.68.1)
     ruby-progressbar (1.10.1)
-    rubyzip (2.0.0)
+    rubyzip (2.2.0)
     shellany (0.0.1)
     simplecov (0.17.1)
       docile (~> 1.1)
