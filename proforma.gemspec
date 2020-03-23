@@ -46,7 +46,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'factory_bot', '~> 5.1.1'
   spec.add_development_dependency 'guard', '~> 2.16.1'
   spec.add_development_dependency 'guard-rspec', '~> 4.7.3'
-  spec.add_development_dependency 'pry', '~> 0.12.2'
+  spec.add_development_dependency 'pry', '~> 0.13.0'
   spec.add_development_dependency 'pry-byebug', '~> 3.8.0'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
