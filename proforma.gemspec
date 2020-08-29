@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rubyzip', '>= 1.2.2', '< 2.4.0'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
-  spec.add_development_dependency 'factory_bot', '~> 5.1.1'
+  spec.add_development_dependency 'factory_bot', '~> 6.1.0'
   spec.add_development_dependency 'guard', '~> 2.16.1'
   spec.add_development_dependency 'guard-rspec', '~> 4.7.3'
   spec.add_development_dependency 'pry', '~> 0.12.2'
