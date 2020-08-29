@@ -176,7 +176,9 @@ module Proforma
     end
 
     def validate
-      Nokogiri::XML::Schema(File.open(SCHEMA_PATH)).validate @doc
+      validator = Proforma::Validator.new @doc
+      validator.perform
+      # Nokogiri::XML::Schema(File.open(SCHEMA_PATH)).validate @doc
     end
   end
 end
