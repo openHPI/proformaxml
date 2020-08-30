@@ -4,8 +4,9 @@ require 'active_support/core_ext/string'
 
 module Proforma
   class Importer
-    def initialize(zip)
+    def initialize(zip, expected_version = nil)
       @zip = zip
+      @expected_version = expected_version
 
       xml = filestring_from_zip('task.xml')
       raise PreImportValidationError if xml.nil?
@@ -176,9 +177,8 @@ module Proforma
     end
 
     def validate
-      validator = Proforma::Validator.new @doc
+      validator = Proforma::Validator.new @doc, @expected_version
       validator.perform
-      # Nokogiri::XML::Schema(File.open(SCHEMA_PATH)).validate @doc
     end
   end
 end

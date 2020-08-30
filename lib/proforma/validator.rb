@@ -4,8 +4,9 @@ require 'active_support/core_ext/string'
 
 module Proforma
   class Validator
-    def initialize(doc)
+    def initialize(doc, expected_version: nil)
       @doc = doc
+      @expected_version = expected_version
     end
 
     def perform
@@ -22,7 +23,7 @@ module Proforma
     end
 
     def validate
-      version = doc_schema_version
+      version = @expected_version || doc_schema_version
       return ['version not supported'] unless SCHEMA_VERSIONS.include? version
 
       Nokogiri::XML::Schema(File.open(SCHEMA_FORMAT_PATH % version)).validate @doc
