@@ -4,7 +4,7 @@ require 'active_support/core_ext/string'
 
 module Proforma
   class Validator
-    def initialize(doc, expected_version: nil)
+    def initialize(doc, expected_version = nil)
       @doc = doc
       @expected_version = expected_version
     end
