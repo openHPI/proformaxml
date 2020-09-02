@@ -148,10 +148,25 @@ module Proforma
       set_value_from_xml(object: test, node: test_node, name: 'description')
       set_value_from_xml(object: test, node: test_node, name: 'internal-description')
       set_value_from_xml(object: test, node: test_node, name: 'test-type', check_presence: false)
-      test.files = test_files_from_test_configuration(test_node.xpath('xmlns:test-configuration'))
-      meta_data = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
-      test.meta_data = custom_meta_data(meta_data) unless meta_data.blank?
+      add_test_configuration(test, test_node)
       @task.tests << test
+    end
+
+    def add_test_configuration(test, test_node)
+      test_configuration_node = test_node.xpath('xmlns:test-configuration')
+      test.files = test_files_from_test_configuration(test_configuration_node)
+      test.configuration = extra_configuration_from_test_configuration(test_configuration_node)
+      meta_data_node = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
+      test.meta_data = any_data_tag(meta_data_node) unless meta_data_node.blank?
+    end
+
+    def extra_configuration_from_test_configuration(test_configuration_node)
+      configuration_any_node = test_configuration_node.children.reject do |c|
+        %w[filerefs timeout externalresourcerefs test-meta-data].include? c.name
+      end.first
+      return if configuration_any_node.nil?
+
+      any_data_tag(configuration_any_node).tap { |hash| hash['type'] = configuration_any_node.name }
     end
 
     def test_files_from_test_configuration(test_configuration_node)
@@ -167,11 +182,12 @@ module Proforma
       end
     end
 
-    def custom_meta_data(meta_data_node)
-      {}.tap do |meta_data|
-        return meta_data if meta_data_node.nil?
+    def any_data_tag(any_data_node)
+      {}.tap do |any_data|
+        return any_data if any_data_node.nil?
 
-        meta_data_node.children.each { |meta_data_tag| meta_data[meta_data_tag.name] = meta_data_tag.children.first.text }
+        any_data_node.attributes.values.each { |attribute| any_data[attribute.name] = attribute.value }
+        any_data_node.children.each { |any_data_tag| any_data[any_data_tag.name] = any_data_tag.children.first.text }
       end
     end
 
