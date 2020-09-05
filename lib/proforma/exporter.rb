@@ -111,7 +111,7 @@ module Proforma
     def add_test_configuration(xml, test)
       xml.send('test-configuration') do
         add_filerefs(xml, test) if test.files
-
+        ## add unit node here if necessary
         if test.meta_data
           xml.send('test-meta-data') do
             test.meta_data.each do |key, value|
