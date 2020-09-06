@@ -67,7 +67,7 @@ module Proforma
         end.first
         return if configuration_any_node.nil?
 
-        any_data_tag(configuration_any_node).tap { |hash| hash['type'] = configuration_any_node.name }
+        any_data_tag(configuration_any_node) # .tap { |hash| hash['type'] = configuration_any_node.name }
       end
 
       def test_files_from_test_configuration(test_configuration_node)
