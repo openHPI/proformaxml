@@ -16,9 +16,9 @@ module Proforma
       doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
 
-      # raise PostGenerateValidationError, errors if errors.any?
+      raise PostGenerateValidationError, errors if errors.any?
 
-      File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
+      # File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
       write_to_zip(xmldoc)
     end
 
