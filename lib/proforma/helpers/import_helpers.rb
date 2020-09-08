@@ -11,9 +11,7 @@ module Proforma
       end
 
       def set_value_from_xml(object:, node:, name:, attribute: false, check_presence: true)
-        xml_name = name.is_a?(Array) ? name[0] : name
-
-        value = attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
+        value = _value_from_node(name, node, attribute)
         return if check_presence && !value.present?
 
         set_value(object: object, name: (name.is_a?(Array) ? name[1] : name).underscore, value: value)
@@ -81,6 +79,13 @@ module Proforma
           any_data_node.attributes.values.each { |attribute| any_data[attribute.name] = attribute.value }
           any_data_node.children.each { |any_data_tag| any_data[any_data_tag.name] = any_data_tag.children.first.text }
         end
+      end
+
+      private
+
+      def value_from_node(name, node, attribute)
+        xml_name = name.is_a?(Array) ? name[0] : name
+        attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
       end
     end
   end
