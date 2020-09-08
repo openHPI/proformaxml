@@ -11,7 +11,7 @@ module Proforma
       end
 
       def set_value_from_xml(object:, node:, name:, attribute: false, check_presence: true)
-        value = _value_from_node(name, node, attribute)
+        value = value_from_node(name, node, attribute)
         return if check_presence && !value.present?
 
         set_value(object: object, name: (name.is_a?(Array) ? name[1] : name).underscore, value: value)
@@ -29,7 +29,10 @@ module Proforma
         shared = shared_file_attributes(attributes, file_tag)
         shared.merge(
           content: shared[:binary] ? Base64.decode64(file_tag.text) : file_tag.text
-        ).tap { |hash| hash[:filename] = file_tag.attributes['filename']&.value unless file_tag.attributes['filename']&.value.blank? }
+        ).tap do |hash|
+          filename = filename_from_tag(file_tag)
+          hash[:filename] = filename unless filename&.blank?
+        end
       end
 
       def attached_file_attributes(attributes, file_tag)
@@ -86,6 +89,10 @@ module Proforma
       def value_from_node(name, node, attribute)
         xml_name = name.is_a?(Array) ? name[0] : name
         attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
+      end
+
+      def filename_from_tag(file_tag)
+        file_tag.attributes['filename']&.value
       end
     end
   end
