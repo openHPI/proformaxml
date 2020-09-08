@@ -28,10 +28,9 @@ module Proforma
       def embedded_file_attributes(attributes, file_tag)
         shared = shared_file_attributes(attributes, file_tag)
         shared.merge(
-          content: shared[:binary] ? Base64.decode64(file_tag.text) : file_tag.text
+          content: content_from_file_tag(file_tag, shared[:binary])
         ).tap do |hash|
-          filename = filename_from_tag(file_tag)
-          hash[:filename] = filename unless filename&.blank?
+          hash[:filename] = file_tag.attributes['filename']&.value unless file_tag.attributes['filename']&.value.blank?
         end
       end
 
@@ -91,8 +90,8 @@ module Proforma
         attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
       end
 
-      def filename_from_tag(file_tag)
-        file_tag.attributes['filename']&.value
+      def content_from_file_tag(file_tag, binary)
+        binary ? Base64.decode64(file_tag.text) : file_tag.text
       end
     end
   end
