@@ -48,10 +48,6 @@ RSpec.shared_examples 'task node' do
   it 'adds meta-data node' do
     expect(xml.xpath('/task/meta-data')).to have(1).item
   end
-
-  it 'adds namespace to task' do
-    expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
-  end
 end
 
 RSpec.shared_examples 'populated task node' do

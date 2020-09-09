@@ -245,6 +245,10 @@ RSpec.describe Proforma::Exporter do
 
         it_behaves_like 'task node with test'
 
+        it 'adds namespace to task' do
+          expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
+        end
+
         it 'adds test-meta-data node to test-configuration node' do
           expect(meta_data_node).to have(1).items
         end
@@ -267,8 +271,41 @@ RSpec.describe Proforma::Exporter do
 
         it_behaves_like 'task node with test'
 
+        it 'does not add namespace to task' do
+          expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to be_nil
+        end
+
         it 'adds no test-meta-data node to test-configuration node' do
           expect(xml.xpath('/task/tests/test/test-configuration/test-meta-data')).to have(0).items
+        end
+      end
+
+      context 'when test has is unittest and has extra test-configuration' do
+        let(:task) do
+          build(:task, :populated, tests: build_list(:test, 1, test_type: 'unittest', configuration: {
+                                                       'version' => '1.23', 'framework' => 'rspec', 'entry-point' => 'unit_file_spec.rb'
+                                                     }))
+        end
+        let(:unittest_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').xpath('unit:unittest') }
+
+        it 'adds namespace to task' do
+          expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:unit']).to eql 'urn:proforma:tests:unittest:v1.1'
+        end
+
+        it 'adds node with correct namespace ' do
+          expect(unittest_node).not_to be_nil
+        end
+
+        it 'adds entry-poiny node with correct namespace and content' do
+          expect(unittest_node.xpath('unit:entry-point').text).to eql 'unit_file_spec.rb'
+        end
+
+        it 'adds correct framework-attribute to node' do
+          expect(unittest_node.attribute('framework').text).to eql 'rspec'
+        end
+
+        it 'adds correct version-attribute to node' do
+          expect(unittest_node.attribute('version').text).to eql '1.23'
         end
       end
     end

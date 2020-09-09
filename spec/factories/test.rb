@@ -6,6 +6,7 @@ FactoryBot.define do
     sequence(:id) { |n| "test_#{n}" }
     title { 'title' }
     test_type { 'test_type' }
+    configuration { nil }
 
     trait(:no_file) do
       files {}

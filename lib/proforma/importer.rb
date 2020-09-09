@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/string'
+require 'proforma/helpers/import_helpers'
 
 module Proforma
   class Importer
+    include Proforma::Helpers::ImportHelpers
+
     def initialize(zip)
       @zip = zip
 
@@ -57,30 +60,6 @@ module Proforma
                         version: @task_node.xpath('xmlns:proglang').attribute('version').value.presence}.compact
     end
 
-    def set_hash_value_if_present(hash:, name:, attributes: nil, value_overwrite: nil)
-      raise unless attributes || value_overwrite
-
-      value = value_overwrite || attributes[name.to_s]&.value
-      hash[name.underscore.to_sym] = value if value.present?
-    end
-
-    def set_value_from_xml(object:, node:, name:, attribute: false, check_presence: true)
-      xml_name = name.is_a?(Array) ? name[0] : name
-
-      value = attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
-      return if check_presence && !value.present?
-
-      set_value(object: object, name: (name.is_a?(Array) ? name[1] : name).underscore, value: value)
-    end
-
-    def set_value(object:, name:, value:)
-      if object.is_a? Hash
-        object[name] = value
-      else
-        object.send("#{name}=", value)
-      end
-    end
-
     def set_files
       @task_node.search('files//file').each { |file_node| add_file file_node }
     end
@@ -115,32 +94,6 @@ module Proforma
       @task.files << file
     end
 
-    def embedded_file_attributes(attributes, file_tag)
-      shared = shared_file_attributes(attributes, file_tag)
-      shared.merge(
-        content: shared[:binary] ? Base64.decode64(file_tag.text) : file_tag.text
-      ).tap { |hash| hash[:filename] = file_tag.attributes['filename']&.value unless file_tag.attributes['filename']&.value.blank? }
-    end
-
-    def attached_file_attributes(attributes, file_tag)
-      filename = file_tag.text
-      shared_file_attributes(attributes, file_tag).merge(filename: filename,
-                                                         content: filestring_from_zip(filename))
-    end
-
-    def shared_file_attributes(attributes, file_tag)
-      {
-        id: attributes['id']&.value,
-        used_by_grader: attributes['used-by-grader']&.value == 'true',
-        visible: attributes['visible']&.value,
-        binary: /-bin-file/.match?(file_tag.name)
-      }.tap do |hash|
-        set_hash_value_if_present(hash: hash, name: 'usage-by-lms', attributes: attributes)
-        set_value_from_xml(object: hash, node: file_tag.parent, name: 'internal-description')
-        set_hash_value_if_present(hash: hash, name: 'mimetype', attributes: attributes)
-      end
-    end
-
     def add_test(test_node)
       test = Test.new
       set_value_from_xml(object: test, node: test_node, name: 'id', attribute: true, check_presence: false)
@@ -148,14 +101,8 @@ module Proforma
       set_value_from_xml(object: test, node: test_node, name: 'description')
       set_value_from_xml(object: test, node: test_node, name: 'internal-description')
       set_value_from_xml(object: test, node: test_node, name: 'test-type', check_presence: false)
-      test.files = test_files_from_test_configuration(test_node.xpath('xmlns:test-configuration'))
-      meta_data = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
-      test.meta_data = custom_meta_data(meta_data) unless meta_data.blank?
+      add_test_configuration(test, test_node)
       @task.tests << test
-    end
-
-    def test_files_from_test_configuration(test_configuration_node)
-      files_from_filerefs(test_configuration_node.search('filerefs'))
     end
 
     def files_from_filerefs(filerefs_node)
@@ -164,14 +111,6 @@ module Proforma
           fileref = fileref_node.attributes['refid'].value
           files << @task.files.delete(@task.files.detect { |file| file.id == fileref })
         end
-      end
-    end
-
-    def custom_meta_data(meta_data_node)
-      {}.tap do |meta_data|
-        return meta_data if meta_data_node.nil?
-
-        meta_data_node.children.each { |meta_data_tag| meta_data[meta_data_tag.name] = meta_data_tag.children.first.text }
       end
     end
 
