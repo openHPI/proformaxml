@@ -20,7 +20,7 @@ module Proforma
 
     def perform
       errors = validate
-      puts errors
+
       raise PreImportValidationError, errors if errors.any?
 
       @task_node = @doc.xpath('/xmlns:task')

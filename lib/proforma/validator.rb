@@ -10,10 +10,7 @@ module Proforma
     end
 
     def perform
-      errors = validate
-      raise PreImportValidationError, errors if errors.any?
-
-      errors
+      validate
     end
 
     private

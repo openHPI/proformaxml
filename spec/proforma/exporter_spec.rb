@@ -56,8 +56,8 @@ RSpec.describe Proforma::Exporter do
     end
 
     it 'contains through schema validatable xml' do
-      #use validator call
-      expect(Nokogiri::XML::Schema(File.open(Proforma::SCHEMA_PATH)).validate(doc)).to be_empty
+      validator = Proforma::Validator.new(doc)
+      expect(validator.perform).to be_empty
     end
 
     it 'adds version attribute to proglang node' do
@@ -369,6 +369,26 @@ RSpec.describe Proforma::Exporter do
 
       it 'does not set internal-description for test' do
         expect(xml.xpath('/task/tests/test/internal-description')).to be_empty
+      end
+    end
+
+    context 'when a specific version is supplied' do
+      let(:exporter) { described_class.new(task, version) }
+
+      context 'when version is 2.0.1' do
+        let(:version) { '2.0.1' }
+
+        it do
+          expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0.1'
+        end
+      end
+
+      context 'when version is 2.0' do
+        let(:version) { '2.0' }
+
+        it do
+          expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0'
+        end
       end
     end
   end
