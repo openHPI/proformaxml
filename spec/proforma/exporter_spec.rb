@@ -378,7 +378,7 @@ RSpec.describe Proforma::Exporter do
       context 'when version is 2.0.1' do
         let(:version) { '2.0.1' }
 
-        it do
+        it 'creates a file with the correct version' do
           expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0.1'
         end
       end
@@ -386,8 +386,16 @@ RSpec.describe Proforma::Exporter do
       context 'when version is 2.0' do
         let(:version) { '2.0' }
 
-        it do
+        it 'creates a file with the correct version' do
           expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0'
+        end
+      end
+
+      context 'when version is not supported' do
+        let(:version) { '1.0' }
+
+        it 'raises an error' do
+          expect { perform }.to raise_error Proforma::PostGenerateValidationError
         end
       end
     end
