@@ -56,6 +56,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     it 'contains through schema validatable xml' do
+      #use validator call
       expect(Nokogiri::XML::Schema(File.open(Proforma::SCHEMA_PATH)).validate(doc)).to be_empty
     end
 

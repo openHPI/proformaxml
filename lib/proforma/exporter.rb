@@ -134,7 +134,7 @@ module Proforma
 
     def headers
       {
-        'xmlns' => "urn:proforma:v#{version}",
+        'xmlns' => "urn:proforma:v#{@version}",
         'uuid' => @task.uuid
       }.tap do |h|
         h['xmlns:c'] = 'codeharbor'
@@ -144,7 +144,7 @@ module Proforma
     end
 
     def validate(doc)
-      validator = Proforma::Validator.new doc, version
+      validator = Proforma::Validator.new doc, @version
       validator.perform
     end
 
