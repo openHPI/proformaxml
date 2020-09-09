@@ -14,6 +14,10 @@ RSpec.describe Proforma::Exporter do
       expect(exporter.instance_variable_get(:@files)).to be_empty
     end
 
+    it 'assigns version' do
+      expect(exporter.instance_variable_get(:@version)).to eql '2.0.1'
+    end
+
     it 'sets placeholder ModelSolution' do
       expect(exporter.instance_variable_get(:@task).model_solutions).to have_exactly(1).item
     end
@@ -23,6 +27,16 @@ RSpec.describe Proforma::Exporter do
         id: 'ms-placeholder',
         files: contain_exactly(have_attributes(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no'))
       )
+    end
+
+    context 'with specific version' do
+      subject(:exporter) { described_class.new(task, version) }
+
+      let(:version) { '2.0' }
+
+      it 'assigns version' do
+        expect(exporter.instance_variable_get(:@version)).to eql '2.0'
+      end
     end
   end
 

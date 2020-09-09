@@ -2,9 +2,10 @@
 
 RSpec.describe Proforma::Importer do
   describe '.new' do
+    subject(:importer) { described_class.new(zip_file) }
+
     let(:task) { build(:task) }
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
-    let(:importer) { described_class.new(zip_file) }
 
     before do
       zip_file.write(Proforma::Exporter.new(task).perform.string)
@@ -21,6 +22,20 @@ RSpec.describe Proforma::Importer do
 
     it 'assigns task' do
       expect(importer.instance_variable_get(:@task)).to be_a Proforma::Task
+    end
+
+    it 'does not assign expected_version' do
+      expect(importer.instance_variable_get(:@expected_version)).to be_nil
+    end
+
+    context 'with a specific expected_version' do
+      subject(:importer) { described_class.new(zip_file, expected_version) }
+
+      let(:expected_version) { '2.0' }
+
+      it 'does not assign expected_version' do
+        expect(importer.instance_variable_get(:@expected_version)).to eql '2.0'
+      end
     end
   end
 
