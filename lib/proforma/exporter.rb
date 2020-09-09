@@ -86,6 +86,8 @@ module Proforma
     end
 
     def add_filerefs(xml, object)
+      return unless object.files.any?
+
       xml.filerefs do
         object.files.each do |file|
           xml.fileref(refid: file.id) {}
@@ -112,14 +114,20 @@ module Proforma
     def add_test_configuration(xml, test)
       xml.send('test-configuration') do
         add_filerefs(xml, test) if test.files
-
+        add_unittest_configuration(xml, test)
         if test.meta_data
           xml.send('test-meta-data') do
-            test.meta_data.each do |key, value|
-              xml['c'].send(key.to_s + '_', value)
-            end
+            test.meta_data.each { |key, value| xml['c'].send(key.to_s + '_', value) }
           end
         end
+      end
+    end
+
+    def add_unittest_configuration(xml, test)
+      return unless test.test_type == 'unittest' && !test.configuration.nil?
+
+      xml['unit'].unittest(framework: test.configuration['framework'], version: test.configuration['version']) do |unit|
+        unit['unit'].send('entry-point', test.configuration['entry-point'])
       end
     end
 
@@ -136,11 +144,20 @@ module Proforma
       {
         'xmlns' => "urn:proforma:v#{@version}",
         'uuid' => @task.uuid
-      }.tap do |h|
-        h['xmlns:c'] = 'codeharbor'
-        h['lang'] = @task.language unless @task.language.blank?
-        h['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
+      }.tap do |header|
+        add_codeharbor_namespace_to_header(header)
+        add_unittest_namespace_to_header(header)
+        header['lang'] = @task.language unless @task.language.blank?
+        header['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
       end
+    end
+
+    def add_codeharbor_namespace_to_header(header)
+      header['xmlns:c'] = 'codeharbor' if @task.tests.filter { |t| t.meta_data&.any? }.any?
+    end
+
+    def add_unittest_namespace_to_header(header)
+      header['xmlns:unit'] = 'urn:proforma:tests:unittest:v1.1' if @task.tests.filter { |t| t.test_type == 'unittest' }.any?
     end
 
     def validate(doc)
