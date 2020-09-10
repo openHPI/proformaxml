@@ -46,9 +46,10 @@ RSpec.describe Proforma::Importer do
     let!(:ref_task) { task.dup }
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
     let(:importer) { described_class.new(zip_file) }
+    let(:export_version) {}
 
     before do
-      zip_file.write(Proforma::Exporter.new(task).perform.string)
+      zip_file.write(Proforma::Exporter.new(task, export_version).perform.string)
       zip_file.rewind
     end
 
@@ -139,6 +140,45 @@ RSpec.describe Proforma::Importer do
       end
 
       it { is_expected.to be_an_equal_task_as ref_task }
+    end
+
+    context 'with a specific expected_version' do
+      let(:importer) { described_class.new(zip_file, expected_version) }
+      let(:expected_version) { '2.0' }
+
+      context 'when exported_version is the same' do
+        let(:export_version) { expected_version }
+
+        it 'does not raise an error' do
+          expect { perform }.not_to raise_error
+        end
+      end
+
+      context 'when exported_version is different' do
+        let(:export_version) { '2.0.1' }
+
+        it 'raises an error' do
+          expect { perform }.to raise_error Proforma::PreImportValidationError
+        end
+      end
+    end
+
+    context 'with no specific expected_version' do
+      context 'when exported_version is set to 2.0' do
+        let(:export_version) { '2.0' }
+
+        it 'does not raise an error' do
+          expect { perform }.not_to raise_error
+        end
+      end
+
+      context 'when exported_version is set to 2.0.1' do
+        let(:export_version) { '2.0.1' }
+
+        it 'does not raise an error' do
+          expect { perform }.not_to raise_error
+        end
+      end
     end
   end
 end
