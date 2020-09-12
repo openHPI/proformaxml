@@ -154,7 +154,7 @@ RSpec.describe Proforma::Importer do
         end
       end
 
-      context 'when export_version is different from the expected_version' do
+      context 'when expected_version is different from the export_version' do
         let(:export_version) { '2.0.1' }
 
         it 'raises an error' do
