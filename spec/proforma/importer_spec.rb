@@ -33,7 +33,7 @@ RSpec.describe Proforma::Importer do
 
       let(:expected_version) { '2.0' }
 
-      it 'does not assign expected_version' do
+      it 'assigns expected_version' do
         expect(importer.instance_variable_get(:@expected_version)).to eql '2.0'
       end
     end
@@ -146,7 +146,7 @@ RSpec.describe Proforma::Importer do
       let(:importer) { described_class.new(zip_file, expected_version) }
       let(:expected_version) { '2.0' }
 
-      context 'when exported_version is the same' do
+      context 'when export_version is the same as expected_version' do
         let(:export_version) { expected_version }
 
         it 'does not raise an error' do
@@ -154,7 +154,7 @@ RSpec.describe Proforma::Importer do
         end
       end
 
-      context 'when exported_version is different' do
+      context 'when export_version is different from the expected_version' do
         let(:export_version) { '2.0.1' }
 
         it 'raises an error' do
