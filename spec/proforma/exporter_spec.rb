@@ -14,6 +14,10 @@ RSpec.describe Proforma::Exporter do
       expect(exporter.instance_variable_get(:@files)).to be_empty
     end
 
+    it 'assigns version' do
+      expect(exporter.instance_variable_get(:@version)).to eql '2.0.1'
+    end
+
     it 'sets placeholder ModelSolution' do
       expect(exporter.instance_variable_get(:@task).model_solutions).to have_exactly(1).item
     end
@@ -23,6 +27,16 @@ RSpec.describe Proforma::Exporter do
         id: 'ms-placeholder',
         files: contain_exactly(have_attributes(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no'))
       )
+    end
+
+    context 'with specific version' do
+      subject(:exporter) { described_class.new(task, version) }
+
+      let(:version) { '2.0' }
+
+      it 'assigns version' do
+        expect(exporter.instance_variable_get(:@version)).to eql '2.0'
+      end
     end
   end
 
@@ -56,7 +70,8 @@ RSpec.describe Proforma::Exporter do
     end
 
     it 'contains through schema validatable xml' do
-      expect(Nokogiri::XML::Schema(File.open(Proforma::SCHEMA_PATH)).validate(doc)).to be_empty
+      validator = Proforma::Validator.new(doc)
+      expect(validator.perform).to be_empty
     end
 
     it 'adds version attribute to proglang node' do
@@ -368,6 +383,34 @@ RSpec.describe Proforma::Exporter do
 
       it 'does not set internal-description for test' do
         expect(xml.xpath('/task/tests/test/internal-description')).to be_empty
+      end
+    end
+
+    context 'when a specific version is supplied' do
+      let(:exporter) { described_class.new(task, version) }
+
+      context 'when version is 2.0.1' do
+        let(:version) { '2.0.1' }
+
+        it 'creates a file with the correct version' do
+          expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0.1'
+        end
+      end
+
+      context 'when version is 2.0' do
+        let(:version) { '2.0' }
+
+        it 'creates a file with the correct version' do
+          expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0'
+        end
+      end
+
+      context 'when version is not supported' do
+        let(:version) { '1.0' }
+
+        it 'raises an error' do
+          expect { perform }.to raise_error Proforma::PostGenerateValidationError
+        end
       end
     end
   end

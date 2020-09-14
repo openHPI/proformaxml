@@ -2,9 +2,10 @@
 
 module Proforma
   class Exporter
-    def initialize(task)
+    def initialize(task, version = nil)
       @files = {}
       @task = task
+      @version = version || SCHEMA_VERSIONS.first
       add_placeholders
     end
 
@@ -141,7 +142,7 @@ module Proforma
 
     def headers
       {
-        'xmlns' => 'urn:proforma:v2.0.1',
+        'xmlns' => "urn:proforma:v#{@version}",
         'uuid' => @task.uuid
       }.tap do |header|
         add_codeharbor_namespace_to_header(header)
@@ -160,8 +161,8 @@ module Proforma
     end
 
     def validate(doc)
-      xsd = Nokogiri::XML::Schema(File.open(SCHEMA_PATH))
-      xsd.validate(doc)
+      validator = Proforma::Validator.new doc, @version
+      validator.perform
     end
 
     def write_to_zip(xmldoc)

@@ -7,8 +7,9 @@ module Proforma
   class Importer
     include Proforma::Helpers::ImportHelpers
 
-    def initialize(zip)
+    def initialize(zip, expected_version = nil)
       @zip = zip
+      @expected_version = expected_version
 
       xml = filestring_from_zip('task.xml')
       raise PreImportValidationError if xml.nil?
@@ -19,7 +20,7 @@ module Proforma
 
     def perform
       errors = validate
-      puts errors
+
       raise PreImportValidationError, errors if errors.any?
 
       @task_node = @doc.xpath('/xmlns:task')
@@ -115,7 +116,8 @@ module Proforma
     end
 
     def validate
-      Nokogiri::XML::Schema(File.open(SCHEMA_PATH)).validate @doc
+      validator = Proforma::Validator.new @doc, @expected_version
+      validator.perform
     end
   end
 end
