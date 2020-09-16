@@ -11,7 +11,7 @@ This gem offers a ruby implementation of https://github.com/ProFormA/proformaxml
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'proforma', git: 'git://github.com/openHPI/proforma.git', tag: 'v0.3.1'
+gem 'proforma', git: 'git://github.com/openHPI/proforma.git', tag: 'v0.5'
 ```
 
 And then execute:
