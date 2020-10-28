@@ -1,6 +1,6 @@
 # Proforma
 
-[![Build Status](https://travis-ci.org/openHPI/proforma.svg?branch=master)](https://travis-ci.org/openHPI/proforma)
+[![Build Status](https://travis-ci.com/openHPI/proforma.svg?branch=master)](https://travis-ci.com/openHPI/proforma)
 [![Code Climate](https://codeclimate.com/github/openHPI/proforma/badges/gpa.svg)](https://codeclimate.com/github/openHPI/proforma)
 [![Test Coverage](https://codeclimate.com/github/openHPI/proforma/badges/coverage.svg)](https://codeclimate.com/github/openHPI/proforma)
 

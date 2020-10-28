@@ -1,7 +1,10 @@
+os: linux
+dist: xenial
+
 language: ruby
 
 rvm:
-  - 2.6.3
+  - 2.7.2
 
 cache:
   bundler: true
