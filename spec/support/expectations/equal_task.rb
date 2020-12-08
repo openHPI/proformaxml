@@ -28,7 +28,12 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   def array_equal?(object, other)
     return true if object == other # for []
 
-    object.product(other).map { |k, v| equal?(k, v) }.any?
+    object.map do |element|
+      other.map do |other_element|
+        equal?(element, other_element)
+      end.any?
+    end.all?
+    # object.product(other).map { |k, v| equal?(k, v) }.any? # da das Kreuzprodukt gebildet wird, müssen nicht alle Einträge gleich sein - pro Eintrag in einem Array müsste EIN true im Array zu finden sein...
   end
 
   def attributes(object)

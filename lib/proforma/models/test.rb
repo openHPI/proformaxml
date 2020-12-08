@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 module Proforma
-  class Test
-    include Base
+  class Test < Base
     attr_accessor :id, :title, :description, :internal_description, :test_type, :files, :configuration, :meta_data
 
     def initialize(attributes = {})

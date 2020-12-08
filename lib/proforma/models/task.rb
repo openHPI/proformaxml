@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
-require 'digest'
+require 'proforma/models/base'
+require 'proforma/models/task_file'
+require 'proforma/models/test'
+require 'proforma/models/model_solution'
+require 'proforma/errors'
 
 module Proforma
-  class Task
-    include Base
+  class Task < Base
     attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid,
                   :language, :model_solutions, :files, :tests
 

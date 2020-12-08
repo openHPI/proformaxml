@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 module Proforma
-  class ModelSolution
-    include Base
+  class ModelSolution < Base
     attr_accessor :id, :files, :description, :internal_description
 
     def initialize(attributes = {})
