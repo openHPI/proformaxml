@@ -45,6 +45,7 @@ GEM
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.4)
+    json (2.3.1)
     listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -99,12 +100,11 @@ GEM
     ruby-progressbar (1.10.1)
     rubyzip (2.3.0)
     shellany (0.0.1)
-    simplecov (0.20.0)
+    simplecov (0.17.1)
       docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.12.3)
-    simplecov_json_formatter (0.1.2)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
     thor (1.0.1)
     thread_safe (0.3.6)
     tzinfo (1.2.7)
@@ -128,7 +128,7 @@ DEPENDENCIES
   rspec-collection_matchers (~> 1.2.0)
   rubocop (~> 0.77.0)
   rubocop-rspec (~> 1.41.0)
-  simplecov (~> 0.20.0)
+  simplecov (~> 0.17.0)
 
 BUNDLED WITH
    2.1.4
