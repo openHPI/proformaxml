@@ -6,6 +6,9 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   match do |task|
     equal?(task, other)
   end
+  failure_message do |actual|
+    "#{actual.inspect} is not equal to \n#{other.inspect}. \nLast checked attribute: #{@last_checked}"
+  end
 
   def equal?(object, other)
     return false unless object.class == other.class
@@ -20,6 +23,8 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
     return false unless object.instance_variables == other.instance_variables
 
     attributes(object).each do |k, v|
+      @last_checked = "#{k}: \n#{v} vs \n#{other.send(k)}"
+
       return false unless equal?(v, other.send(k))
     end
     true
@@ -33,7 +38,6 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
         equal?(element, other_element)
       end.any?
     end.all?
-    # object.product(other).map { |k, v| equal?(k, v) }.any? # da das Kreuzprodukt gebildet wird, müssen nicht alle Einträge gleich sein - pro Eintrag in einem Array müsste EIN true im Array zu finden sein...
   end
 
   def attributes(object)

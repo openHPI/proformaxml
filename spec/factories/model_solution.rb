@@ -10,5 +10,9 @@ FactoryBot.define do
       internal_description { 'internal_description' }
       files { build_list(:task_file, 1, :populated, :small_content, :text) }
     end
+
+    trait(:with_multiple_files) do
+      files { build_list(:task_file, 2, :populated, :small_content, :text) }
+    end
   end
 end

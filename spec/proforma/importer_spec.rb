@@ -134,9 +134,9 @@ RSpec.describe Proforma::Importer do
     context 'when task has everything set and multiples of every object' do
       let(:task) { build(:task, :populated, files: files, tests: tests, model_solutions: model_solutions) }
       let(:files) { build_list(:task_file, 2, :populated, :small_content, :text) }
-      let(:tests) { build_list(:test, 2, :populated, files: build_list(:task_file, 2, :populated, :large_content)) }
+      let(:tests) { build_list(:test, 2, :populated, :with_multiple_files) }
       let(:model_solutions) do
-        build_list(:model_solution, 2, :populated, files: build_list(:task_file, 2, :populated, :binary, :small_content))
+        build_list(:model_solution, 2, :populated, :with_multiple_files)
       end
 
       it { is_expected.to be_an_equal_task_as ref_task }
