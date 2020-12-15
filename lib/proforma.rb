@@ -8,9 +8,9 @@ require 'securerandom'
 
 require 'proforma/version'
 
-require 'proforma/importer'
-require 'proforma/exporter'
-require 'proforma/validator'
+require 'proforma/services/importer'
+require 'proforma/services/exporter'
+require 'proforma/services/validator'
 require 'proforma/models/task'
 
 module Proforma
