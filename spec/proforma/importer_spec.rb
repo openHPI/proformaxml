@@ -8,7 +8,7 @@ RSpec.describe Proforma::Importer do
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
 
     before do
-      zip_file.write(Proforma::Exporter.new(task).perform.string)
+      zip_file.write(Proforma::Exporter.new(task).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 
@@ -49,7 +49,7 @@ RSpec.describe Proforma::Importer do
     let(:export_version) {}
 
     before do
-      zip_file.write(Proforma::Exporter.new(task, export_version).perform.string)
+      zip_file.write(Proforma::Exporter.new(task, export_version).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 
