@@ -117,6 +117,7 @@ module Proforma
         add_unittest_configuration(xml, test)
         if test.meta_data
           xml.send('test-meta-data') do
+            # underscore is used to disambiguate tag names from ruby methods
             test.meta_data.each { |key, value| xml['c'].send(key.to_s + '_', value) }
           end
         end
