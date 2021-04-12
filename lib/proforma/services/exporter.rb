@@ -148,8 +148,7 @@ module Proforma
       }.tap do |header|
         add_codeharbor_namespace_to_header(header)
         add_unittest_namespace_to_header(header)
-        header['lang'] = @task.language unless @task.language.blank?
-        header['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
+        add_parent_uuid_and_lang_to_header(header)
       end
     end
 
@@ -159,6 +158,11 @@ module Proforma
 
     def add_unittest_namespace_to_header(header)
       header['xmlns:unit'] = 'urn:proforma:tests:unittest:v1.1' if @task.tests.filter { |t| t.test_type == 'unittest' }.any?
+    end
+
+    def add_parent_uuid_and_lang_to_header(header)
+      header['lang'] = @task.language unless @task.language.blank?
+      header['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
     end
 
     def validate(doc)
