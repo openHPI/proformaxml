@@ -27,12 +27,15 @@ Metrics/BlockLength:
     - spec/**/*
     - proforma.gemspec
 
-RSpec/NestedGroups:
-  Max: 5
-
 Style/Documentation:
   Enabled: false
+
+RSpec/NestedGroups:
+  Max: 5
 
 RSpec/DescribeClass:
   Exclude:
     - spec/custom_matchers/*
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false

@@ -101,8 +101,9 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.4.1)
       parser (>= 2.7.1.5)
-    rubocop-rspec (1.41.0)
-      rubocop (>= 0.68.1)
+    rubocop-rspec (2.2.0)
+      rubocop (~> 1.0)
+      rubocop-ast (>= 1.1.0)
     ruby-progressbar (1.11.0)
     rubyzip (2.3.0)
     shellany (0.0.1)
@@ -133,7 +134,7 @@ DEPENDENCIES
   rspec (~> 3.0)
   rspec-collection_matchers (~> 1.2.0)
   rubocop (~> 1.12.1)
-  rubocop-rspec (~> 1.41.0)
+  rubocop-rspec (~> 2.2.0)
   simplecov (~> 0.21.2)
 
 BUNDLED WITH
