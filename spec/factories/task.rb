@@ -13,6 +13,7 @@ FactoryBot.define do
     end
 
     trait(:with_embedded_txt_file) { files { build_list(:task_file, 1, :populated, :small_content, :text) } }
+    trait(:with_multiple_embedded_txt_files) { files { build_list(:task_file, 5, :populated, :small_content, :text) } }
     trait(:with_embedded_bin_file) { files { build_list(:task_file, 1, :populated, :small_content, :binary) } }
     trait(:with_attached_txt_file) { files { build_list(:task_file, 1, :populated, :large_content, :text) } }
     trait(:with_attached_bin_file) { files { build_list(:task_file, 1, :populated, :large_content, :binary) } }
@@ -21,7 +22,7 @@ FactoryBot.define do
     trait(:with_test) { tests { build_list(:test, 1, :populated) } }
 
     trait(:with_everything) do
-      with_embedded_txt_file
+      with_multiple_embedded_txt_files
       with_model_solution
       with_test
     end

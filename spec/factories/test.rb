@@ -19,5 +19,9 @@ FactoryBot.define do
       files { build_list(:task_file, 1, :populated, :small_content, :text) }
       meta_data { {meta: 'data'} }
     end
+
+    trait(:with_multiple_files) do
+      files { build_list(:task_file, 2, :populated, :small_content, :text) }
+    end
   end
 end

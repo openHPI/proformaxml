@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Proforma
-  module Base
+  class Base
     include ActiveModel::AttributeAssignment
 
     def initialize(attributes = {})

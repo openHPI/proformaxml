@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require 'proforma/helpers/export_helpers'
+
 module Proforma
   class Exporter
+    include Proforma::Helpers::ExportHelpers
+
     def initialize(task, version = nil)
       @files = {}
       @task = task
@@ -63,18 +67,6 @@ module Proforma
       end
     end
 
-    def attach_file(xml, file)
-      if file.embed?
-        if file.binary
-          xml.send 'embedded-bin-file', {filename: file.filename}, Base64.encode64(file.content)
-        else
-          xml.send 'embedded-txt-file', {filename: file.filename}, file.content
-        end
-      else
-        xml.send "attached-#{file.binary ? 'bin' : 'txt'}-file", file.filename
-      end
-    end
-
     def model_solutions(xml)
       @task.model_solutions&.each do |model_solution|
         xml.send('model-solution', id: model_solution.id) do
@@ -107,30 +99,6 @@ module Proforma
       end
     end
 
-    def add_description_to_xml(xml, description)
-      xml.send('description', description) unless description.blank?
-    end
-
-    def add_test_configuration(xml, test)
-      xml.send('test-configuration') do
-        add_filerefs(xml, test) if test.files
-        add_unittest_configuration(xml, test)
-        if test.meta_data
-          xml.send('test-meta-data') do
-            test.meta_data.each { |key, value| xml['c'].send(key.to_s + '_', value) }
-          end
-        end
-      end
-    end
-
-    def add_unittest_configuration(xml, test)
-      return unless test.test_type == 'unittest' && !test.configuration.nil?
-
-      xml['unit'].unittest(framework: test.configuration['framework'], version: test.configuration['version']) do |unit|
-        unit['unit'].send('entry-point', test.configuration['entry-point'])
-      end
-    end
-
     # ms-placeholder should be able to go as soon as profoma 2.1 is released https://github.com/ProFormA/proformaxml/issues/5
     def add_placeholders
       return if @task.model_solutions&.any?
@@ -145,19 +113,9 @@ module Proforma
         'xmlns' => "urn:proforma:v#{@version}",
         'uuid' => @task.uuid
       }.tap do |header|
-        add_codeharbor_namespace_to_header(header)
-        add_unittest_namespace_to_header(header)
-        header['lang'] = @task.language unless @task.language.blank?
-        header['parent-uuid'] = @task.parent_uuid unless @task.parent_uuid.blank?
+        add_namespaces_to_header(header)
+        add_parent_uuid_and_lang_to_header(header)
       end
-    end
-
-    def add_codeharbor_namespace_to_header(header)
-      header['xmlns:c'] = 'codeharbor' if @task.tests.filter { |t| t.meta_data&.any? }.any?
-    end
-
-    def add_unittest_namespace_to_header(header)
-      header['xmlns:unit'] = 'urn:proforma:tests:unittest:v1.1' if @task.tests.filter { |t| t.test_type == 'unittest' }.any?
     end
 
     def validate(doc)

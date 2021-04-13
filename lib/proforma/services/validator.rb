@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
-
 module Proforma
   class Validator
     def initialize(doc, expected_version = nil)
       @doc = doc
       @expected_version = expected_version
-      @errors = []
     end
 
     def perform

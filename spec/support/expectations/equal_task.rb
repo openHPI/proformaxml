@@ -6,6 +6,9 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   match do |task|
     equal?(task, other)
   end
+  failure_message do |actual|
+    "#{actual.inspect} is not equal to \n#{other.inspect}. \nLast checked attribute: #{@last_checked}"
+  end
 
   def equal?(object, other)
     return false unless object.class == other.class
@@ -20,6 +23,8 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
     return false unless object.instance_variables == other.instance_variables
 
     attributes(object).each do |k, v|
+      @last_checked = "#{k}: \n#{v} vs \n#{other.send(k)}"
+
       return false unless equal?(v, other.send(k))
     end
     true
@@ -28,7 +33,11 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   def array_equal?(object, other)
     return true if object == other # for []
 
-    object.product(other).map { |k, v| equal?(k, v) }.any?
+    object.map do |element|
+      other.map do |other_element|
+        equal?(element, other_element)
+      end.any?
+    end.all?
   end
 
   def attributes(object)
