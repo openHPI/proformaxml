@@ -2,23 +2,30 @@ require: rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 2.6
+  NewCops: enable
   Exclude:
     - bin/*
     - vendor/**/*
     - Guardfile
 
+Layout/LineLength:
+  Max: 140
+
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
+
+Lint/EmptyBlock:
+  Exclude:
+    - spec/**/*
+    - lib/proforma/services/exporter.rb
 
 Metrics/ClassLength:
   Max: 150
 
-Metrics/LineLength:
-  Max: 140
 
 Metrics/BlockLength:
   Exclude:
-    - 'spec/**/*'
+    - spec/**/*
     - proforma.gemspec
 
 RSpec/MultipleMemoizedHelpers:
