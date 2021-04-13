@@ -10,13 +10,3 @@ updates:
     labels:
       - dependencies
       - ruby
-
-  - package-ecosystem: npm
-    directory: "/"
-    schedule:
-      interval: daily
-      time: "09:00"
-      timezone: UTC
-    labels:
-      - dependencies
-      - javascript
