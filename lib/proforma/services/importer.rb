@@ -87,9 +87,10 @@ module Proforma
     def add_file(file_node)
       file_tag = file_node.children.first
       file = nil
-      if /embedded-(bin|txt)-file/.match? file_tag.name
+      case file_tag.name
+      when /embedded-(bin|txt)-file/
         file = TaskFile.new(embedded_file_attributes(file_node.attributes, file_tag))
-      elsif /attached-(bin|txt)-file/.match? file_tag.name
+      when /attached-(bin|txt)-file/
         file = TaskFile.new(attached_file_attributes(file_node.attributes, file_tag))
       end
       @task.files << file
