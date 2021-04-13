@@ -41,6 +41,6 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
   end
 
   def attributes(object)
-    Hash[object.instance_variables.map { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }]
+    object.instance_variables.map { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }.to_h
   end
 end

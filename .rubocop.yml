@@ -22,14 +22,10 @@ Lint/EmptyBlock:
 Metrics/ClassLength:
   Max: 150
 
-
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
     - proforma.gemspec
-
-RSpec/MultipleMemoizedHelpers:
-  Enabled: false
 
 RSpec/NestedGroups:
   Max: 5
