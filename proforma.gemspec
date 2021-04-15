@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/openHPI/proforma'
   spec.license       = 'MIT'
 
+  spec.required_ruby_version = '~> 2.6'
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   # if spec.respond_to?(:metadata)
@@ -51,7 +52,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
-  spec.add_development_dependency 'rubocop', '~> 0.77.0'
-  spec.add_development_dependency 'rubocop-rspec', '~> 1.41.0'
+  spec.add_development_dependency 'rubocop', '~> 1.12.1'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.2.0'
   spec.add_development_dependency 'simplecov', '~> 0.21.2'
 end

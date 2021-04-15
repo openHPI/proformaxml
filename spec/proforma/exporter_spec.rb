@@ -393,7 +393,7 @@ RSpec.describe Proforma::Exporter do
         let(:version) { '2.0.1' }
 
         it 'creates a file with the correct version' do
-          expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0.1'
+          expect(doc.namespaces['xmlns']).to eql 'urn:proforma:v2.0.1'
         end
       end
 
@@ -401,7 +401,7 @@ RSpec.describe Proforma::Exporter do
         let(:version) { '2.0' }
 
         it 'creates a file with the correct version' do
-          expect(doc.namespaces['xmlns']). to eql 'urn:proforma:v2.0'
+          expect(doc.namespaces['xmlns']).to eql 'urn:proforma:v2.0'
         end
       end
 

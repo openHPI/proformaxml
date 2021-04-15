@@ -78,7 +78,7 @@ module Proforma
         {}.tap do |any_data|
           return any_data if any_data_node.nil?
 
-          any_data_node.attributes.values.each { |attribute| any_data[attribute.name] = attribute.value }
+          any_data_node.attributes.each_value { |attribute| any_data[attribute.name] = attribute.value }
           any_data_node.children.each { |any_data_tag| any_data[any_data_tag.name] = any_data_tag.children.first.text }
         end
       end
