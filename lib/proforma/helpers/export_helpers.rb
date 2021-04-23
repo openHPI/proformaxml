@@ -30,7 +30,7 @@ module Proforma
           if test.meta_data
             xml.send('test-meta-data') do
               # underscore is used to disambiguate tag names from ruby methods
-              test.meta_data.each { |key, value| xml['c'].send("#{key}_", value) }
+              test.meta_data.each { |entry| xml[entry[:namespace]].send("#{entry[:key]}_", entry[:value]) }
             end
           end
         end
@@ -44,8 +44,10 @@ module Proforma
         end
       end
 
-      def add_namespaces_to_header(header)
-        header['xmlns:c'] = 'codeharbor' if @task.tests.filter { |t| t.meta_data&.any? }.any?
+      def add_namespaces_to_header(header, custom_namespaces)
+        custom_namespaces.each do |namespace|
+          header["xmlns:#{namespace[:prefix]}"] = namespace[:uri]
+        end
         header['xmlns:unit'] = 'urn:proforma:tests:unittest:v1.1' if @task.tests.filter { |t| t.test_type == 'unittest' }.any?
       end
 

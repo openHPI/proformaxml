@@ -6,9 +6,10 @@ module Proforma
   class Exporter
     include Proforma::Helpers::ExportHelpers
 
-    def initialize(task, version = nil)
+    def initialize(task:, custom_namespaces: [], version: nil)
       @files = {}
       @task = task
+      @custom_namespaces = custom_namespaces
       @version = version || SCHEMA_VERSIONS.first
       add_placeholders
     end
@@ -113,7 +114,7 @@ module Proforma
         'xmlns' => "urn:proforma:v#{@version}",
         'uuid' => @task.uuid
       }.tap do |header|
-        add_namespaces_to_header(header)
+        add_namespaces_to_header(header, @custom_namespaces)
         add_parent_uuid_and_lang_to_header(header)
       end
     end

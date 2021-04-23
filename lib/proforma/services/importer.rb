@@ -7,7 +7,7 @@ module Proforma
   class Importer
     include Proforma::Helpers::ImportHelpers
 
-    def initialize(zip, expected_version = nil)
+    def initialize(zip:, expected_version: nil)
       @zip = zip
       @expected_version = expected_version
 
