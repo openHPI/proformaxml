@@ -111,15 +111,11 @@ RSpec.describe Proforma::Importer do
         it { is_expected.to be_an_equal_task_as ref_task }
       end
 
-      # context 'when test has unittest test-configuration' do
-      #   let(:task) do
-      #     build(:task, tests: build_list(:test, 1, test_type: 'unittest', configuration: {
-      #                                      'version' => '1.23', 'framework' => 'rspec', 'entry-point' => 'unit_file_spec.rb'
-      #                                    }))
-      #   end
-      #
-      #   it { is_expected.to be_an_equal_task_as ref_task }
-      # end
+      context 'when test has meta-data' do
+        let(:task) { build(:task, tests: build_list(:test, 1, :with_meta_data)) }
+
+        it { is_expected.to be_an_equal_task_as ref_task }
+      end
     end
 
     context 'when task has a test and a model_solution' do

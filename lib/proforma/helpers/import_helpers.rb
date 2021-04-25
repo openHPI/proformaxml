@@ -65,9 +65,9 @@ module Proforma
         configuration_any_node = test_configuration_node.children.reject do |c|
           %w[filerefs timeout externalresourcerefs test-meta-data].include? c.name
         end.first
-        return if configuration_any_node.nil?
+        nil if configuration_any_node.nil?
 
-        any_data_tag(configuration_any_node)
+        # any_data_tag(configuration_any_node)
       end
 
       def test_files_from_test_configuration(test_configuration_node)
