@@ -57,7 +57,7 @@ RSpec.describe 'equal_task matcher' do
     end
 
     context 'with a tiny change in a test' do
-      before { task.tests.first.meta_data[:meta] += 'a' }
+      before { task.tests.first.title += 'a' }
 
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2

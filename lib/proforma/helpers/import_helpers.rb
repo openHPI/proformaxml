@@ -78,8 +78,6 @@ module Proforma
         [].tap do |any_data|
           return any_data if any_data_node.nil?
 
-          # TODO namespace for attributes??
-          any_data_node.attributes.each_value { |attribute| any_data << {namespace: 'test', key: attribute.name, value: attribute.value} }
           any_data_node.children.each do |any_data_tag|
             any_data << {namespace: any_data_node.children.first.namespace.prefix, key: any_data_tag.name,
                          value: any_data_tag.children.first.text}

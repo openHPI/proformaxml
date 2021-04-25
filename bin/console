@@ -15,7 +15,7 @@ Pry.start
 # IRB.start(__FILE__)
 
 # Examples:
-# Proforma::Importer.new(File.open('../testfiles/helloWorld.zip')).perform
+# Proforma::Importer.new(File.open(zip: '../testfiles/helloWorld.zip')).perform
 #
 # task = Proforma::Task.new(
 #   title: 't',
@@ -69,5 +69,5 @@ Pry.start
 #   ]
 # )
 
-# File.open('../testfiles/testfile.zip', 'wb') { |file| file.write(Proforma::Exporter.new(task, [{prefix: 'openHPI', uri: 'open.hpi.de'}]).perform.string) }
+# File.open('../testfiles/testfile.zip', 'wb') { |file| file.write(Proforma::Exporter.new(task: task, custom_namespaces: [{prefix: 'openHPI', uri: 'open.hpi.de'}]).perform.string) }
 #

@@ -133,7 +133,6 @@ RSpec.describe Proforma::Importer do
       let(:task) { build(:task, :with_test, :with_model_solution, files: build_list(:task_file, 10, :populated, :small_content, :text)) }
       let(:export_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
-
       it { is_expected.to be_an_equal_task_as ref_task }
     end
 
