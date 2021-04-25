@@ -26,15 +26,22 @@ task = Proforma::Task.new(title: 'title')
 ```
 Call Exporter to serialize to XML.
 ```ruby
-Proforma::Exporter.new(task).perform
+Proforma::Exporter.new(task: task).perform
 ```
 It returns a StringIO of a zip-file which includes the XML and any external files (TaskFiles will be saved in the XML up to a size of 50kb, anything larger will be its own file in the zip)
+`Proforma::Exporter` has the following optional parameters:
+- `custom_namespaces`: expects an array with hashes with the following attributes:
+    - `prefix`
+    - `uri`
+- `version`: sets the ProFormA version of the generated XML
 
 Call Importer to deserialize from XML
 ```ruby
-task = Proforma::Exporter.new(zip_file).perform
+task = Proforma::Importer.new(zip: zip_file).perform
 ```
-the zip_file has to be openable by Zip::File.open(zip.path), otherwise Proforma::InvalidZip will be raised
+the `zip_file` has to be openable by `Zip::File.open(zip: zip.path)`, otherwise `Proforma::InvalidZip` will be raised
+`Proforma::Importer` has the following optional parameter:
+- `expected_version`: if the version of the XML doesn't match this value `Proforma::InvalidZip` will be raised
 
 ## Example
 ```ruby
@@ -82,9 +89,7 @@ Proforma::Task.new(
           internal_description: 'internal_description',
         )
       ],
-      meta_data: {
-        'key' => 'value'
-      }
+      meta_data: [{ namespace: 'prefix', key: 'key', value: 'value' }]
     )
   ],
   uuid: '2c8ee23e-fa98-4ea9-b6a5-9a0066ebac1f',
@@ -110,10 +115,10 @@ Proforma::Task.new(
 )
 
 ```
-Generated XML from task above
+Generated XML from task above with `custom_namespaces: [{prefix: 'prefix', uri: 'test.namespace'}]`
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<task xmlns="urn:proforma:v2.0.1" xmlns:c="codeharbor" uuid="2c8ee23e-fa98-4ea9-b6a5-9a0066ebac1f" lang="de" parent-uuid="abf097f5-0df0-468d-8ce4-13460c34cd3b">
+<task xmlns="urn:proforma:v2.0.1" xmlns:prefix="test.namespace" uuid="2c8ee23e-fa98-4ea9-b6a5-9a0066ebac1f" lang="de" parent-uuid="abf097f5-0df0-468d-8ce4-13460c34cd3b">
   <title>title</title>
   <description>description</description>
   <internal-description>internal_description</internal-description>
@@ -125,7 +130,7 @@ Generated XML from task above
     </file>
     <file id="file_id_2" used-by-grader="false" visible="yes" usage-by-lms="display" mimetype="image/jpeg">
       <embedded-bin-file filename="image.jpg">QklOQVJZIElNQUdFIENPTlRFTlQ=
-</embedded-bin-file>
+      </embedded-bin-file>
       <internal-description>internal_description</internal-description>
     </file>
     <file id="model_solution_test_id_1" used-by-grader="false" visible="delayed" usage-by-lms="display">
@@ -153,13 +158,13 @@ Generated XML from task above
           <fileref refid="test_file_1"/>
         </filerefs>
         <test-meta-data>
-          <c:key>value</c:key>
+          <prefix:key>value</prefix:key>
         </test-meta-data>
       </test-configuration>
     </test>
   </tests>
+  <meta-data/>
 </task>
-
 ```
 ## Development
 
