@@ -15,7 +15,7 @@ Pry.start
 # IRB.start(__FILE__)
 
 # Examples:
-# Proforma::Importer.new(File.open(zip: '../testfiles/helloWorld.zip')).perform
+# Proforma::Importer.new(zip: File.open('../testfiles/helloWorld.zip')).perform
 #
 # task = Proforma::Task.new(
 #   title: 't',
