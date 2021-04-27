@@ -37,7 +37,9 @@ It returns a StringIO of a zip-file which includes the XML and any external file
 
 Call Importer to deserialize from XML
 ```ruby
-task = Proforma::Importer.new(zip: zip_file).perform
+result = Proforma::Importer.new(zip: zip_file).perform
+task = result[:task]
+custom_namespaces = result[:custom_namespaces]
 ```
 the `zip_file` has to be openable by `Zip::File.open(zip: zip.path)`, otherwise `Proforma::InvalidZip` will be raised
 `Proforma::Importer` has the following optional parameter:
