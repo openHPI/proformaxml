@@ -17,7 +17,10 @@ FactoryBot.define do
       description { 'description' }
       internal_description { 'internal_description' }
       files { build_list(:task_file, 1, :populated, :small_content, :text) }
-      meta_data { {meta: 'data'} }
+    end
+
+    trait(:with_meta_data) do
+      meta_data { [{namespace: 'test', key: 'meta', value: 'data'}] }
     end
 
     trait(:with_multiple_files) do

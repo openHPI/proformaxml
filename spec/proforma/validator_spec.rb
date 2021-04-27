@@ -4,7 +4,7 @@ RSpec.describe Proforma::Validator do
   describe '.new' do
     subject(:validator) { described_class.new(doc) }
 
-    let(:zip_file) { Proforma::Exporter.new(build(:task)).perform }
+    let(:zip_file) { Proforma::Exporter.new(task: build(:task)).perform }
     let(:zip_content) do
       {}.tap do |hash|
         Zip::InputStream.open(zip_file) do |io|
@@ -38,7 +38,7 @@ RSpec.describe Proforma::Validator do
   describe '#perform' do
     subject(:perform) { validator.perform }
 
-    let(:zip_file) { Proforma::Exporter.new(build(:task), export_version).perform }
+    let(:zip_file) { Proforma::Exporter.new(task: task, version: export_version).perform }
     let(:zip_content) do
       {}.tap do |hash|
         Zip::InputStream.open(zip_file) do |io|
@@ -50,6 +50,7 @@ RSpec.describe Proforma::Validator do
     end
     let(:doc) { Nokogiri::XML(zip_content['task.xml'], &:noblanks) }
     let(:validator) { described_class.new(doc) }
+    let(:task) { build(:task) }
     let(:export_version) {}
 
     it { is_expected.to be_empty }

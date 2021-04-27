@@ -65,9 +65,9 @@ module Proforma
         configuration_any_node = test_configuration_node.children.reject do |c|
           %w[filerefs timeout externalresourcerefs test-meta-data].include? c.name
         end.first
-        return if configuration_any_node.nil?
+        nil if configuration_any_node.nil?
 
-        any_data_tag(configuration_any_node)
+        # any_data_tag(configuration_any_node)
       end
 
       def test_files_from_test_configuration(test_configuration_node)
@@ -75,11 +75,13 @@ module Proforma
       end
 
       def any_data_tag(any_data_node)
-        {}.tap do |any_data|
+        [].tap do |any_data|
           return any_data if any_data_node.nil?
 
-          any_data_node.attributes.each_value { |attribute| any_data[attribute.name] = attribute.value }
-          any_data_node.children.each { |any_data_tag| any_data[any_data_tag.name] = any_data_tag.children.first.text }
+          any_data_node.children.each do |any_data_tag|
+            any_data << {namespace: any_data_node.children.first.namespace.prefix, key: any_data_tag.name,
+                         value: any_data_tag.children.first.text}
+          end
         end
       end
 

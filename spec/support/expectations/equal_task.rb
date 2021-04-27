@@ -7,7 +7,9 @@ RSpec::Matchers.define :be_an_equal_task_as do |other|
     equal?(task, other)
   end
   failure_message do |actual|
+    # :nocov:
     "#{actual.inspect} is not equal to \n#{other.inspect}. \nLast checked attribute: #{@last_checked}"
+    # :nocov:
   end
 
   def equal?(object, other)

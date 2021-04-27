@@ -20,11 +20,12 @@ FactoryBot.define do
 
     trait(:with_model_solution) { model_solutions { build_list(:model_solution, 1, :populated) } }
     trait(:with_test) { tests { build_list(:test, 1, :populated) } }
+    trait(:with_test_with_meta_data) { tests { build_list(:test, 1, :populated, :with_meta_data) } }
 
     trait(:with_everything) do
       with_multiple_embedded_txt_files
       with_model_solution
-      with_test
+      with_test_with_meta_data
     end
 
     trait(:invalid) { files { build_list(:task_file, 1, :invalid) } }

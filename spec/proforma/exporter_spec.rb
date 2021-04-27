@@ -2,7 +2,7 @@
 
 RSpec.describe Proforma::Exporter do
   describe '.new' do
-    subject(:exporter) { described_class.new(task) }
+    subject(:exporter) { described_class.new(task: task) }
 
     let(:task) { build(:task) }
 
@@ -18,6 +18,10 @@ RSpec.describe Proforma::Exporter do
       expect(exporter.instance_variable_get(:@version)).to eql '2.0.1'
     end
 
+    it 'assigns custom_namespaces' do
+      expect(exporter.instance_variable_get(:@custom_namespaces)).to be_empty
+    end
+
     it 'sets placeholder ModelSolution' do
       expect(exporter.instance_variable_get(:@task).model_solutions).to have_exactly(1).item
     end
@@ -30,7 +34,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     context 'with specific version' do
-      subject(:exporter) { described_class.new(task, version) }
+      subject(:exporter) { described_class.new(task: task, version: version) }
 
       let(:version) { '2.0' }
 
@@ -38,12 +42,23 @@ RSpec.describe Proforma::Exporter do
         expect(exporter.instance_variable_get(:@version)).to eql '2.0'
       end
     end
+
+    context 'with a custom namespace' do
+      subject(:exporter) { described_class.new(task: task, custom_namespaces: custom_namespaces) }
+
+      let(:custom_namespaces) { [namespace] }
+      let(:namespace) { {prefix: 'test', uri: 'test.com'} }
+
+      it 'assigns custom_namespaces' do
+        expect(exporter.instance_variable_get(:@custom_namespaces)).to include(namespace)
+      end
+    end
   end
 
   describe '#perform' do
     subject(:perform) { exporter.perform }
 
-    let(:exporter) { described_class.new(task) }
+    let(:exporter) { described_class.new(task: task, custom_namespaces: custom_namespaces) }
     let(:task) { build(:task) }
 
     let(:zip_files) do
@@ -60,6 +75,7 @@ RSpec.describe Proforma::Exporter do
     let(:xml) { doc.remove_namespaces! }
     let(:placeholder_file) { task.all_files.filter { |file| file.id == 'ms-placeholder-file' }.first }
     let(:model_solution) { task.model_solutions.first }
+    let(:custom_namespaces) { [] }
 
     it_behaves_like 'task node'
 
@@ -98,6 +114,14 @@ RSpec.describe Proforma::Exporter do
       expect(
         xml.xpath('/task/model-solutions/model-solution/filerefs/fileref').attribute('refid').value
       ).to eql model_solution.files.first.id
+    end
+
+    context 'with a custom namespace' do
+      let(:custom_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
+
+      it 'adds namespace to task' do
+        expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:test']).to eql 'test.com'
+      end
     end
 
     context 'when a populated task is supplied' do
@@ -208,6 +232,7 @@ RSpec.describe Proforma::Exporter do
       let(:task) { build(:task, :populated, :with_test) }
       let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
       let(:test) { task.tests.first }
+      let(:custom_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -255,14 +280,13 @@ RSpec.describe Proforma::Exporter do
       end
 
       context 'when test has meta-data' do
-        let(:task) { build(:task, :populated, tests: build_list(:test, 1, meta_data: {test: 'data', meta: 'data'})) }
+        let(:task) do
+          build(:task, :populated, tests: build_list(:test, 1, meta_data: [{namespace: 'test', key: 'test', value: 'data'},
+                                                                           {namespace: 'test', key: 'meta', value: 'data'}]))
+        end
         let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration/xmlns:test-meta-data') }
 
         it_behaves_like 'task node with test'
-
-        it 'adds namespace to task' do
-          expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to eql 'codeharbor'
-        end
 
         it 'adds test-meta-data node to test-configuration node' do
           expect(meta_data_node).to have(1).items
@@ -273,11 +297,11 @@ RSpec.describe Proforma::Exporter do
         end
 
         it 'adds test node with correct namespace to test-meta-data node' do
-          expect(meta_data_node.xpath('c:test').text).to eql 'data'
+          expect(meta_data_node.xpath('test:test').text).to eql 'data'
         end
 
         it 'adds meta node with correct namespace to test-meta-data node' do
-          expect(meta_data_node.xpath('c:meta').text).to eql 'data'
+          expect(meta_data_node.xpath('test:meta').text).to eql 'data'
         end
       end
 
@@ -387,7 +411,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     context 'when a specific version is supplied' do
-      let(:exporter) { described_class.new(task, version) }
+      let(:exporter) { described_class.new(task: task, version: version) }
 
       context 'when version is 2.0.1' do
         let(:version) { '2.0.1' }

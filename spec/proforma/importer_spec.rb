@@ -2,13 +2,13 @@
 
 RSpec.describe Proforma::Importer do
   describe '.new' do
-    subject(:importer) { described_class.new(zip_file) }
+    subject(:importer) { described_class.new(zip: zip_file) }
 
     let(:task) { build(:task) }
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
 
     before do
-      zip_file.write(Proforma::Exporter.new(task).perform.string.force_encoding('UTF-8'))
+      zip_file.write(Proforma::Exporter.new(task: task).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 
@@ -29,7 +29,7 @@ RSpec.describe Proforma::Importer do
     end
 
     context 'with a specific expected_version' do
-      subject(:importer) { described_class.new(zip_file, expected_version) }
+      subject(:importer) { described_class.new(zip: zip_file, expected_version: expected_version) }
 
       let(:expected_version) { '2.0' }
 
@@ -42,108 +42,146 @@ RSpec.describe Proforma::Importer do
   describe '#perform' do
     subject(:perform) { importer.perform }
 
+    let(:imported_task) { perform[:task] }
+    let(:imported_namespaces) { perform[:custom_namespaces] }
     let(:task) { build(:task) }
     let!(:ref_task) { task.dup }
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
-    let(:importer) { described_class.new(zip_file) }
+    let(:importer) { described_class.new(zip: zip_file) }
     let(:export_version) {}
+    let(:export_namespaces) { [] }
 
     before do
-      zip_file.write(Proforma::Exporter.new(task, export_version).perform.string.force_encoding('UTF-8'))
+      zip_file.write(Proforma::Exporter.new(task: task, custom_namespaces: export_namespaces,
+                                            version: export_version).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 
-    it { is_expected.to be_an_equal_task_as ref_task }
+    it 'successfully imports the task' do
+      expect(imported_task).to be_an_equal_task_as ref_task
+    end
+
+    it 'evalutates the correct custom_namespaces' do
+      expect(imported_namespaces).to eql export_namespaces
+    end
 
     context 'when task is populated' do
       let(:task) { build(:task, :populated) }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has proglang, but no version' do
       let(:task) { build(:task, proglang: {name: 'Ruby'}) }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has an embedded text file' do
       let(:task) { build(:task, :with_embedded_txt_file) }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has an embedded bin file' do
       let(:task) { build(:task, :with_embedded_bin_file) }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has an attached text file' do
       let(:task) { build(:task, :with_attached_txt_file) }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has an attached bin file' do
       let(:task) { build(:task, :with_attached_bin_file) }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has a model_solution' do
       let(:task) { build(:task, :with_model_solution) }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has a test' do
       let(:task) { build(:task, :with_test) }
+      let(:export_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'evalutates the correct custom_namespaces' do
+        expect(imported_namespaces).to eql export_namespaces
+      end
+
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
 
       context 'when test is minimal' do
         let(:task) { build(:task, tests: build_list(:test, 1)) }
 
-        it { is_expected.to be_an_equal_task_as ref_task }
+        it 'successfully imports the task' do
+          expect(imported_task).to be_an_equal_task_as ref_task
+        end
       end
 
-      context 'when test has unittest test-configuration' do
-        let(:task) do
-          build(:task, tests: build_list(:test, 1, test_type: 'unittest', configuration: {
-                                           'version' => '1.23', 'framework' => 'rspec', 'entry-point' => 'unit_file_spec.rb'
-                                         }))
-        end
+      context 'when test has meta-data' do
+        let(:task) { build(:task, tests: build_list(:test, 1, :with_meta_data)) }
 
-        it { is_expected.to be_an_equal_task_as ref_task }
+        it 'successfully imports the task' do
+          expect(imported_task).to be_an_equal_task_as ref_task
+        end
       end
     end
 
-    context 'when task has a text and a model_solution' do
+    context 'when task has a test and a model_solution' do
       let(:task) { build(:task, :with_test, :with_model_solution) }
+      let(:export_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has a text, a model_solution and 10 embedded files' do
       let(:task) { build(:task, :with_test, :with_model_solution, files: build_list(:task_file, 10, :populated, :small_content, :text)) }
+      let(:export_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'when task has everything set and multiples of every object' do
       let(:task) { build(:task, :populated, files: files, tests: tests, model_solutions: model_solutions) }
       let(:files) { build_list(:task_file, 2, :populated, :small_content, :text) }
       let(:tests) { build_list(:test, 2, :populated, :with_multiple_files) }
-      let(:model_solutions) do
-        build_list(:model_solution, 2, :populated, :with_multiple_files)
-      end
+      let(:model_solutions) { build_list(:model_solution, 2, :populated, :with_multiple_files) }
+      let(:export_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
-      it { is_expected.to be_an_equal_task_as ref_task }
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
     end
 
     context 'with a specific expected_version' do
-      let(:importer) { described_class.new(zip_file, expected_version) }
+      let(:importer) { described_class.new(zip: zip_file, expected_version: expected_version) }
       let(:expected_version) { '2.0' }
 
       context 'when export_version is the same as expected_version' do
