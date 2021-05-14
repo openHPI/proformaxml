@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'factory_bot', '~> 6.2.0'
-  spec.add_development_dependency 'guard', '~> 2.16.1'
+  spec.add_development_dependency 'guard', '~> 2.17.0'
   spec.add_development_dependency 'guard-rspec', '~> 4.7.3'
   spec.add_development_dependency 'pry', '~> 0.13.1'
   spec.add_development_dependency 'pry-byebug', '~> 3.9.0'
