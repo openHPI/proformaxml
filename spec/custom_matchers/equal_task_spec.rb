@@ -65,20 +65,22 @@ RSpec.describe 'equal_task matcher' do
     end
   end
 
-  context 'with two similar tasks' do
+  context 'with two similar tasks with 3 files' do
     let(:task) { build(:task, files: files) }
     let(:task2) { build(:task, files: files2) }
 
-    let(:files) { [build(:task_file, id: 1), build(:task_file, id: files_2_id)] }
-    let(:files_2_id) { 2 }
-    let(:files2) { [build(:task_file, id: 1), build(:task_file, id: 2)] }
+    let(:files) { [build(:task_file, id: 1), build(:task_file, id: 2), build(:task_file, id: files_3_id)] }
+    let(:files_3_id) { 3 }
+    let(:files2) { [build(:task_file, id: 1), build(:task_file, id: 2), build(:task_file, id: files2_3_id)] }
+    let(:files2_3_id) { 3 }
 
     it 'successfully compares the tasks' do
       expect(task).to be_an_equal_task_as task2
     end
 
-    context 'when first task has two equal task files' do
-      let(:files_2_id) { 1 }
+    context 'when both tasks have two equal exercises, but are still different' do
+      let(:files_3_id) { 2 }
+      let(:files2_3_id) { 1 }
 
       it 'successfully compares the tasks' do
         expect(task).not_to be_an_equal_task_as task2
