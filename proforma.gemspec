@@ -40,7 +40,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activemodel', '>= 5.2.3', '< 6.2.0'
   spec.add_dependency 'activesupport', '>= 5.2.3', '< 6.2.0'
-  spec.add_dependency 'nokogiri', '>= 1.10.2', '< 1.12.0'
+  spec.add_dependency 'nokogiri', '>= 1.10.2', '< 1.13.0'
   spec.add_dependency 'rubyzip', '>= 1.2.2', '< 2.4.0'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
