@@ -19,7 +19,7 @@ FactoryBot.define do
     trait(:binary) { binary { true } }
     trait(:text) { binary { false } }
     trait(:small_content) { content { 'test' } }
-    trait(:large_content) { content { 'test' * 10**5 } }
+    trait(:large_content) { content { 'test' * (10**5) } }
     trait(:invalid) do
       id {}
       content { 'content' }

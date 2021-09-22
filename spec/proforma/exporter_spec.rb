@@ -331,7 +331,7 @@ RSpec.describe Proforma::Exporter do
           expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:unit']).to eql 'urn:proforma:tests:unittest:v1.1'
         end
 
-        it 'adds node with correct namespace ' do
+        it 'adds node with correct namespace' do
           expect(unittest_node).not_to be_nil
         end
 
