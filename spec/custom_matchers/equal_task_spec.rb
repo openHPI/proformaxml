@@ -78,7 +78,7 @@ RSpec.describe 'equal_task matcher' do
       expect(task).to be_an_equal_task_as task2
     end
 
-    context 'when both tasks have two equal exercises, but are still different' do
+    context 'when both tasks have two equal files, but are still different' do
       let(:files_3_id) { 2 }
       let(:files2_3_id) { 1 }
 

@@ -29,9 +29,33 @@ module Proforma
           add_unittest_configuration(xml, test)
           if test.meta_data
             xml.send('test-meta-data') do
-              # underscore is used to disambiguate tag names from ruby methods
-              test.meta_data.each { |entry| xml[entry[:namespace]].send("#{entry[:key]}_", entry[:value]) }
+              meta_data(xml, test.meta_data)
             end
+          end
+        end
+      end
+
+      def inner_meta_data(xml, namespace, _key, data)
+        data.each do |key, value|
+          xml[namespace].send("#{key}_", data[key]) if value.is_a? String
+
+          next unless value.is_a? Hash
+
+          xml[namespace].send("#{key}_") do |xml|
+            inner_meta_data(xml, namespace, key, value)
+          end
+        end
+      end
+
+      def meta_data(xml, meta_data)
+        # underscore is used to disambiguate tag names from ruby methods
+        meta_data.each do |namespace, data|
+          # if data.is_a? String
+          #   data
+          # end
+          data.each do |key, value|
+            xml[namespace].send("#{key}_", data[key]) if value.is_a? String
+            inner_meta_data(xml, namespace, key, value) if value.is_a? Hash
           end
         end
       end

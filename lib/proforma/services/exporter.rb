@@ -47,8 +47,16 @@ module Proforma
     end
 
     def add_meta_data(xml)
-      xml.send('meta-data') {}
+      xml.send('meta-data') { meta_data(xml, @task.meta_data) }
     end
+
+    # def meta_data(xml)
+    #   test_meta_data xml, @task.meta_data
+    #   # @task.meta_data&.each do |namespace, data|
+    #   #   # underscore is used to disambiguate tag names from ruby methods
+    #   #   xml[entry[:namespace]].send("#{entry[:key]}_", entry.is_a?(Hash) ? (xml) : entry[:value])
+    #   # end
+    # end
 
     def add_objects_to_xml(xml)
       xml.files { files(xml) }
