@@ -35,14 +35,14 @@ module Proforma
         end
       end
 
-      def inner_meta_data(xml, namespace, _key, data)
+      def inner_meta_data(xml, namespace, data)
         data.each do |key, value|
-          xml[namespace].send("#{key}_", data[key]) if value.is_a? String
+          xml[namespace].send("#{key}_", value) if value.is_a? String
 
           next unless value.is_a? Hash
 
           xml[namespace].send("#{key}_") do |meta_data_xml|
-            inner_meta_data(meta_data_xml, namespace, key, value)
+            inner_meta_data(meta_data_xml, namespace, value)
           end
         end
       end
@@ -50,12 +50,9 @@ module Proforma
       def meta_data(xml, meta_data)
         # underscore is used to disambiguate tag names from ruby methods
         meta_data&.each do |namespace, data|
-          # if data.is_a? String
-          #   data
-          # end
           data.each do |key, value|
-            xml[namespace].send("#{key}_", data[key]) if value.is_a? String
-            inner_meta_data(xml, namespace, key, value) if value.is_a? Hash
+            xml[namespace].send("#{key}_", value) if value.is_a? String
+            inner_meta_data(xml, namespace, value) if value.is_a? Hash
           end
         end
       end
