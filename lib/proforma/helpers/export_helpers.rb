@@ -41,8 +41,8 @@ module Proforma
 
           next unless value.is_a? Hash
 
-          xml[namespace].send("#{key}_") do |xml|
-            inner_meta_data(xml, namespace, key, value)
+          xml[namespace].send("#{key}_") do |meta_data_xml|
+            inner_meta_data(meta_data_xml, namespace, key, value)
           end
         end
       end

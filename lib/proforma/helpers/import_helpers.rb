@@ -90,11 +90,7 @@ module Proforma
           return any_data if meta_data_node.nil?
 
           meta_data_node.children.each do |any_data_tag|
-            # create hash if not exists use existing if possible
             set_any_meta_data(any_data, meta_data_node.children.first.namespace.prefix, any_data_tag.name, any_data_tag.children.first.text)
-            # any_data[meta_data_node.children.first.namespace.prefix.to_sym] = {any_data_tag.name.to_sym => any_data_tag.children.first.text}
-            # any_data << {namespace: meta_data_node.children.first.namespace.prefix, key: any_data_tag.name,
-            #              value: any_data_tag.children.first.text}
           end
         end
       end
