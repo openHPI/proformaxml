@@ -49,7 +49,7 @@ module Proforma
 
       def meta_data(xml, meta_data)
         # underscore is used to disambiguate tag names from ruby methods
-        meta_data.each do |namespace, data|
+        meta_data&.each do |namespace, data|
           # if data.is_a? String
           #   data
           # end

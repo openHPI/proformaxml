@@ -58,7 +58,7 @@ module Proforma
         test.files = test_files_from_test_configuration(test_configuration_node)
         test.configuration = extra_configuration_from_test_configuration(test_configuration_node)
         meta_data_node = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
-        test.meta_data = any_data_tag(meta_data_node.first) unless meta_data_node.blank?
+        test.meta_data = meta_data(meta_data_node) unless meta_data_node.blank?
       end
 
       def extra_configuration_from_test_configuration(test_configuration_node)
@@ -83,6 +83,25 @@ module Proforma
                          value: any_data_tag.children.first.text}
           end
         end
+      end
+
+      def meta_data(meta_data_node)
+        {}.tap do |any_data|
+          return any_data if meta_data_node.nil?
+
+          meta_data_node.children.each do |any_data_tag|
+            # create hash if not exists use existing if possible
+            set_any_meta_data(any_data, meta_data_node.children.first.namespace.prefix, any_data_tag.name, any_data_tag.children.first.text)
+            # any_data[meta_data_node.children.first.namespace.prefix.to_sym] = {any_data_tag.name.to_sym => any_data_tag.children.first.text}
+            # any_data << {namespace: meta_data_node.children.first.namespace.prefix, key: any_data_tag.name,
+            #              value: any_data_tag.children.first.text}
+          end
+        end
+      end
+
+      def set_any_meta_data(meta_data, namespace, key, value)
+        meta_data[namespace.to_sym] = meta_data[namespace.to_sym] || {}
+        meta_data[namespace.to_sym][key.to_sym] = value
       end
 
       private

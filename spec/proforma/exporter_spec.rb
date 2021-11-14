@@ -280,9 +280,9 @@ RSpec.describe Proforma::Exporter do
       end
 
       context 'when test has meta-data' do
+        let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
         let(:task) do
-          build(:task, :populated, tests: build_list(:test, 1, meta_data: [{namespace: 'test', key: 'test', value: 'data'},
-                                                                           {namespace: 'test', key: 'meta', value: 'data'}]))
+          build(:task, :populated, tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', test: 'data'}}))
         end
         let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration/xmlns:test-meta-data') }
 
@@ -297,11 +297,11 @@ RSpec.describe Proforma::Exporter do
         end
 
         it 'adds test node with correct namespace to test-meta-data node' do
-          expect(meta_data_node.xpath('test:test').text).to eql 'data'
+          expect(meta_data_node.xpath('namespace:test').text).to eql 'data'
         end
 
         it 'adds meta node with correct namespace to test-meta-data node' do
-          expect(meta_data_node.xpath('test:meta').text).to eql 'data'
+          expect(meta_data_node.xpath('namespace:meta').text).to eql 'data'
         end
       end
 

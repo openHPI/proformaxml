@@ -142,7 +142,8 @@ RSpec.describe Proforma::Importer do
       end
 
       context 'when test has meta-data' do
-        let(:task) { build(:task, tests: build_list(:test, 1, :with_meta_data)) }
+        let(:export_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
+        let(:task) { build(:task, tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', test: 'data'}})) }
 
         it 'successfully imports the task' do
           expect(imported_task).to be_an_equal_task_as ref_task

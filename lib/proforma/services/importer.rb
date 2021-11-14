@@ -83,7 +83,7 @@ module Proforma
 
     def set_meta_data
       meta_data_node = @task_node.xpath('xmlns:meta-data')
-      @task.meta_data = any_data_tag(meta_data_node.first) unless meta_data_node.blank?
+      @task.meta_data = meta_data(meta_data_node) if meta_data_node.text.present?
     end
 
     def add_model_solution(model_solution_node)
