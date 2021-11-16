@@ -52,7 +52,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
-  spec.add_development_dependency 'rubocop', '~> 1.22.0'
+  spec.add_development_dependency 'rubocop', '~> 1.23.0'
   spec.add_development_dependency 'rubocop-rspec', '~> 2.6.0'
   spec.add_development_dependency 'simplecov', '~> 0.21.2'
+  spec.metadata = {
+    'rubygems_mfa_required' => 'true'
+  }
 end
