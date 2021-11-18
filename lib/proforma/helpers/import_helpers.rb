@@ -94,10 +94,6 @@ module Proforma
             any_data[key.to_sym].merge! set_any_meta_data(node.name, node) if node.node_type == Nokogiri::XML::Node::ELEMENT_NODE
           end
         end
-
-
-        # meta_data[namespace.to_sym] = meta_data[namespace.to_sym] || {}
-        # meta_data[namespace.to_sym][key.to_sym] = value
       end
 
       private
