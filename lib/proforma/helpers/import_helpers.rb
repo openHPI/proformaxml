@@ -74,30 +74,30 @@ module Proforma
         files_from_filerefs(test_configuration_node.search('filerefs'))
       end
 
-      def any_data_tag(any_data_node)
-        [].tap do |any_data|
-          return any_data if any_data_node.nil?
-
-          any_data_node.children.each do |any_data_tag|
-            any_data << {namespace: any_data_node.children.first.namespace.prefix, key: any_data_tag.name,
-                         value: any_data_tag.children.first.text}
-          end
-        end
-      end
-
       def meta_data(meta_data_node)
         {}.tap do |any_data|
           return any_data if meta_data_node.nil?
 
           meta_data_node.children.each do |any_data_tag|
-            set_any_meta_data(any_data, meta_data_node.children.first.namespace.prefix, any_data_tag.name, any_data_tag.children.first.text)
+            inner_hash = set_any_meta_data(any_data_tag.name, any_data_tag)
+            namespace_hash = any_data[any_data_tag.namespace.prefix.to_sym] || {}
+            namespace_hash.merge! inner_hash
+            any_data[any_data_tag.namespace.prefix.to_sym] = namespace_hash
           end
         end
       end
 
-      def set_any_meta_data(meta_data, namespace, key, value)
-        meta_data[namespace.to_sym] = meta_data[namespace.to_sym] || {}
-        meta_data[namespace.to_sym][key.to_sym] = value
+      def set_any_meta_data(key, any_data_node)
+        {}.tap do |any_data|
+          any_data_node.children.each do |node|
+            any_data[key.to_sym] = node.node_type == Nokogiri::XML::Node::TEXT_NODE ? node.text : any_data[key.to_sym] || {}
+            any_data[key.to_sym].merge! set_any_meta_data(node.name, node) if node.node_type == Nokogiri::XML::Node::ELEMENT_NODE
+          end
+        end
+
+
+        # meta_data[namespace.to_sym] = meta_data[namespace.to_sym] || {}
+        # meta_data[namespace.to_sym][key.to_sym] = value
       end
 
       private

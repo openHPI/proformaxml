@@ -131,6 +131,37 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'populated task node'
     end
 
+    context 'when task has meta_data' do
+      let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
+      let(:task) do
+        build(:task, :populated, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}})
+      end
+      let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:meta-data') }
+
+      it_behaves_like 'task node'
+      it_behaves_like 'populated task node'
+
+      it 'adds meta-data node task node' do
+        expect(meta_data_node).to have(1).items
+      end
+
+      it 'adds two children nodes to meta-data node' do
+        expect(meta_data_node.children).to have(2).items
+      end
+
+      it 'adds meta node with correct namespace to meta-data node' do
+        expect(meta_data_node.xpath('namespace:meta').text).to eql 'data'
+      end
+
+      it 'adds nested test node with correct namespace to meta-data node' do
+        expect(meta_data_node.xpath('namespace:nested/namespace:foo').text).to eql 'bar'
+      end
+
+      it 'adds multiple times nested node with correct namespace to meta-data node' do
+        expect(meta_data_node.xpath('namespace:nested/namespace:test/namespace:abc').text).to eql '123'
+      end
+    end
+
     context 'when a populated task with embedded text file is supplied' do
       let(:task) { build(:task, :populated, :with_embedded_txt_file) }
       let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
@@ -282,7 +313,8 @@ RSpec.describe Proforma::Exporter do
       context 'when test has meta-data' do
         let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
         let(:task) do
-          build(:task, :populated, tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', test: 'data'}}))
+          build(:task, :populated,
+                tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}))
         end
         let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration/xmlns:test-meta-data') }
 
@@ -296,12 +328,16 @@ RSpec.describe Proforma::Exporter do
           expect(meta_data_node.children).to have(2).items
         end
 
-        it 'adds test node with correct namespace to test-meta-data node' do
-          expect(meta_data_node.xpath('namespace:test').text).to eql 'data'
-        end
-
         it 'adds meta node with correct namespace to test-meta-data node' do
           expect(meta_data_node.xpath('namespace:meta').text).to eql 'data'
+        end
+
+        it 'adds nested node with correct namespace to test-meta-data node' do
+          expect(meta_data_node.xpath('namespace:nested/namespace:foo').text).to eql 'bar'
+        end
+
+        it 'adds multiple times nested node with correct namespace to test-meta-data node' do
+          expect(meta_data_node.xpath('namespace:nested/namespace:test/namespace:abc').text).to eql '123'
         end
       end
 

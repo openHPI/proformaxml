@@ -52,7 +52,12 @@ module Proforma
         meta_data&.each do |namespace, data|
           data.each do |key, value|
             xml[namespace].send("#{key}_", value) if value.is_a? String
-            inner_meta_data(xml, namespace, value) if value.is_a? Hash
+
+            next unless value.is_a? Hash
+
+            xml[namespace].send("#{key}_") do |meta_data_xml|
+              inner_meta_data(meta_data_xml, namespace, value)
+            end
           end
         end
       end

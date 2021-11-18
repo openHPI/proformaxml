@@ -48,6 +48,14 @@ RSpec.describe 'equal_task matcher' do
       end
     end
 
+    context 'with a tiny change in the nested meta_data' do
+      before { task.meta_data[:namespace][:nested][:test] = 'doto' }
+
+      it 'fails' do
+        expect(task).not_to be_an_equal_task_as task2
+      end
+    end
+
     context 'with a tiny change in a file' do
       before { task.files.first.content += 'a' }
 

@@ -81,6 +81,15 @@ RSpec.describe Proforma::Importer do
       end
     end
 
+    context 'when task has meta-data' do
+      let(:export_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
+      let(:task) { build(:task, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}) }
+
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
+    end
+
     context 'when task has an embedded text file' do
       let(:task) { build(:task, :with_embedded_txt_file) }
 
@@ -143,7 +152,9 @@ RSpec.describe Proforma::Importer do
 
       context 'when test has meta-data' do
         let(:export_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
-        let(:task) { build(:task, tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', test: 'data'}})) }
+        let(:task) do
+          build(:task, tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}))
+        end
 
         it 'successfully imports the task' do
           expect(imported_task).to be_an_equal_task_as ref_task
