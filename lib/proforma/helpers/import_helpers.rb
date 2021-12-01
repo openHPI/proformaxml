@@ -58,7 +58,7 @@ module Proforma
         test.files = test_files_from_test_configuration(test_configuration_node)
         test.configuration = extra_configuration_from_test_configuration(test_configuration_node)
         meta_data_node = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
-        test.meta_data = meta_data(meta_data_node) unless meta_data_node.blank?
+        test.meta_data = meta_data(meta_data_node, use_namespace: true) unless meta_data_node.blank?
       end
 
       def extra_configuration_from_test_configuration(test_configuration_node)
@@ -74,24 +74,17 @@ module Proforma
         files_from_filerefs(test_configuration_node.search('filerefs'))
       end
 
-      def meta_data(meta_data_node)
-        {}.tap do |any_data|
-          return any_data if meta_data_node.nil?
-
-          meta_data_node.children.each do |any_data_tag|
-            inner_hash = set_any_meta_data(any_data_tag.name, any_data_tag)
-            namespace_hash = any_data[any_data_tag.namespace.prefix.to_sym] || {}
-            namespace_hash.merge! inner_hash
-            any_data[any_data_tag.namespace.prefix.to_sym] = namespace_hash
-          end
-        end
-      end
-
-      def set_any_meta_data(key, any_data_node)
+      def meta_data(any_data_node, use_namespace: false)
+        # use_namespace forces the use of the namespace as hash key - it should only be used at the entry of the recursion
         {}.tap do |any_data|
           any_data_node.children.each do |node|
-            any_data[key.to_sym] = node.node_type == Nokogiri::XML::Node::TEXT_NODE ? node.text : any_data[key.to_sym] || {}
-            any_data[key.to_sym].merge! set_any_meta_data(node.name, node) if node.node_type == Nokogiri::XML::Node::ELEMENT_NODE
+            key = (use_namespace ? node.namespace.prefix : any_data_node.name).to_sym
+            any_data[key.to_sym] = if node.node_type == Nokogiri::XML::Node::TEXT_NODE
+                                     node.text
+                                   else
+                                     # preserve any existing data in the nested hash
+                                     (any_data[key.to_sym] || {}).merge meta_data(node)
+                                   end
           end
         end
       end

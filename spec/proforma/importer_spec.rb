@@ -81,6 +81,14 @@ RSpec.describe Proforma::Importer do
       end
     end
 
+    context 'when task has no meta-data' do
+      let(:task) { build(:task, meta_data: {}) }
+
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
+    end
+
     context 'when task has meta-data' do
       let(:export_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
       let(:task) { build(:task, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}) }

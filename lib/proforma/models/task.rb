@@ -16,6 +16,7 @@ module Proforma
       self.files = [] if files.nil?
       self.tests = [] if tests.nil?
       self.model_solutions = [] if model_solutions.nil?
+      self.meta_data = {} if meta_data.nil?
     end
 
     def all_files
