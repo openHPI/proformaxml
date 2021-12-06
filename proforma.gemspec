@@ -38,10 +38,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activemodel', '>= 5.2.3', '< 6.2.0'
-  spec.add_dependency 'activesupport', '>= 5.2.3', '< 6.2.0'
-  spec.add_dependency 'nokogiri', '>= 1.10.2', '< 1.13.0'
-  spec.add_dependency 'rubyzip', '>= 1.2.2', '< 2.4.0'
+  spec.add_dependency 'activemodel', '>= 5.2.3', '< 7.0.0'
+  spec.add_dependency 'activesupport', '>= 5.2.3', '< 7.0.0'
+  spec.add_dependency 'nokogiri', '>= 1.10.2', '< 2.0.0'
+  spec.add_dependency 'rubyzip', '>= 1.2.2', '< 3.0.0'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'factory_bot', '~> 6.2.0'
@@ -52,7 +52,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
-  spec.add_development_dependency 'rubocop', '~> 1.22.0'
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.5.0'
+  spec.add_development_dependency 'rubocop', '~> 1.23.0'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.6.0'
   spec.add_development_dependency 'simplecov', '~> 0.21.2'
+  spec.metadata = {
+    'rubygems_mfa_required' => 'true'
+  }
 end
