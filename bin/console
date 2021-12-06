@@ -25,7 +25,7 @@ Pry.start
 #   uuid: SecureRandom.uuid,
 #   language: 'de',
 #   meta_data: {
-#     openHPI: {
+#     CodeOcean: {
 #       metao: 'datao',
 #       bla: 'bloo',
 #       secrets: {
@@ -73,19 +73,15 @@ Pry.start
 #         )
 #       ],
 #       meta_data: {
-#         openHPI: {
+#         CodeOcean: {
 #           meta: 'data'
 #         }
 #       }
-#       # meta_data: [
-#       #   { namespace: 'openHPI', key: 'meta', value: 'data' }
-#       # ]
 #     )
 #   ]
 # )
 
+# task = Proforma::Task.new(title: 't', description: 'd', internal_description:'id', proglang: { name: 'Ruby', version: '1' }, uuid: SecureRandom.uuid, language: 'de', meta_data: { CodeOcean: { metao: 'datao', bla: 'bloo', secrets: { server_key: 'asdf', other_key: 'fdsa' } } }, files: [Proforma::TaskFile.new(id: 'file1', content: 'c', used_by_grader: true, visible: 'yes', binary: false)], model_solutions: [Proforma::ModelSolution.new(id: 'ms1', description: 'd', internal_description:'id', files: [Proforma::TaskFile.new(id: 'ms-file1', content: 'ms-c', used_by_grader: true, visible: 'yes', binary: false)])], tests: [Proforma::Test.new(id: 'test1', test_type: 'type', files: [Proforma::TaskFile.new(id: 'testfile1', content: 'testc', used_by_grader: true, visible: 'yes', binary: false)], meta_data: { CodeOcean: { meta: 'data' } })])
 
-# task = Proforma::Task.new(title: 't', description: 'd', internal_description:'id', proglang: { name: 'Ruby', version: '1' }, uuid: SecureRandom.uuid, language: 'de', files: [Proforma::TaskFile.new(id: 'file1', content: 'c', used_by_grader: true, visible: 'yes', binary: false)], model_solutions: [Proforma::ModelSolution.new(id: 'ms1', description: 'd', internal_description:'id', files: [Proforma::TaskFile.new(id: 'ms-file1', content: 'ms-c', used_by_grader: true, visible: 'yes', binary: false)])], tests: [Proforma::Test.new(id: 'test1', test_type: 'type', files: [Proforma::TaskFile.new(id: 'testfile1', content: 'testc', used_by_grader: true, visible: 'yes', binary: false)], meta_data: [{ namespace: 'openHPI', key: 'meta', value: 'data' }])])
-
-# File.open('../testfiles/testfile.zip', 'wb') { |file| file.write(Proforma::Exporter.new(task: task, custom_namespaces: [{prefix: 'openHPI', uri: 'open.hpi.de'}]).perform.string) }
+# File.open('../testfiles/testfile.zip', 'wb') { |file| file.write(Proforma::Exporter.new(task: task, custom_namespaces: [{prefix: 'CodeOcean', uri: 'codeocean.openhpi.de'}]).perform.string) }
 #

@@ -39,6 +39,7 @@ module Proforma
         data.each do |key, value|
           case value.class.name
           when 'Hash'
+            # underscore is used to disambiguate tag names from ruby methods
             xml[namespace].send("#{key}_") do |meta_data_xml|
               inner_meta_data(meta_data_xml, namespace, value)
             end
@@ -49,7 +50,6 @@ module Proforma
       end
 
       def meta_data(xml, meta_data)
-        # underscore is used to disambiguate tag names from ruby methods
         meta_data&.each do |namespace, data|
           inner_meta_data(xml, namespace, data)
         end
