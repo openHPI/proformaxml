@@ -25,6 +25,14 @@ RSpec.describe 'equal_task matcher' do
     end
   end
 
+  context 'when only one task has a file' do
+    let(:task2) { build(:task, files: [build(:task_file)]) }
+
+    it 'fails the comparison' do
+      expect(task).not_to be_an_equal_task_as task2
+    end
+  end
+
   context 'when the tasks are complex' do
     let(:task) { build(:task, :with_everything) }
     let(:task2) { build(:task, :with_everything) }

@@ -50,7 +50,7 @@ module Proforma
       end
 
       def meta_data(xml, meta_data)
-        meta_data&.each do |namespace, data|
+        meta_data.each do |namespace, data|
           inner_meta_data(xml, namespace, data)
         end
       end
