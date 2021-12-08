@@ -79,12 +79,12 @@ module Proforma
         {}.tap do |any_data|
           any_data_node.children.each do |node|
             key = (use_namespace ? node.namespace.prefix : any_data_node.name).to_sym
-            any_data[key.to_sym] = if node.node_type == Nokogiri::XML::Node::TEXT_NODE
-                                     node.text
-                                   else
-                                     # preserve any existing data in the nested hash
-                                     (any_data[key.to_sym] || {}).merge meta_data(node)
-                                   end
+            any_data[key] = if node.node_type == Nokogiri::XML::Node::TEXT_NODE
+                              node.text
+                            else
+                              # preserve any existing data in the nested hash
+                              (any_data[key] || {}).merge meta_data(node)
+                            end
           end
         end
       end
