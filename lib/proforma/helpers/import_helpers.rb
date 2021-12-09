@@ -58,7 +58,7 @@ module Proforma
         test.files = test_files_from_test_configuration(test_configuration_node)
         test.configuration = extra_configuration_from_test_configuration(test_configuration_node)
         meta_data_node = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
-        test.meta_data = any_data_tag(meta_data_node.first) unless meta_data_node.blank?
+        test.meta_data = meta_data(meta_data_node, use_namespace: true) unless meta_data_node.blank?
       end
 
       def extra_configuration_from_test_configuration(test_configuration_node)
@@ -74,13 +74,17 @@ module Proforma
         files_from_filerefs(test_configuration_node.search('filerefs'))
       end
 
-      def any_data_tag(any_data_node)
-        [].tap do |any_data|
-          return any_data if any_data_node.nil?
-
-          any_data_node.children.each do |any_data_tag|
-            any_data << {namespace: any_data_node.children.first.namespace.prefix, key: any_data_tag.name,
-                         value: any_data_tag.children.first.text}
+      def meta_data(any_data_node, use_namespace: false)
+        # use_namespace forces the use of the namespace as hash key - it should only be used at the entry of the recursion
+        {}.tap do |any_data|
+          any_data_node.children.each do |node|
+            key = (use_namespace ? node.namespace.prefix : any_data_node.name).to_sym
+            any_data[key] = if node.node_type == Nokogiri::XML::Node::TEXT_NODE
+                              node.text
+                            else
+                              # preserve any existing data in the nested hash
+                              (any_data[key] || {}).merge meta_data(node)
+                            end
           end
         end
       end

@@ -11,7 +11,7 @@ This gem offers a ruby implementation of https://github.com/ProFormA/proformaxml
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'proforma', git: 'git://github.com/openHPI/proforma.git', tag: 'v0.5'
+gem 'proforma', git: 'git://github.com/openHPI/proforma.git', tag: 'v0.7'
 ```
 
 And then execute:
@@ -52,6 +52,15 @@ Proforma::Task.new(
   description: 'description',
   internal_description: 'internal_description',
   proglang: {name: 'proglang_name', version: '123'},
+  meta_data: {
+    CodeOcean: {
+      meta_data_key: 'meta_data_content',
+      secrets: {
+        server_key: 'the key',
+        other_key: 'another key'
+      }
+    }
+  },
   files: [
     Proforma::TaskFile.new(
       id: 'file_id_1',
@@ -91,7 +100,11 @@ Proforma::Task.new(
           internal_description: 'internal_description',
         )
       ],
-      meta_data: [{ namespace: 'prefix', key: 'key', value: 'value' }]
+      meta_data: {
+        CodeOcean: {
+          entry_point: 'junit/assert123.java'
+        }
+      }
     )
   ],
   uuid: '2c8ee23e-fa98-4ea9-b6a5-9a0066ebac1f',
@@ -117,10 +130,10 @@ Proforma::Task.new(
 )
 
 ```
-Generated XML from task above with `custom_namespaces: [{prefix: 'prefix', uri: 'test.namespace'}]`
+Generated XML from task above with `custom_namespaces: [{prefix: 'CodeOcean', uri: 'codeocean.openhpi.de'}]`
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<task xmlns="urn:proforma:v2.0.1" xmlns:prefix="test.namespace" uuid="2c8ee23e-fa98-4ea9-b6a5-9a0066ebac1f" lang="de" parent-uuid="abf097f5-0df0-468d-8ce4-13460c34cd3b">
+<task xmlns="urn:proforma:v2.0.1" xmlns:CodeOcean="codeocean.openhpi.de" uuid="2c8ee23e-fa98-4ea9-b6a5-9a0066ebac1f" lang="de" parent-uuid="abf097f5-0df0-468d-8ce4-13460c34cd3b">
   <title>title</title>
   <description>description</description>
   <internal-description>internal_description</internal-description>
@@ -160,12 +173,18 @@ Generated XML from task above with `custom_namespaces: [{prefix: 'prefix', uri: 
           <fileref refid="test_file_1"/>
         </filerefs>
         <test-meta-data>
-          <prefix:key>value</prefix:key>
+          <CodeOcean:entry_point>junit/assert123.java</CodeOcean:entry_point>
         </test-meta-data>
       </test-configuration>
     </test>
   </tests>
-  <meta-data/>
+  <meta-data>
+    <CodeOcean:meta_data_key>meta_data_content</CodeOcean:meta_data_key>
+    <CodeOcean:secrets>
+      <CodeOcean:server_key>the key</CodeOcean:server_key>
+      <CodeOcean:other_key>another key</CodeOcean:other_key>
+    </CodeOcean:secrets>
+  </meta-data>
 </task>
 ```
 ## Development

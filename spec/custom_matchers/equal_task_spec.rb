@@ -25,6 +25,14 @@ RSpec.describe 'equal_task matcher' do
     end
   end
 
+  context 'when only one task has a file' do
+    let(:task2) { build(:task, files: [build(:task_file)]) }
+
+    it 'fails the comparison' do
+      expect(task).not_to be_an_equal_task_as task2
+    end
+  end
+
   context 'when the tasks are complex' do
     let(:task) { build(:task, :with_everything) }
     let(:task2) { build(:task, :with_everything) }
@@ -38,6 +46,22 @@ RSpec.describe 'equal_task matcher' do
 
     it 'successfully compares the tasks' do
       expect(task).to be_an_equal_task_as task2
+    end
+
+    context 'with a tiny change in the meta_data' do
+      before { task.meta_data[:namespace][:meta] = 'doto' }
+
+      it 'fails' do
+        expect(task).not_to be_an_equal_task_as task2
+      end
+    end
+
+    context 'with a tiny change in the nested meta_data' do
+      before { task.meta_data[:namespace][:nested][:test] = 'doto' }
+
+      it 'fails' do
+        expect(task).not_to be_an_equal_task_as task2
+      end
     end
 
     context 'with a tiny change in a file' do
@@ -63,6 +87,14 @@ RSpec.describe 'equal_task matcher' do
         expect(task).not_to be_an_equal_task_as task2
       end
     end
+
+    context 'with a tiny change in a test meta_data' do
+      before { task.tests.first.meta_data[:test_meta] = 'diti' }
+
+      it 'fails' do
+        expect(task).not_to be_an_equal_task_as task2
+      end
+    end
   end
 
   context 'with two similar tasks with 3 files' do
@@ -78,7 +110,7 @@ RSpec.describe 'equal_task matcher' do
       expect(task).to be_an_equal_task_as task2
     end
 
-    context 'when both tasks have two equal exercises, but are still different' do
+    context 'when both tasks have two equal files, but are still different' do
       let(:files_3_id) { 2 }
       let(:files2_3_id) { 1 }
 

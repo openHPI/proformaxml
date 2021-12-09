@@ -20,7 +20,7 @@ FactoryBot.define do
     end
 
     trait(:with_meta_data) do
-      meta_data { [{namespace: 'test', key: 'meta', value: 'data'}] }
+      meta_data { {namespace: {test_meta: 'data', test: 'test_data'}} }
     end
 
     trait(:with_multiple_files) do

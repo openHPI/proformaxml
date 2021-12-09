@@ -43,6 +43,7 @@ module Proforma
       set_files
       set_model_solutions
       set_tests
+      set_meta_data
     end
 
     def set_namespaces
@@ -78,6 +79,11 @@ module Proforma
       @task_node.search('model-solutions//model-solution').each do |model_solution_node|
         add_model_solution model_solution_node
       end
+    end
+
+    def set_meta_data
+      meta_data_node = @task_node.xpath('xmlns:meta-data')
+      @task.meta_data = meta_data(meta_data_node, use_namespace: true) if meta_data_node.text.present?
     end
 
     def add_model_solution(model_solution_node)

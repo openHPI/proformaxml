@@ -9,13 +9,14 @@ require 'proforma/errors'
 module Proforma
   class Task < Base
     attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid,
-                  :language, :model_solutions, :files, :tests
+                  :language, :model_solutions, :files, :tests, :meta_data
 
     def initialize(attributes = {})
       super
       self.files = [] if files.nil?
       self.tests = [] if tests.nil?
       self.model_solutions = [] if model_solutions.nil?
+      self.meta_data = {} if meta_data.nil?
     end
 
     def all_files

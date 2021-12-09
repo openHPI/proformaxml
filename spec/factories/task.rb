@@ -17,6 +17,7 @@ FactoryBot.define do
     trait(:with_embedded_bin_file) { files { build_list(:task_file, 1, :populated, :small_content, :binary) } }
     trait(:with_attached_txt_file) { files { build_list(:task_file, 1, :populated, :large_content, :text) } }
     trait(:with_attached_bin_file) { files { build_list(:task_file, 1, :populated, :large_content, :binary) } }
+    trait(:with_meta_data) { meta_data { {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}} } }
 
     trait(:with_model_solution) { model_solutions { build_list(:model_solution, 1, :populated) } }
     trait(:with_test) { tests { build_list(:test, 1, :populated) } }
@@ -26,6 +27,7 @@ FactoryBot.define do
       with_multiple_embedded_txt_files
       with_model_solution
       with_test_with_meta_data
+      with_meta_data
     end
 
     trait(:invalid) { files { build_list(:task_file, 1, :invalid) } }

@@ -47,7 +47,7 @@ module Proforma
     end
 
     def add_meta_data(xml)
-      xml.send('meta-data') {}
+      xml.send('meta-data') { meta_data(xml, @task.meta_data) }
     end
 
     def add_objects_to_xml(xml)
