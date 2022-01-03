@@ -52,6 +52,6 @@ RSpec::Matchers.define :be_an_equal_task_as do |task2|
   # rubocop:enable Metrics/MethodLength
 
   def attributes(object)
-    object.instance_variables.map { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }.to_h
+    object.instance_variables.to_h { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }
   end
 end
