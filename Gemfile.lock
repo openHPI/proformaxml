@@ -1,23 +1,22 @@
 PATH
   remote: .
   specs:
-    proforma (0.7)
+    proforma (0.7.1)
       activemodel (>= 5.2.3, < 8.0.0)
-      activesupport (>= 5.2.3, < 7.0.0)
+      activesupport (>= 5.2.3, < 8.0.0)
       nokogiri (>= 1.10.2, < 2.0.0)
       rubyzip (>= 1.2.2, < 3.0.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (6.1.4.4)
-      activesupport (= 6.1.4.4)
-    activesupport (6.1.4.4)
+    activemodel (7.0.0)
+      activesupport (= 7.0.0)
+    activesupport (7.0.0)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     ast (2.4.2)
     byebug (11.1.3)
     coderay (1.1.3)
@@ -112,11 +111,10 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.3)
-    thor (1.1.0)
+    thor (1.2.1)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.1.0)
-    zeitwerk (2.5.3)
 
 PLATFORMS
   ruby
