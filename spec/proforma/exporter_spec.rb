@@ -414,11 +414,11 @@ RSpec.describe Proforma::Exporter do
       end
 
       it 'does not set lang-attribute for task' do
-        expect(xml.xpath('/task').attribute('lang')).to be nil
+        expect(xml.xpath('/task').attribute('lang')).to be_nil
       end
 
       it 'does not set parent-uuid-attribute for task' do
-        expect(xml.xpath('/task').attribute('parent-uuid')).to be nil
+        expect(xml.xpath('/task').attribute('parent-uuid')).to be_nil
       end
 
       it 'does not set internal-description for task' do

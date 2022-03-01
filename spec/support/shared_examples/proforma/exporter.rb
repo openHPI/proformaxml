@@ -102,7 +102,7 @@ RSpec.shared_examples 'task node with attached file' do |text_bin|
   end
 
   it 'adds attached file to zip' do
-    expect(zip_files[file.filename]).not_to be nil
+    expect(zip_files[file.filename]).not_to be_nil
   end
 end
 RSpec.shared_examples 'task node without model-solution with file' do
