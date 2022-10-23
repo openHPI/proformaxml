@@ -3,11 +3,11 @@ on:
   - push
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -22,18 +22,18 @@ jobs:
         run: bundle exec rspec --color --format progress --require spec_helper
 
       - name: Send coverage to CodeClimate
-        uses: paambaati/codeclimate-action@v3.0.0
+        uses: paambaati/codeclimate-action@v3.2.0
         continue-on-error: true
         if: ${{ success() || failure() }}
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
 
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -42,4 +42,13 @@ jobs:
           bundler-cache: true
 
       - name: Run rubocop
-        run: bundle exec rubocop
+        uses: reviewdog/action-rubocop@v2
+        with:
+          filter_mode: nofilter
+          rubocop_version: gemfile
+          rubocop_extensions: rubocop-rspec:gemfile rubocop-performance:gemfile
+          rubocop_flags: --parallel
+          reporter: github-check
+          skip_install: true
+          use_bundler: true
+          fail_on_error: true
