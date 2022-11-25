@@ -38,7 +38,7 @@ RSpec.describe Proforma::Validator do
   describe '#perform' do
     subject(:perform) { validator.perform }
 
-    let(:zip_file) { Proforma::Exporter.new(task: task, version: export_version).perform }
+    let(:zip_file) { Proforma::Exporter.new(task:, version: export_version).perform }
     let(:zip_content) do
       {}.tap do |hash|
         Zip::InputStream.open(zip_file) do |io|

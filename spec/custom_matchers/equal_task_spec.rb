@@ -98,7 +98,7 @@ RSpec.describe 'equal_task matcher' do
   end
 
   context 'with two similar tasks with 3 files' do
-    let(:task) { build(:task, files: files) }
+    let(:task) { build(:task, files:) }
     let(:task2) { build(:task, files: files2) }
 
     let(:files) { [build(:task_file, id: 1), build(:task_file, id: 2), build(:task_file, id: files_3_id)] }

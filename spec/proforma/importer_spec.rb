@@ -8,7 +8,7 @@ RSpec.describe Proforma::Importer do
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
 
     before do
-      zip_file.write(Proforma::Exporter.new(task: task).perform.string.force_encoding('UTF-8'))
+      zip_file.write(Proforma::Exporter.new(task:).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 
@@ -29,7 +29,7 @@ RSpec.describe Proforma::Importer do
     end
 
     context 'with a specific expected_version' do
-      subject(:importer) { described_class.new(zip: zip_file, expected_version: expected_version) }
+      subject(:importer) { described_class.new(zip: zip_file, expected_version:) }
 
       let(:expected_version) { '2.0' }
 
@@ -52,7 +52,7 @@ RSpec.describe Proforma::Importer do
     let(:export_namespaces) { [] }
 
     before do
-      zip_file.write(Proforma::Exporter.new(task: task, custom_namespaces: export_namespaces,
+      zip_file.write(Proforma::Exporter.new(task:, custom_namespaces: export_namespaces,
                                             version: export_version).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
@@ -189,7 +189,7 @@ RSpec.describe Proforma::Importer do
     end
 
     context 'when task has everything set and multiples of every object' do
-      let(:task) { build(:task, :populated, files: files, tests: tests, model_solutions: model_solutions) }
+      let(:task) { build(:task, :populated, files:, tests:, model_solutions:) }
       let(:files) { build_list(:task_file, 2, :populated, :small_content, :text) }
       let(:tests) { build_list(:test, 2, :populated, :with_multiple_files) }
       let(:model_solutions) { build_list(:model_solution, 2, :populated, :with_multiple_files) }
@@ -201,7 +201,7 @@ RSpec.describe Proforma::Importer do
     end
 
     context 'with a specific expected_version' do
-      let(:importer) { described_class.new(zip: zip_file, expected_version: expected_version) }
+      let(:importer) { described_class.new(zip: zip_file, expected_version:) }
       let(:expected_version) { '2.0' }
 
       context 'when export_version is the same as expected_version' do

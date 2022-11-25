@@ -47,7 +47,7 @@ module Proforma
     end
 
     def set_namespaces
-      @custom_namespaces = @doc.namespaces.reject { |k, _| k == 'xmlns' }.map { |k, v| {prefix: k[6..], uri: v} }
+      @custom_namespaces = @doc.namespaces.except('xmlns').map { |k, v| {prefix: k[6..], uri: v} }
     end
 
     def set_base_data

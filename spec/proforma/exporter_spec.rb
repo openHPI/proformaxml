@@ -2,7 +2,7 @@
 
 RSpec.describe Proforma::Exporter do
   describe '.new' do
-    subject(:exporter) { described_class.new(task: task) }
+    subject(:exporter) { described_class.new(task:) }
 
     let(:task) { build(:task) }
 
@@ -34,7 +34,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     context 'with specific version' do
-      subject(:exporter) { described_class.new(task: task, version: version) }
+      subject(:exporter) { described_class.new(task:, version:) }
 
       let(:version) { '2.0' }
 
@@ -44,7 +44,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     context 'with a custom namespace' do
-      subject(:exporter) { described_class.new(task: task, custom_namespaces: custom_namespaces) }
+      subject(:exporter) { described_class.new(task:, custom_namespaces:) }
 
       let(:custom_namespaces) { [namespace] }
       let(:namespace) { {prefix: 'test', uri: 'test.com'} }
@@ -58,7 +58,7 @@ RSpec.describe Proforma::Exporter do
   describe '#perform' do
     subject(:perform) { exporter.perform }
 
-    let(:exporter) { described_class.new(task: task, custom_namespaces: custom_namespaces) }
+    let(:exporter) { described_class.new(task:, custom_namespaces:) }
     let(:task) { build(:task) }
 
     let(:zip_files) do
@@ -447,7 +447,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     context 'when a specific version is supplied' do
-      let(:exporter) { described_class.new(task: task, version: version) }
+      let(:exporter) { described_class.new(task:, version:) }
 
       context 'when version is 2.0.1' do
         let(:version) { '2.0.1' }

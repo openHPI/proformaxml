@@ -14,7 +14,7 @@ module Proforma
         value = value_from_node(name, node, attribute)
         return if check_presence && !value.present?
 
-        set_value(object: object, name: (name.is_a?(Array) ? name[1] : name).underscore, value: value)
+        set_value(object:, name: (name.is_a?(Array) ? name[1] : name).underscore, value:)
       end
 
       def set_value(object:, name:, value:)
@@ -36,7 +36,7 @@ module Proforma
 
       def attached_file_attributes(attributes, file_tag)
         filename = file_tag.text
-        shared_file_attributes(attributes, file_tag).merge(filename: filename,
+        shared_file_attributes(attributes, file_tag).merge(filename:,
                                                            content: filestring_from_zip(filename))
       end
 
@@ -47,9 +47,9 @@ module Proforma
           visible: attributes['visible']&.value,
           binary: /-bin-file/.match?(file_tag.name)
         }.tap do |hash|
-          set_hash_value_if_present(hash: hash, name: 'usage-by-lms', attributes: attributes)
+          set_hash_value_if_present(hash:, name: 'usage-by-lms', attributes:)
           set_value_from_xml(object: hash, node: file_tag.parent, name: 'internal-description')
-          set_hash_value_if_present(hash: hash, name: 'mimetype', attributes: attributes)
+          set_hash_value_if_present(hash:, name: 'mimetype', attributes:)
         end
       end
 
