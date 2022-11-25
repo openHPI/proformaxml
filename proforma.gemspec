@@ -54,7 +54,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
   spec.add_development_dependency 'rubocop', '~> 1.37.1'
   spec.add_development_dependency 'rubocop-performance', '~> 1.15.0'
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.14.1'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.15.0'
   spec.add_development_dependency 'simplecov', '~> 0.21.2'
   spec.metadata = {
     'rubygems_mfa_required' => 'true'
