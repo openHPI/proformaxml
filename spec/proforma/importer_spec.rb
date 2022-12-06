@@ -213,7 +213,7 @@ RSpec.describe Proforma::Importer do
       end
 
       context 'when expected_version is different from the export_version' do
-        let(:export_version) { '2.0.1' }
+        let(:export_version) { '2.1' }
 
         it 'raises an error' do
           expect { perform }.to raise_error Proforma::PreImportValidationError
@@ -230,8 +230,8 @@ RSpec.describe Proforma::Importer do
         end
       end
 
-      context 'when exported_version is set to 2.0.1' do
-        let(:export_version) { '2.0.1' }
+      context 'when exported_version is set to 2.1' do
+        let(:export_version) { '2.1' }
 
         it 'does not raise an error' do
           expect { perform }.not_to raise_error

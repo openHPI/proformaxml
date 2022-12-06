@@ -74,7 +74,7 @@ RSpec.describe Proforma::Validator do
       end
 
       context 'when export_version is different' do
-        let(:export_version) { '2.0.1' }
+        let(:export_version) { '2.1' }
 
         it { is_expected.to include Nokogiri::XML::SyntaxError }
       end

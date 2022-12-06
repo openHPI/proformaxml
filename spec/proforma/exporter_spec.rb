@@ -15,22 +15,11 @@ RSpec.describe Proforma::Exporter do
     end
 
     it 'assigns version' do
-      expect(exporter.instance_variable_get(:@version)).to eql '2.0.1'
+      expect(exporter.instance_variable_get(:@version)).to eql '2.1'
     end
 
     it 'assigns custom_namespaces' do
       expect(exporter.instance_variable_get(:@custom_namespaces)).to be_empty
-    end
-
-    it 'sets placeholder ModelSolution' do
-      expect(exporter.instance_variable_get(:@task).model_solutions).to have_exactly(1).item
-    end
-
-    it 'sets params of placeholder ModelSolution' do
-      expect(exporter.instance_variable_get(:@task).model_solutions.first).to have_attributes(
-        id: 'ms-placeholder',
-        files: contain_exactly(have_attributes(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no'))
-      )
     end
 
     context 'with specific version' do
@@ -73,8 +62,6 @@ RSpec.describe Proforma::Exporter do
 
     let(:doc) { Nokogiri::XML(zip_files['task.xml'], &:noblanks) }
     let(:xml) { doc.remove_namespaces! }
-    let(:placeholder_file) { task.all_files.filter { |file| file.id == 'ms-placeholder-file' }.first }
-    let(:model_solution) { task.model_solutions.first }
     let(:custom_namespaces) { [] }
 
     it_behaves_like 'task node'
@@ -94,26 +81,12 @@ RSpec.describe Proforma::Exporter do
       expect(xml.xpath('/task/proglang').attribute('version').value).to eql ''
     end
 
-    it 'adds id attribute to file node' do
-      expect(xml.xpath('/task/files/file').attribute('id').value).to eql placeholder_file.id
+    it 'adds no model-solutions node' do
+      expect(xml.xpath('/task/model-solutions')).to have(0).item
     end
 
-    it 'adds used-by-grader attribute to file node' do
-      expect(xml.xpath('/task/files/file').attribute('used-by-grader').value).to eql placeholder_file.used_by_grader.to_s
-    end
-
-    it 'adds visible attribute to file node' do
-      expect(xml.xpath('/task/files/file').attribute('visible').value).to eql placeholder_file.visible
-    end
-
-    it 'adds id attribute to model-solution node' do
-      expect(xml.xpath('/task/model-solutions/model-solution').attribute('id').value).to eql model_solution.id
-    end
-
-    it 'adds refid attribute to fileref' do
-      expect(
-        xml.xpath('/task/model-solutions/model-solution/filerefs/fileref').attribute('refid').value
-      ).to eql model_solution.files.first.id
+    it 'adds mo fileref node to filerefs' do
+      expect(xml.xpath('/task/model-solutions/model-solution/filerefs/fileref')).to have(0).item
     end
 
     context 'with a custom namespace' do
@@ -209,12 +182,13 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'populated task node'
 
       it 'add two file-nodes to files' do
-        expect(xml.xpath('/task/files/file')).to have(3).items
+        expect(xml.xpath('/task/files/file')).to have(2).items
       end
     end
 
     context 'when a populated task with a model-solution is supplied' do
       let(:task) { build(:task, :populated, :with_model_solution) }
+      let(:model_solution) { task.model_solutions.first }
       let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
 
       it_behaves_like 'task node'
@@ -449,11 +423,11 @@ RSpec.describe Proforma::Exporter do
     context 'when a specific version is supplied' do
       let(:exporter) { described_class.new(task:, version:) }
 
-      context 'when version is 2.0.1' do
-        let(:version) { '2.0.1' }
+      context 'when version is 2.1' do
+        let(:version) { '2.1' }
 
         it 'creates a file with the correct version' do
-          expect(doc.namespaces['xmlns']).to eql 'urn:proforma:v2.0.1'
+          expect(doc.namespaces['xmlns']).to eql 'urn:proforma:v2.1'
         end
       end
 
@@ -462,6 +436,18 @@ RSpec.describe Proforma::Exporter do
 
         it 'creates a file with the correct version' do
           expect(doc.namespaces['xmlns']).to eql 'urn:proforma:v2.0'
+        end
+
+        it 'sets placeholder ModelSolution' do
+          expect(exporter.instance_variable_get(:@task).model_solutions).to have_exactly(1).item
+        end
+
+        it 'sets params of placeholder ModelSolution' do
+          expect(exporter.instance_variable_get(:@task).model_solutions.first).to have_attributes(
+            id: 'ms-placeholder',
+            files: contain_exactly(have_attributes(content: '',
+                                                   id: 'ms-placeholder-file', used_by_grader: false, visible: 'no'))
+          )
         end
       end
 

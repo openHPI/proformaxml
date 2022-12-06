@@ -11,7 +11,7 @@ module Proforma
       @task = task
       @custom_namespaces = custom_namespaces
       @version = version || SCHEMA_VERSIONS.first
-      add_placeholders
+      add_placeholders if @version == '2.0'
     end
 
     def perform
@@ -52,7 +52,7 @@ module Proforma
 
     def add_objects_to_xml(xml)
       xml.files { files(xml) }
-      xml.send('model-solutions') { model_solutions(xml) }
+      xml.send('model-solutions') { model_solutions(xml) } if @task.model_solutions.any? || @version == '2.0'
       xml.tests { tests(xml) }
     end
 
@@ -100,7 +100,7 @@ module Proforma
       end
     end
 
-    # ms-placeholder should be able to go as soon as profoma 2.1 is released https://github.com/ProFormA/proformaxml/issues/5
+    # ms-placeholder only necessary for version 2.0 where model-solutions were mandatory
     def add_placeholders
       return if @task.model_solutions&.any?
 
