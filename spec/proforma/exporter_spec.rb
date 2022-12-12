@@ -89,6 +89,34 @@ RSpec.describe Proforma::Exporter do
       expect(xml.xpath('/task/model-solutions/model-solution/filerefs/fileref')).to have(0).item
     end
 
+    context 'with file refs (ProFormA 2.0)' do
+      let(:exporter) { described_class.new(task:, version: '2.0') }
+      let(:placeholder_file) { task.all_files.filter { |file| file.id == 'ms-placeholder-file' }.first }
+      let(:model_solution) { task.model_solutions.first }
+
+      it 'adds id attribute to file node' do
+        expect(xml.xpath('/task/files/file').attribute('id').value).to eql placeholder_file.id
+      end
+
+      it 'adds used-by-grader attribute to file node' do
+        expect(xml.xpath('/task/files/file').attribute('used-by-grader').value).to eql placeholder_file.used_by_grader.to_s
+      end
+
+      it 'adds visible attribute to file node' do
+        expect(xml.xpath('/task/files/file').attribute('visible').value).to eql placeholder_file.visible
+      end
+
+      it 'adds id attribute to model-solution node' do
+        expect(xml.xpath('/task/model-solutions/model-solution').attribute('id').value).to eql model_solution.id
+      end
+
+      it 'adds refid attribute to fileref' do
+        expect(
+          xml.xpath('/task/model-solutions/model-solution/filerefs/fileref').attribute('refid').value
+        ).to eql model_solution.files.first.id
+      end
+    end
+
     context 'with a custom namespace' do
       let(:custom_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
@@ -245,6 +273,7 @@ RSpec.describe Proforma::Exporter do
       it_behaves_like 'task node without model-solution with file'
 
       it_behaves_like 'task node with test'
+      it_behaves_like 'task node with test in ProFormA 2.0'
 
       it 'adds filerefs node to test-configuration node' do
         expect(xml.xpath('/task/tests/test/test-configuration/filerefs')).to have(1).item
@@ -264,6 +293,7 @@ RSpec.describe Proforma::Exporter do
         let(:task) { build(:task, :populated, tests: build_list(:test, 1, :populated, :no_file)) }
 
         it_behaves_like 'task node with test'
+        it_behaves_like 'task node with test in ProFormA 2.0'
 
         it 'does not add filerefs node to test-configuration node' do
           expect(xml.xpath('/task/tests/test/test-configuration/filerefs')).to have(0).items
@@ -274,6 +304,7 @@ RSpec.describe Proforma::Exporter do
         let(:task) { build(:task, :populated, tests: build_list(:test, 1, :populated, files: build_list(:task_file, 2))) }
 
         it_behaves_like 'task node with test'
+        it_behaves_like 'task node with test in ProFormA 2.0'
 
         it 'does not add filerefs node to test-configuration node' do
           expect(xml.xpath('/task/tests/test/test-configuration/filerefs')).to have(1).items
@@ -293,6 +324,7 @@ RSpec.describe Proforma::Exporter do
         let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration/xmlns:test-meta-data') }
 
         it_behaves_like 'task node with test'
+        it_behaves_like 'task node with test in ProFormA 2.0'
 
         it 'adds test-meta-data node to test-configuration node' do
           expect(meta_data_node).to have(1).items
@@ -319,6 +351,7 @@ RSpec.describe Proforma::Exporter do
         let(:task) { build(:task, :populated, tests: build_list(:test, 1)) }
 
         it_behaves_like 'task node with test'
+        it_behaves_like 'task node with test in ProFormA 2.0'
 
         it 'does not add namespace to task' do
           expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:c']).to be_nil
