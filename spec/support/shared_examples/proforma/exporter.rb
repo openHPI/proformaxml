@@ -22,23 +22,7 @@ RSpec.shared_examples 'task node' do
   end
 
   it 'adds file node to files' do
-    expect(xml.xpath('/task/files/file')).to have_at_least(1).item
-  end
-
-  it 'adds model-solutions node' do
-    expect(xml.xpath('/task/model-solutions')).to have(1).item
-  end
-
-  it 'adds model-solution node to model-solutions' do
-    expect(xml.xpath('/task/model-solutions/model-solution')).to have(1).item
-  end
-
-  it 'adds filerefs node to model-solution' do
-    expect(xml.xpath('/task/model-solutions/model-solution/filerefs')).to have(1).item
-  end
-
-  it 'adds fileref node to filerefs' do
-    expect(xml.xpath('/task/model-solutions/model-solution/filerefs/fileref')).to have(1).item
+    expect(xml.xpath('/task/files/file')).to have_at_least(0).item
   end
 
   it 'adds tests node' do
@@ -107,7 +91,7 @@ RSpec.shared_examples 'task node with attached file' do |text_bin|
 end
 RSpec.shared_examples 'task node without model-solution with file' do
   it 'adds file nodes to files' do
-    expect(xml.xpath('/task/files/file')).to have(2).items
+    expect(xml.xpath('/task/files/file')).to have(1).items
   end
 end
 
@@ -160,5 +144,27 @@ RSpec.shared_examples 'task node with test' do
 
   it 'adds test-configuration node to test node' do
     expect(xml.xpath('/task/tests/test/test-configuration')).to have(1).item
+  end
+end
+
+RSpec.shared_examples 'task node with test in ProFormA 2.0' do
+  let(:exporter) { described_class.new(task:, custom_namespaces:, version: '2.0') }
+
+  it_behaves_like 'task node with test'
+
+  it 'adds model-solutions node' do
+    expect(xml.xpath('/task/model-solutions')).to have(1).item
+  end
+
+  it 'adds model-solution node to model-solutions' do
+    expect(xml.xpath('/task/model-solutions/model-solution')).to have(1).item
+  end
+
+  it 'adds filerefs node to model-solution' do
+    expect(xml.xpath('/task/model-solutions/model-solution/filerefs')).to have(1).item
+  end
+
+  it 'adds fileref node to filerefs' do
+    expect(xml.xpath('/task/model-solutions/model-solution/filerefs/fileref')).to have(1).item
   end
 end
