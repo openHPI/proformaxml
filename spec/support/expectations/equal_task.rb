@@ -22,7 +22,7 @@ RSpec::Matchers.define :be_an_equal_task_as do |task2|
   end
 
   def proforma_base_equal?(object, other)
-    return false unless object.instance_variables == other.instance_variables
+    return false unless array_equal?(object.instance_variables, other.instance_variables)
 
     attributes(object).each do |k, v|
       @last_checked = "#{k}: \n#{v} vs \n#{other.send(k)}"
