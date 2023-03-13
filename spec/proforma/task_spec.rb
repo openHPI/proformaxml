@@ -18,7 +18,7 @@ RSpec.describe Proforma::Task do
       let(:task) { build(:task, files:) }
       let(:files) { build_list(:task_file, 2) }
 
-      it { is_expected.to contain_exactly(*files) }
+      it { is_expected.to match_array(files) }
     end
 
     context 'when task has a model_solution' do
@@ -26,7 +26,7 @@ RSpec.describe Proforma::Task do
       let(:model_solutions) { [build(:model_solution, files:)] }
       let(:files) { build_list(:task_file, 2) }
 
-      it { is_expected.to contain_exactly(*files) }
+      it { is_expected.to match_array(files) }
     end
 
     context 'when task has a test' do
@@ -34,7 +34,7 @@ RSpec.describe Proforma::Task do
       let(:tests) { [build(:test, files:)] }
       let(:files) { build_list(:task_file, 2) }
 
-      it { is_expected.to contain_exactly(*files) }
+      it { is_expected.to match_array(files) }
     end
 
     context 'when task has files, model_solutions and tests' do
@@ -46,12 +46,12 @@ RSpec.describe Proforma::Task do
       let(:model_solution_files) { build_list(:task_file, 2) }
       let(:test_files) { build_list(:task_file, 2) }
 
-      it { is_expected.to contain_exactly(*(task_files + model_solution_files + test_files)) }
+      it { is_expected.to match_array((task_files + model_solution_files + test_files)) }
 
       context 'when a file is assigned multiple times' do
         let(:task_files) { model_solution_files + test_files }
 
-        it { is_expected.to contain_exactly(*(model_solution_files + test_files)) }
+        it { is_expected.to match_array((model_solution_files + test_files)) }
       end
     end
   end
