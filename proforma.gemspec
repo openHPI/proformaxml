@@ -52,6 +52,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
+  spec.add_development_dependency 'rspec-github', '~> 2.4.0'
   spec.add_development_dependency 'rubocop', '~> 1.48.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.16.0'
   spec.add_development_dependency 'rubocop-rspec', '~> 2.19.0'
