@@ -3,6 +3,7 @@
 [![Build Status](https://github.com/openHPI/proforma/workflows/CI/badge.svg)](https://github.com/openHPI/proforma/actions?query=workflow%3ACI)
 [![Code Climate](https://codeclimate.com/github/openHPI/proforma/badges/gpa.svg)](https://codeclimate.com/github/openHPI/proforma)
 [![Test Coverage](https://codeclimate.com/github/openHPI/proforma/badges/coverage.svg)](https://codeclimate.com/github/openHPI/proforma)
+[![codecov](https://codecov.io/gh/openHPI/proforma/branch/master/graph/badge.svg?token=n1rDXnCezH)](https://codecov.io/gh/openHPI/proforma)
 
 This gem offers a ruby implementation of https://github.com/ProFormA/proformaxml. Includes a datastructure and XML-(de)serializer.
 
