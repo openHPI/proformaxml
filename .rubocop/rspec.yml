@@ -1,0 +1,27 @@
+# rspec cop settings
+
+RSpec:
+  Include:
+    - "spec/**/*_spec.rb"
+    - "spec/spec_helper.rb"
+    - "spec/proforma_spec.rb"
+
+#
+# Too stupid. There are also views, templates, request specs etc.
+#
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/custom_matchers/*"
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - "spec/custom_matchers/equal_task_spec.rb"
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 5
+
+RSpec/IndexedLet:
+  Max: 2

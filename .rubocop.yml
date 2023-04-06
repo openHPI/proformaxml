@@ -1,48 +1,25 @@
-require: rubocop-rspec
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
+inherit_from:
+  - .rubocop/layout.yml
+  - .rubocop/lint.yml
+  - .rubocop/metrics.yml
+  - .rubocop/rspec.yml
+  - .rubocop/style.yml
 
 AllCops:
   TargetRubyVersion: 3.2
+  TargetRailsVersion: 7.0 # for ActiveSupport
+  UseCache: True
   NewCops: enable
   Exclude:
-    - bin/*
-    - vendor/**/*
-    - Guardfile
-
-Layout/LineLength:
-  Max: 140
-
-Layout/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
-
-Lint/EmptyBlock:
-  Exclude:
-    - spec/**/*
-    - lib/proforma/services/exporter.rb
-
-Metrics/ClassLength:
-  Max: 150
-
-Metrics/BlockLength:
-  Exclude:
-    - spec/**/*
-    - proforma.gemspec
-
-Style/Documentation:
-  Enabled: false
-
-RSpec/NestedGroups:
-  Max: 5
-
-RSpec/DescribeClass:
-  Exclude:
-    - spec/custom_matchers/*
-
-RSpec/MultipleMemoizedHelpers:
-  Enabled: false
-
-RSpec/MultipleExpectations:
-  Exclude:
-    - spec/custom_matchers/equal_task_spec.rb
-
-RSpec/IndexedLet:
-  Max: 2
+    - 'bin/*'
+    - 'vendor/**/*'
+    - 'Guardfile'
+    # Ignore local files for faster processing
+    - 'tmp/**/*'
+    - 'out/**/*'
+    - 'coverage/**/*'

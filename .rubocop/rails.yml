@@ -1,0 +1,4 @@
+# rails cop settings
+
+Rails:
+  Enabled: true
