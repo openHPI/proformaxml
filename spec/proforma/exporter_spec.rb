@@ -91,7 +91,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'with file refs (ProFormA 2.0)' do
       let(:exporter) { described_class.new(task:, version: '2.0') }
-      let(:placeholder_file) { task.all_files.filter { |file| file.id == 'ms-placeholder-file' }.first }
+      let(:placeholder_file) { task.all_files.find {|file| file.id == 'ms-placeholder-file' } }
       let(:model_solution) { task.model_solutions.first }
 
       it 'adds id attribute to file node' do
@@ -165,7 +165,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with embedded text file is supplied' do
       let(:task) { build(:task, :populated, :with_embedded_txt_file) }
-      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+      let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -175,7 +175,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with embedded binary file is supplied' do
       let(:task) { build(:task, :populated, :with_embedded_bin_file) }
-      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+      let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -185,7 +185,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with attached text file is supplied' do
       let(:task) { build(:task, :populated, :with_attached_txt_file) }
-      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+      let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -195,7 +195,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with attached binary file is supplied' do
       let(:task) { build(:task, :populated, :with_attached_bin_file) }
-      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+      let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -217,7 +217,7 @@ RSpec.describe Proforma::Exporter do
     context 'when a populated task with a model-solution is supplied' do
       let(:task) { build(:task, :populated, :with_model_solution) }
       let(:model_solution) { task.model_solutions.first }
-      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+      let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -243,7 +243,7 @@ RSpec.describe Proforma::Exporter do
 
       context 'when model-solution has multiple files' do
         let(:task) { build(:task, :populated, model_solutions: build_list(:model_solution, 1, files: build_list(:task_file, 2))) }
-        let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+        let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
 
         it 'adds correct refid attribute to fileref' do
           expect(xml.xpath('/task/files/file')).to have(2).items
@@ -263,7 +263,7 @@ RSpec.describe Proforma::Exporter do
 
     context 'when a populated task with a test is supplied' do
       let(:task) { build(:task, :populated, :with_test) }
-      let(:file) { task.all_files.filter { |file| file.id != 'ms-placeholder-file' }.first }
+      let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
       let(:test) { task.tests.first }
       let(:custom_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
@@ -319,7 +319,7 @@ RSpec.describe Proforma::Exporter do
         let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
         let(:task) do
           build(:task, :populated,
-                tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}))
+            tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}))
         end
         let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration/xmlns:test-meta-data') }
 
@@ -365,8 +365,8 @@ RSpec.describe Proforma::Exporter do
       context 'when test has is unittest and has extra test-configuration' do
         let(:task) do
           build(:task, :populated, tests: build_list(:test, 1, test_type: 'unittest', configuration: {
-                                                       'version' => '1.23', 'framework' => 'rspec', 'entry-point' => 'unit_file_spec.rb'
-                                                     }))
+            'version' => '1.23', 'framework' => 'rspec', 'entry-point' => 'unit_file_spec.rb'
+          }))
         end
         let(:unittest_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').xpath('unit:unittest') }
 
@@ -479,7 +479,7 @@ RSpec.describe Proforma::Exporter do
           expect(exporter.instance_variable_get(:@task).model_solutions.first).to have_attributes(
             id: 'ms-placeholder',
             files: contain_exactly(have_attributes(content: '',
-                                                   id: 'ms-placeholder-file', used_by_grader: false, visible: 'no'))
+              id: 'ms-placeholder-file', used_by_grader: false, visible: 'no'))
           )
         end
       end

@@ -30,7 +30,6 @@ RSpec::Matchers.define :be_an_equal_task_as do |task2|
     true
   end
 
-  # rubocop:disable Metrics/MethodLength
   def array_equal?(object, other)
     return true if object == other # for []
     return false if object.length != other.length
@@ -39,7 +38,7 @@ RSpec::Matchers.define :be_an_equal_task_as do |task2|
     other_clone = other.clone
     object.each do |element|
       object_index = object_clone.index(element)
-      other_index = other_clone.index { |delete_element| equal?(element, delete_element) }
+      other_index = other_clone.index {|delete_element| equal?(element, delete_element) }
       return false if other_index.nil?
 
       object_clone.delete_at(object_index)
@@ -47,9 +46,8 @@ RSpec::Matchers.define :be_an_equal_task_as do |task2|
     end
     object_clone.empty? && other_clone.empty?
   end
-  # rubocop:enable Metrics/MethodLength
 
   def attributes(object)
-    object.instance_variables.to_h { |e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }
+    object.instance_variables.to_h {|e| [e.slice(1, e.length - 1).to_sym, object.instance_variable_get(e)] }
   end
 end

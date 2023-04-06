@@ -3,6 +3,8 @@
 module Proforma
   module Helpers
     module ImportHelpers
+      CONFIGURATION_NODES = %w[filerefs timeout externalresourcerefs test-meta-data].freeze
+
       def set_hash_value_if_present(hash:, name:, attributes: nil, value_overwrite: nil)
         raise unless attributes || value_overwrite
 
@@ -12,7 +14,7 @@ module Proforma
 
       def set_value_from_xml(object:, node:, name:, attribute: false, check_presence: true)
         value = value_from_node(name, node, attribute)
-        return if check_presence && !value.present?
+        return if check_presence && value.blank?
 
         set_value(object:, name: (name.is_a?(Array) ? name[1] : name).underscore, value:)
       end
@@ -30,14 +32,14 @@ module Proforma
         shared.merge(
           content: content_from_file_tag(file_tag, shared[:binary])
         ).tap do |hash|
-          hash[:filename] = file_tag.attributes['filename']&.value unless file_tag.attributes['filename']&.value.blank?
+          hash[:filename] = file_tag.attributes['filename']&.value if file_tag.attributes['filename']&.value.present?
         end
       end
 
       def attached_file_attributes(attributes, file_tag)
         filename = file_tag.text
         shared_file_attributes(attributes, file_tag).merge(filename:,
-                                                           content: filestring_from_zip(filename))
+          content: filestring_from_zip(filename))
       end
 
       def shared_file_attributes(attributes, file_tag)
@@ -45,7 +47,7 @@ module Proforma
           id: attributes['id']&.value,
           used_by_grader: attributes['used-by-grader']&.value == 'true',
           visible: attributes['visible']&.value,
-          binary: /-bin-file/.match?(file_tag.name)
+          binary: file_tag.name.include?('-bin-file'),
         }.tap do |hash|
           set_hash_value_if_present(hash:, name: 'usage-by-lms', attributes:)
           set_value_from_xml(object: hash, node: file_tag.parent, name: 'internal-description')
@@ -58,16 +60,14 @@ module Proforma
         test.files = test_files_from_test_configuration(test_configuration_node)
         test.configuration = extra_configuration_from_test_configuration(test_configuration_node)
         meta_data_node = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
-        test.meta_data = meta_data(meta_data_node, use_namespace: true) unless meta_data_node.blank?
+        test.meta_data = meta_data(meta_data_node, use_namespace: true) if meta_data_node.present?
       end
 
       def extra_configuration_from_test_configuration(test_configuration_node)
         configuration_any_node = test_configuration_node.children.reject do |c|
-          %w[filerefs timeout externalresourcerefs test-meta-data].include? c.name
+          CONFIGURATION_NODES.include? c.name
         end.first
         nil if configuration_any_node.nil?
-
-        # any_data_tag(configuration_any_node)
       end
 
       def test_files_from_test_configuration(test_configuration_node)

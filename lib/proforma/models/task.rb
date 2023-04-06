@@ -9,7 +9,7 @@ require 'proforma/errors'
 module Proforma
   class Task < Base
     attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid,
-                  :language, :model_solutions, :files, :tests, :meta_data
+      :language, :model_solutions, :files, :tests, :meta_data
 
     def initialize(attributes = {})
       super

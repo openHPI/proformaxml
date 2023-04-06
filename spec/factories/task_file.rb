@@ -2,14 +2,14 @@
 
 FactoryBot.define do
   factory :task_file, class: 'Proforma::TaskFile' do
-    sequence(:id) { |n| "file_#{n}" }
+    sequence(:id) {|n| "file_#{n}" }
     content { '' }
     used_by_grader { true }
     visible { 'yes' }
     binary { false }
 
     trait(:populated) do
-      sequence(:filename) { |n| "filename_#{n}.#{binary ? 'bin' : 'txt'}" }
+      sequence(:filename) {|n| "filename_#{n}.#{binary ? 'bin' : 'txt'}" }
       used_by_grader { true }
       visible { 'yes' }
       usage_by_lms { 'display' }

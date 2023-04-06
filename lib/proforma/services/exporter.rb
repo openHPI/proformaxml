@@ -22,7 +22,7 @@ module Proforma
       doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
 
-      raise PostGenerateValidationError, errors if errors.any?
+      raise PostGenerateValidationError.new(errors) if errors.any?
 
       # File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
       write_to_zip(xmldoc)
@@ -43,16 +43,16 @@ module Proforma
     end
 
     def add_internal_description_to_xml(xml, internal_description)
-      xml.send('internal-description', internal_description) unless internal_description.blank?
+      xml.send(:'internal-description', internal_description) if internal_description.present?
     end
 
     def add_meta_data(xml)
-      xml.send('meta-data') { meta_data(xml, @task.meta_data) }
+      xml.send(:'meta-data') { meta_data(xml, @task.meta_data) }
     end
 
     def add_objects_to_xml(xml)
       xml.files { files(xml) }
-      xml.send('model-solutions') { model_solutions(xml) } if @task.model_solutions.any? || @version == '2.0'
+      xml.send(:'model-solutions') { model_solutions(xml) } if @task.model_solutions.any? || @version == '2.0'
       xml.tests { tests(xml) }
     end
 
@@ -70,7 +70,7 @@ module Proforma
 
     def model_solutions(xml)
       @task.model_solutions&.each do |model_solution|
-        xml.send('model-solution', id: model_solution.id) do
+        xml.send(:'model-solution', id: model_solution.id) do
           add_filerefs(xml, model_solution)
           add_description_to_xml(xml, model_solution.description)
           add_internal_description_to_xml(xml, model_solution.internal_description)
@@ -94,7 +94,7 @@ module Proforma
           xml.title test.title
           add_description_to_xml(xml, test.description)
           add_internal_description_to_xml(xml, test.internal_description)
-          xml.send('test-type', test.test_type)
+          xml.send(:'test-type', test.test_type)
           add_test_configuration(xml, test)
         end
       end
@@ -112,7 +112,7 @@ module Proforma
     def headers
       {
         'xmlns' => "urn:proforma:v#{@version}",
-        'uuid' => @task.uuid
+        'uuid' => @task.uuid,
       }.tap do |header|
         add_namespaces_to_header(header, @custom_namespaces)
         add_parent_uuid_and_lang_to_header(header)
