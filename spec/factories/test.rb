@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :test, class: 'Proforma::Test' do
-    sequence(:files) { |n| build_list(:task_file, 1, id: "test_file_#{n}") }
-    sequence(:id) { |n| "test_#{n}" }
+    sequence(:files) {|n| build_list(:task_file, 1, id: "test_file_#{n}") }
+    sequence(:id) {|n| "test_#{n}" }
     title { 'title' }
     test_type { 'test_type' }
     configuration { nil }

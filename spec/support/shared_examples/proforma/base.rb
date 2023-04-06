@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples 'mass assignable' do |attributes|
-  let(:params) { attributes.to_h { |i| [i, i] } }
+  let(:params) { attributes.to_h {|i| [i, i] } }
 
   it 'supports mass-assignments' do
     expect(described_class.new(params)).to have_attributes(params)

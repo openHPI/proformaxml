@@ -53,7 +53,7 @@ RSpec.describe Proforma::Importer do
 
     before do
       zip_file.write(Proforma::Exporter.new(task:, custom_namespaces: export_namespaces,
-                                            version: export_version).perform.string.force_encoding('UTF-8'))
+        version: export_version).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 

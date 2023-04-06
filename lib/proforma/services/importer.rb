@@ -21,7 +21,7 @@ module Proforma
     def perform
       errors = validate
 
-      raise PreImportValidationError, errors if errors.any?
+      raise PreImportValidationError.new(errors) if errors.any?
 
       @task_node = @doc.xpath('/xmlns:task')
 
@@ -47,7 +47,7 @@ module Proforma
     end
 
     def set_namespaces
-      @custom_namespaces = @doc.namespaces.except('xmlns').map { |k, v| {prefix: k[6..], uri: v} }
+      @custom_namespaces = @doc.namespaces.except('xmlns').map {|k, v| {prefix: k[6..], uri: v} }
     end
 
     def set_base_data
@@ -61,18 +61,18 @@ module Proforma
     end
 
     def set_proglang
-      return unless @task_node.xpath('xmlns:proglang').text.present?
+      return if @task_node.xpath('xmlns:proglang').text.blank?
 
       @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
                         version: @task_node.xpath('xmlns:proglang').attribute('version').value.presence}.compact
     end
 
     def set_files
-      @task_node.search('files//file').each { |file_node| add_file file_node }
+      @task_node.search('files//file').each {|file_node| add_file file_node }
     end
 
     def set_tests
-      @task_node.search('tests//test').each { |test_node| add_test test_node }
+      @task_node.search('tests//test').each {|test_node| add_test test_node }
     end
 
     def set_model_solutions
@@ -99,10 +99,10 @@ module Proforma
       file_tag = file_node.children.first
       file = nil
       case file_tag.name
-      when /embedded-(bin|txt)-file/
-        file = TaskFile.new(embedded_file_attributes(file_node.attributes, file_tag))
-      when /attached-(bin|txt)-file/
-        file = TaskFile.new(attached_file_attributes(file_node.attributes, file_tag))
+        when /embedded-(bin|txt)-file/
+          file = TaskFile.new(embedded_file_attributes(file_node.attributes, file_tag))
+        when /attached-(bin|txt)-file/
+          file = TaskFile.new(attached_file_attributes(file_node.attributes, file_tag))
       end
       @task.files << file
     end
@@ -122,7 +122,7 @@ module Proforma
       [].tap do |files|
         filerefs_node.search('fileref').each do |fileref_node|
           fileref = fileref_node.attributes['refid'].value
-          files << @task.files.delete(@task.files.detect { |file| file.id == fileref })
+          files << @task.files.delete(@task.files.detect {|file| file.id == fileref })
         end
       end
     end
