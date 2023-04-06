@@ -1,0 +1,31 @@
+# metric cop settings
+
+Metrics/BlockLength:
+  Exclude:
+    # Common files with e.g. block based DSLs
+    - "spec/**/*"
+    - "**/*.rake"
+    - "Rakefile"
+    - "Guardfile"
+    - "**/*/Rakefile"
+    - 'proforma.gemspec'
+  Max: 50
+
+Metrics/ClassLength:
+  Max: 150
+
+#
+# Often used as a proxy for complexity in a method, but causes many false
+# positives, e.g. when generating large, but simple, hashes.
+# We want to rely on CyclomaticComplexity instead.
+#
+Metrics/MethodLength:
+  Enabled: true
+  Max: 20
+
+#
+# This seems to be the cop that is closest to what we're interested in, which
+# is the kind of complexity that usually surfaces in deep nesting.
+#
+Metrics/CyclomaticComplexity:
+  Enabled: true
