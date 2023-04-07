@@ -39,3 +39,7 @@ RSpec/DescribeClass:
 
 RSpec/MultipleMemoizedHelpers:
   Enabled: false
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - spec/custom_matchers/equal_task_spec.rb

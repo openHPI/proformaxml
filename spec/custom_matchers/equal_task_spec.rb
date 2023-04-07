@@ -15,6 +15,10 @@ RSpec.describe 'equal_task matcher' do
     it 'fails' do
       expect(string).not_to be_an_equal_task_as integer
     end
+
+    it 'provides a useful error message' do
+      expect { expect(string).to be_an_equal_task_as integer }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
+    end
   end
 
   context 'when one task is different' do
@@ -23,6 +27,10 @@ RSpec.describe 'equal_task matcher' do
     it 'fails the comparison' do
       expect(task).not_to be_an_equal_task_as task2
     end
+
+    it 'provides a useful error message' do
+      expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
+    end
   end
 
   context 'when only one task has a file' do
@@ -30,6 +38,10 @@ RSpec.describe 'equal_task matcher' do
 
     it 'fails the comparison' do
       expect(task).not_to be_an_equal_task_as task2
+    end
+
+    it 'provides a useful error message' do
+      expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
     end
   end
 
@@ -54,6 +66,10 @@ RSpec.describe 'equal_task matcher' do
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2
       end
+
+      it 'provides a useful error message' do
+        expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
+      end
     end
 
     context 'with a tiny change in the nested meta_data' do
@@ -61,6 +77,10 @@ RSpec.describe 'equal_task matcher' do
 
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2
+      end
+
+      it 'provides a useful error message' do
+        expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
       end
     end
 
@@ -70,6 +90,10 @@ RSpec.describe 'equal_task matcher' do
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2
       end
+
+      it 'provides a useful error message' do
+        expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
+      end
     end
 
     context 'with a tiny change in a model_solution' do
@@ -77,6 +101,10 @@ RSpec.describe 'equal_task matcher' do
 
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2
+      end
+
+      it 'provides a useful error message' do
+        expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
       end
     end
 
@@ -86,6 +114,10 @@ RSpec.describe 'equal_task matcher' do
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2
       end
+
+      it 'provides a useful error message' do
+        expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
+      end
     end
 
     context 'with a tiny change in a test meta_data' do
@@ -93,6 +125,10 @@ RSpec.describe 'equal_task matcher' do
 
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2
+      end
+
+      it 'provides a useful error message' do
+        expect { expect(task).to be_an_equal_task_as task2 }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /not equal to/)
       end
     end
   end
