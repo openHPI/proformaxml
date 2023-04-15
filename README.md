@@ -5,19 +5,23 @@
 [![Test Coverage](https://codeclimate.com/github/openHPI/proforma/badges/coverage.svg)](https://codeclimate.com/github/openHPI/proforma)
 [![codecov](https://codecov.io/gh/openHPI/proforma/branch/master/graph/badge.svg?token=n1rDXnCezH)](https://codecov.io/gh/openHPI/proforma)
 
-This gem offers a ruby implementation of https://github.com/ProFormA/proformaxml. Includes a datastructure and XML-(de)serializer.
+This gem offers a Ruby implementation of the [ProFormA XML standard](https://github.com/ProFormA/proformaxml), an XML exchange format for programming exercises. This gem includes a datastructure and XML-(de)serializer.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'proforma', git: 'git://github.com/openHPI/proforma.git', tag: 'v0.7'
+gem 'proforma', github: 'openHPI/proforma', tag: 'v0.8'
 ```
 
 And then execute:
 
-    $ bundle
+```
+$ bundle
+```
+
+Note: Removing support for ancient Ruby or Rails versions will not result in a new major. Please be extra careful when using ancient Ruby or Rails versions and updating gems.
 
 ## Usage
 
@@ -196,8 +200,12 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/openHPI/proforma.
+Bug reports and pull requests are welcome on GitHub at https://github.com/openHPI/proforma. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/openHPI/proforma/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## Code of Conduct
+
+Everyone interacting in this project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/openHPI/proforma/blob/master/CODE_OF_CONDUCT.md).
