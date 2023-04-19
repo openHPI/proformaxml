@@ -89,6 +89,7 @@ RSpec.shared_examples 'task node with attached file' do |text_bin|
     expect(zip_files[file.filename]).not_to be_nil
   end
 end
+
 RSpec.shared_examples 'task node without model-solution with file' do
   it 'adds file nodes to files' do
     expect(xml.xpath('/task/files/file')).to have(1).items

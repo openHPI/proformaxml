@@ -43,3 +43,6 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/MultipleExpectations:
   Exclude:
     - spec/custom_matchers/equal_task_spec.rb
+
+RSpec/IndexedLet:
+  Max: 2
