@@ -43,20 +43,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'nokogiri', '>= 1.10.2', '< 2.0.0'
   spec.add_dependency 'rubyzip', '>= 1.2.2', '< 3.0.0'
 
-  spec.add_development_dependency 'bundler', '~> 2.0'
-  spec.add_development_dependency 'factory_bot', '~> 6.2.0'
-  spec.add_development_dependency 'guard', '~> 2.18.0'
-  spec.add_development_dependency 'guard-rspec', '~> 4.7.3'
-  spec.add_development_dependency 'pry', '~> 0.14.1'
-  spec.add_development_dependency 'pry-byebug', '~> 3.10.1'
-  spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
-  spec.add_development_dependency 'rspec-github', '~> 2.4.0'
-  spec.add_development_dependency 'rubocop', '~> 1.50.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.17.1'
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.22.0'
-  spec.add_development_dependency 'simplecov', '~> 0.22.0'
   spec.metadata = {
     'rubygems_mfa_required' => 'true'
   }
