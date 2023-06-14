@@ -5,6 +5,7 @@ require 'nokogiri'
 require 'zip'
 require 'base64'
 require 'securerandom'
+require 'dachsfisch'
 
 require 'proforma/version'
 

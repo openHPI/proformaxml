@@ -364,9 +364,18 @@ RSpec.describe Proforma::Exporter do
 
       context 'when test has is unittest and has extra test-configuration' do
         let(:task) do
-          build(:task, :populated, tests: build_list(:test, 1, test_type: 'unittest', configuration: {
-            'version' => '1.23', 'framework' => 'rspec', 'entry-point' => 'unit_file_spec.rb'
-          }))
+          build(:task, tests: build_list(:test, 1, test_type: 'unittest', configuration:))
+        end
+
+        let(:configuration) do
+          {
+            'unit:unittest' => {
+              '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+              '@framework' => 'JUnit',
+              '@version' => '4.10',
+              'unit:entry-point' => {'@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'}, '$1' => 'HelloWorldTest'},
+            },
+          }
         end
         let(:unittest_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').xpath('unit:unittest') }
 
@@ -379,15 +388,15 @@ RSpec.describe Proforma::Exporter do
         end
 
         it 'adds entry-poiny node with correct namespace and content' do
-          expect(unittest_node.xpath('unit:entry-point').text).to eql 'unit_file_spec.rb'
+          expect(unittest_node.xpath('unit:entry-point').text).to eql 'HelloWorldTest'
         end
 
         it 'adds correct framework-attribute to node' do
-          expect(unittest_node.attribute('framework').text).to eql 'rspec'
+          expect(unittest_node.attribute('framework').text).to eql 'JUnit'
         end
 
         it 'adds correct version-attribute to node' do
-          expect(unittest_node.attribute('version').text).to eql '1.23'
+          expect(unittest_node.attribute('version').text).to eql '4.10'
         end
       end
     end

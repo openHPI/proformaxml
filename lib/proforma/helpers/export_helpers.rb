@@ -26,7 +26,7 @@ module Proforma
       def add_test_configuration(xml, test)
         xml.send(:'test-configuration') do
           add_filerefs(xml, test) if test.files
-          add_unittest_configuration(xml, test)
+          add_configuration(xml, test.configuration) unless test.configuration.nil?
           if test.meta_data
             xml.send(:'test-meta-data') do
               meta_data(xml, test.meta_data)
@@ -55,19 +55,19 @@ module Proforma
         end
       end
 
-      def add_unittest_configuration(xml, test)
-        return unless test.test_type == 'unittest' && !test.configuration.nil?
+      def add_configuration(xml, configuration)
+        xml_snippet_doc = Nokogiri::XML(Dachsfisch::JSON2XMLConverter.perform(json: configuration.to_json))
+        xml_snippet_root = xml_snippet_doc.root
+        xml_namespace = xml_snippet_root.namespace
+        xml.doc.root.add_namespace(xml_namespace.prefix, xml_namespace.href)
 
-        xml['unit'].unittest(framework: test.configuration['framework'], version: test.configuration['version']) do |unit|
-          unit['unit'].send(:'entry-point', test.configuration['entry-point'])
-        end
+        xml << xml_snippet_root.to_xml
       end
 
       def add_namespaces_to_header(header, custom_namespaces)
         custom_namespaces.each do |namespace|
           header["xmlns:#{namespace[:prefix]}"] = namespace[:uri]
         end
-        header['xmlns:unit'] = 'urn:proforma:tests:unittest:v1.1' if @task.tests.any? {|t| t.test_type == 'unittest' }
       end
 
       def add_parent_uuid_and_lang_to_header(header)

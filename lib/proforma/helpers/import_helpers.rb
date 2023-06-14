@@ -67,7 +67,9 @@ module Proforma
         configuration_any_node = test_configuration_node.children.reject do |c|
           CONFIGURATION_NODES.include? c.name
         end.first
-        nil if configuration_any_node.nil?
+        return nil if configuration_any_node.nil?
+
+        convert_xml_node_to_json(configuration_any_node)
       end
 
       def test_files_from_test_configuration(test_configuration_node)
@@ -90,6 +92,12 @@ module Proforma
       end
 
       private
+
+      def convert_xml_node_to_json(any_node)
+        xml_snippet = Nokogiri::XML(any_node.to_xml(save_with: 0))
+        xml_snippet.children.first.add_namespace_definition(any_node.namespace.prefix, any_node.namespace.href)
+        JSON.parse(Dachsfisch::XML2JSONConverter.perform(xml: xml_snippet.to_xml))
+      end
 
       def value_from_node(name, node, attribute)
         xml_name = name.is_a?(Array) ? name[0] : name
