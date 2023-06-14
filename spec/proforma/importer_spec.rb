@@ -142,7 +142,7 @@ RSpec.describe Proforma::Importer do
       let(:task) { build(:task, :with_test) }
       let(:export_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
-      it 'evalutates the correct custom_namespaces' do
+      it 'evaluates the correct custom_namespaces' do
         expect(imported_namespaces).to eql export_namespaces
       end
 
@@ -168,6 +168,27 @@ RSpec.describe Proforma::Importer do
           expect(imported_task).to be_an_equal_task_as ref_task
         end
       end
+
+      context 'when test-configuration has custom data' do
+        let(:task) do
+          build(:task, tests: build_list(:test, 1, test_type: 'unittest', configuration:))
+        end
+
+        let(:configuration) do
+          {
+            'unit:unittest' => {
+              '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+              '@framework' => 'JUnit',
+              '@version' => '4.10',
+              'unit:entry-point' => {'@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'}, '$1' => 'HelloWorldTest'},
+            },
+          }
+        end
+
+        it 'successfully imports the task' do
+          expect(imported_task).to be_an_equal_task_as ref_task
+        end
+      end
     end
 
     context 'when task has a test and a model_solution' do
@@ -179,7 +200,7 @@ RSpec.describe Proforma::Importer do
       end
     end
 
-    context 'when task has a text, a model_solution and 10 embedded files' do
+    context 'when task has a test, a model_solution and 10 embedded files' do
       let(:task) { build(:task, :with_test, :with_model_solution, files: build_list(:task_file, 10, :populated, :small_content, :text)) }
       let(:export_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
