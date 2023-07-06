@@ -53,7 +53,7 @@ GEM
     mini_portile2 (2.8.2)
     minitest (5.18.1)
     nenv (0.3.0)
-    nokogiri (1.15.2)
+    nokogiri (1.15.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     notiffany (0.1.3)
