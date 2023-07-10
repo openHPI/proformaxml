@@ -7,10 +7,11 @@ This gem offers a Ruby implementation of the [ProFormA XML standard](https://git
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this lines to your application's Gemfile:
 
 ```ruby
-gem 'proforma', github: 'openHPI/proforma', tag: 'v0.8'
+gem 'proforma', github: 'openHPI/proforma', tag: 'v0.9'
+gem 'dachsfisch', github: 'openHPI/dachsfisch' # this is needed until we publish dachsfisch on rubygems
 ```
 
 And then execute:
