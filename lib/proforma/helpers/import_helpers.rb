@@ -69,7 +69,7 @@ module Proforma
         end.first
         return nil if configuration_any_node.nil?
 
-        convert_xml_node_to_json(configuration_any_node)
+        JSON.parse(convert_xml_node_to_json(configuration_any_node))
       end
 
       def test_files_from_test_configuration(test_configuration_node)
@@ -96,7 +96,7 @@ module Proforma
       def convert_xml_node_to_json(any_node)
         xml_snippet = Nokogiri::XML(any_node.to_xml(save_with: 0))
         xml_snippet.children.first.add_namespace_definition(any_node.namespace.prefix, any_node.namespace.href)
-        JSON.parse(Dachsfisch::XML2JSONConverter.perform(xml: xml_snippet.to_xml))
+        Dachsfisch::XML2JSONConverter.perform(xml: xml_snippet.to_xml)
       end
 
       def value_from_node(name, node, attribute)

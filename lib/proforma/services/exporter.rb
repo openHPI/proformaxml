@@ -35,9 +35,10 @@ module Proforma
         xml.title @task.title
         xml.description @task.description
         add_internal_description_to_xml(xml, @task.internal_description)
-        xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
-
+        add_proglang(xml)
+        add_submission_restrictions(xml)
         add_objects_to_xml(xml)
+        add_grading_hints(xml)
         add_meta_data(xml)
       end
     end
@@ -46,12 +47,25 @@ module Proforma
       xml.send(:'internal-description', internal_description) if internal_description.present?
     end
 
+    def add_proglang(xml)
+      xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
+    end
+
+    def add_submission_restrictions(xml)
+      add_dachsfisch_json(xml, @task.submission_restrictions) if @task.submission_restrictions.present?
+    end
+
+    def add_grading_hints(xml)
+      add_dachsfisch_json(xml, @task.grading_hints) if @task.grading_hints.present?
+    end
+
     def add_meta_data(xml)
       xml.send(:'meta-data') { meta_data(xml, @task.meta_data) }
     end
 
     def add_objects_to_xml(xml)
       xml.files { files(xml) }
+      add_dachsfisch_json(xml, @task.external_resources) if @task.external_resources.present?
       xml.send(:'model-solutions') { model_solutions(xml) } if @task.model_solutions.any? || @version == '2.0'
       xml.tests { tests(xml) }
     end

@@ -26,7 +26,7 @@ module Proforma
       def add_test_configuration(xml, test)
         xml.send(:'test-configuration') do
           add_filerefs(xml, test) if test.files
-          add_configuration(xml, test.configuration) unless test.configuration.nil?
+          add_dachsfisch_json(xml, test.configuration.to_json) unless test.configuration.nil?
           if test.meta_data
             xml.send(:'test-meta-data') do
               meta_data(xml, test.meta_data)
@@ -55,8 +55,8 @@ module Proforma
         end
       end
 
-      def add_configuration(xml, configuration)
-        xml_snippet_doc = Nokogiri::XML(Dachsfisch::JSON2XMLConverter.perform(json: configuration.to_json))
+      def add_dachsfisch_json(xml, json)
+        xml_snippet_doc = Nokogiri::XML(Dachsfisch::JSON2XMLConverter.perform(json:))
         xml_snippet_root = xml_snippet_doc.root
         xml_namespace = xml_snippet_root.namespace
         xml.doc.root.add_namespace(xml_namespace.prefix, xml_namespace.href)
