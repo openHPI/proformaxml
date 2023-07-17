@@ -19,7 +19,7 @@ module Proforma
   SCHEMA_FORMAT_PATH = "#{SCHEMA_PATH}/proforma-%s.xsd".freeze
   SCHEMA_VERSIONS = %w[2.1 2.0].freeze
 
-  TEST_TYPE_SCHEMA_NAMES = %w[checkstyle regexptest unittest].freeze
+  TEST_TYPE_SCHEMA_NAMES = %w[java-checkstyle regexptest unittest].freeze
   TEST_TYPE_SCHEMAS = {}.tap do |hash|
     TEST_TYPE_SCHEMA_NAMES.each do |name|
       path = SCHEMA_FORMAT_PATH % name
