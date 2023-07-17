@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task xmlns="urn:proforma:v2.1" xmlns:unit="urn:proforma:tests:unittest:v1.1" xmlns:check="urn:proforma:tests:java-checkstyle:v1.1" xmlns:regex="urn:proforma:tests:regexptest:v0.9" uuid="">
+  <title/>
+  <description/>
+  <proglang version=""/>
+  <files>
+    <file id="test_file_1" used-by-grader="true" visible="yes">
+      <embedded-txt-file filename=""/>
+    </file>
+  </files>
+  <tests>
+    <test id="test_1">
+      <title>title</title>
+      <test-type>unittest</test-type>
+      <test-configuration>
+        <filerefs>
+          <fileref refid="test_file_1"/>
+        </filerefs>
+        <unit:unittest framework="JUnit" version="4.10">
+          <unit:entry-point>HelloWorldTest</unit:entry-point>
+        </unit:unittest>
+        <check:java-checkstyle version="3.14">
+          <check:max-checkstyle-warnings xmlns:unit="urn:proforma:tests:java-checkstyle:v1.1">4</check:max-checkstyle-warnings>
+        </check:java-checkstyle>
+        <regex:regexptest>
+          <regex:entry-point>HelloWorldTest</regex:entry-point>
+          <regex:parameter>gui</regex:parameter>
+          <regex:regular-expressions>
+            <regex:regexp-disallow case-insensitive="true" dotall="true" multiline="true" free-spacing="true">foobar</regex:regexp-disallow>
+          </regex:regular-expressions>
+        </regex:regexptest>
+      </test-configuration>
+    </test>
+  </tests>
+  <meta-data/>
+</task>
