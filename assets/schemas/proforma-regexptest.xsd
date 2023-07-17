@@ -34,7 +34,11 @@ sourcecode something like checkstyle can be used.-->
     </xs:element>
 
     <xs:complexType name="regexpType">
-        <xs:attributeGroup ref="ns1:regexp-flags"/>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attributeGroup ref="ns1:regexp-flags"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
     <!-- attributes to define, which regexp-flags are applied to a specified regular expression -->
     <xs:attributeGroup name="regexp-flags">
