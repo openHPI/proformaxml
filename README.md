@@ -7,7 +7,7 @@ This gem offers a Ruby implementation of the [ProFormA XML standard](https://git
 
 ## Installation
 
-Add this lines to your application's Gemfile:
+Add these lines to your application's Gemfile:
 
 ```ruby
 gem 'proforma', github: 'openHPI/proforma', tag: 'v0.9'

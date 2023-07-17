@@ -20,12 +20,5 @@ module Proforma
   SCHEMA_VERSIONS = %w[2.1 2.0].freeze
 
   TEST_TYPE_SCHEMA_NAMES = %w[java-checkstyle regexptest unittest].freeze
-  TEST_TYPE_SCHEMAS = {}.tap do |hash|
-    TEST_TYPE_SCHEMA_NAMES.each do |name|
-      path = SCHEMA_FORMAT_PATH % name
-      namespace = Nokogiri::XML(File.read(path)).xpath('xs:schema').first&.attributes&.dig('targetNamespace')&.value
-      hash[namespace] = name
-    end
-  end
   MAX_EMBEDDED_FILE_SIZE_KB = 50
 end
