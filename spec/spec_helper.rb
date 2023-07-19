@@ -12,7 +12,6 @@ require 'factory_bot'
 require 'pry-byebug'
 
 Dir['./spec/support/**/*.rb'].each {|f| require f }
-RSPEC_ROOT = File.dirname __FILE__
 # RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 999_999_999
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -30,4 +29,6 @@ RSpec.configure do |config|
   config.before(:suite) do
     FactoryBot.find_definitions
   end
+
+  config.add_setting :file_fixture_path, default: 'spec/fixtures/files'
 end
