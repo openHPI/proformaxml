@@ -81,74 +81,25 @@ RSpec.describe Proforma::Validator do
     end
 
     context 'when task contains validatable test-configuration' do
-      context 'with unittest' do
-        let(:task) do
-          build(:task, tests: build_list(:test, 1, test_type: 'unittest', configuration:))
-        end
-
-        let(:configuration) do
-          {
-            'unit:unittest' => {
-              '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
-              '@framework' => 'JUnit',
-              '@version' => '4.10',
-              'unit:entry-point' => {'@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'}, '$1' => 'HelloWorldTest'},
-            },
-          }
-        end
+      shared_examples 'validates successfully' do |test_type|
+        let(:task) { build(:task, tests: build_list(:test, 1, test_type)) }
 
         it { is_expected.to be_empty }
       end
 
-      context 'with java-checkstyle' do
-        let(:task) do
-          build(:task, tests: build_list(:test, 1, test_type: 'java-checkstyle', configuration:))
-        end
-
-        let(:configuration) do
-          {
-            'check:java-checkstyle' => {
-              '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
-              '@version' => '3.14',
-              'check:max-checkstyle-warnings' => {'@xmlns' => {'unit' => 'urn:proforma:tests:java-checkstyle:v1.1'}, '$1' => '4'},
-            },
-          }
-        end
-
-        it { is_expected.to be_empty }
-      end
-
-      context 'with regexptest' do
-        let(:task) do
-          build(:task, tests: build_list(:test, 1, test_type: 'regexptest', configuration:))
-        end
-
-        let(:configuration) do
-          {
-            'regex:regexptest' => {
-              '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-              'regex:entry-point' => {'@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'}, '$1' => 'HelloWorldTest'},
-              'regex:parameter' => {'@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'}, '$1' => 'gui'},
-              'regex:regular-expressions' => {'@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-                                              'regex:regexp-disallow' => {'@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-                                                                          '@case-insensitive' => 'true',
-                                                                          '@dotall' => 'true',
-                                                                          '@multiline' => 'true',
-                                                                          '@free-spacing' => 'true',
-                                                                          '$1' => 'foobar'}},
-            },
-          }
-        end
-
-        it { is_expected.to be_empty }
-      end
+      it_behaves_like 'validates successfully', :with_unittest
+      it_behaves_like 'validates successfully', :with_java_checkstyle
+      it_behaves_like 'validates successfully', :with_regexptest
 
       context 'with all test-types' do
-        let(:xml_file) { File.open("#{RSPEC_ROOT}/support/fixtures/#{filename}.xml") }
+        let(:xml_file) { file_fixture("#{filename}.xml") }
         let(:doc) { Nokogiri::XML xml_file.read }
-        let(:filename) { 'task_with_valid_test_config' }
 
-        it { is_expected.to be_empty }
+        context 'without errors' do
+          let(:filename) { 'task_with_valid_test_config' }
+
+          it { is_expected.to be_empty }
+        end
 
         context 'with a lot of errors' do
           let(:filename) { 'task_with_invalid_test_config' }

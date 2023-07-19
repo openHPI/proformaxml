@@ -26,5 +26,84 @@ FactoryBot.define do
     trait(:with_multiple_files) do
       files { build_list(:task_file, 2, :populated, :small_content, :text) }
     end
+
+    trait(:with_unittest) do
+      test_type { 'unittest' }
+      configuration do
+        {
+          'unit:unittest' => {
+            '@xmlns' => {
+              'unit' => 'urn:proforma:tests:unittest:v1.1',
+            },
+            '@framework' => 'JUnit',
+            '@version' => '4.10',
+            'unit:entry-point' => {
+              '@xmlns' => {
+                'unit' => 'urn:proforma:tests:unittest:v1.1',
+              }, '$1' => 'HelloWorldTest'
+            },
+          },
+        }
+      end
+    end
+
+    trait(:with_java_checkstyle) do
+      test_type { 'java-checkstyle' }
+      configuration do
+        {
+          'check:java-checkstyle' => {
+            '@xmlns' => {
+              'check' => 'urn:proforma:tests:java-checkstyle:v1.1',
+            },
+            '@version' => '3.14',
+            'check:max-checkstyle-warnings' => {
+              '@xmlns' => {
+                'unit' => 'urn:proforma:tests:java-checkstyle:v1.1',
+              }, '$1' => '4'
+            },
+          },
+        }
+      end
+    end
+
+    trait(:with_regexptest) do
+      test_type { 'regexptest' }
+      configuration do
+        {
+          'regex:regexptest' => {
+            '@xmlns' => {
+              'regex' => 'urn:proforma:tests:regexptest:v0.9',
+            },
+            'regex:entry-point' => {
+              '@xmlns' => {
+                'regex' => 'urn:proforma:tests:regexptest:v0.9',
+              },
+              '$1' => 'HelloWorldTest',
+            },
+            'regex:parameter' => {
+              '@xmlns' => {
+                'regex' => 'urn:proforma:tests:regexptest:v0.9',
+              },
+              '$1' => 'gui',
+            },
+            'regex:regular-expressions' => {
+              '@xmlns' => {
+                'regex' => 'urn:proforma:tests:regexptest:v0.9',
+              },
+              'regex:regexp-disallow' => {
+                '@xmlns' => {
+                  'regex' => 'urn:proforma:tests:regexptest:v0.9',
+                },
+                '@case-insensitive' => 'true',
+                '@dotall' => 'true',
+                '@multiline' => 'true',
+                '@free-spacing' => 'true',
+                '$1' => 'foobar',
+              },
+            },
+          },
+        }
+      end
+    end
   end
 end
