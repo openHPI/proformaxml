@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/openHPI/dachsfisch.git
-  revision: 73ce14d86562052761de9164c46012e1171eae54
+  revision: 1e890e342b0f972dcf56a0d65b445ccad810a086
   specs:
     dachsfisch (0.1.0)
       nokogiri (>= 1.14.1, < 1.16.0)
