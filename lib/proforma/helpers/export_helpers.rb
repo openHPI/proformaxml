@@ -56,12 +56,12 @@ module Proforma
       end
 
       def add_configuration(xml, configuration)
-        xml_snippet_doc = Nokogiri::XML(Dachsfisch::JSON2XMLConverter.perform(json: configuration.to_json))
-        xml_snippet_root = xml_snippet_doc.root
-        xml_namespace = xml_snippet_root.namespace
-        xml.doc.root.add_namespace(xml_namespace.prefix, xml_namespace.href)
+        xml_snippet = Dachsfisch::JSON2XMLConverter.perform(json: configuration.to_json)
+        configuration.flat_map {|_, val| val['@xmlns'].to_a }.uniq.each do |namespace|
+          xml.doc.root.add_namespace(namespace[0], namespace[1])
+        end
 
-        xml << xml_snippet_root.to_xml
+        xml << xml_snippet
       end
 
       def add_namespaces_to_header(header, custom_namespaces)
