@@ -387,7 +387,7 @@ RSpec.describe Proforma::Exporter do
           expect(unittest_node).not_to be_nil
         end
 
-        it 'adds entry-poiny node with correct namespace and content' do
+        it 'adds entry-point node with correct namespace and content' do
           expect(unittest_node.xpath('unit:entry-point').text).to eql 'HelloWorldTest'
         end
 
@@ -397,6 +397,73 @@ RSpec.describe Proforma::Exporter do
 
         it 'adds correct version-attribute to node' do
           expect(unittest_node.attribute('version').text).to eql '4.10'
+        end
+
+        context 'with multiple custom data entries' do
+          let(:configuration) do
+            {
+              'unit:unittest' => {
+                '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+                '@version' => '4.10',
+                '@framework' => 'JUnit',
+                'unit:entry-point' => {
+                  '$1' => 'HelloWorldTest',
+                  '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+                },
+              },
+              'regex:regexptest' =>
+                {
+                  '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                  'regex:entry-point' => {
+                    '$1' => 'HelloWorldTest',
+                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                  },
+                  'regex:parameter' => {
+                    '$1' => 'gui',
+                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                  },
+                  'regex:regular-expressions' => {
+                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                    'regex:regexp-disallow' => {
+                      '$1' => 'foobar',
+                      '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                      '@dotall' => 'true',
+                      '@multiline' => 'true',
+                      '@free-spacing' => 'true',
+                      '@case-insensitive' => 'true',
+                    },
+                  },
+                },
+              'check:java-checkstyle' => {
+                '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
+                '@version' => '3.14',
+                'check:max-checkstyle-warnings' => {
+                  '$1' => '4',
+                  '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
+                },
+              },
+            }
+          end
+
+          it 'adds all namespaces to task' do
+            expect(doc.xpath('/xmlns:task').first.namespaces).to include(
+              'xmlns:unit' => 'urn:proforma:tests:unittest:v1.1',
+              'xmlns:regex' => 'urn:proforma:tests:regexptest:v0.9',
+              'xmlns:check' => 'urn:proforma:tests:java-checkstyle:v1.1'
+            )
+          end
+
+          it 'adds unittest node with correct namespace' do
+            expect(doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').xpath('unit:unittest')).not_to be_nil
+          end
+
+          it 'adds regexptest node with correct namespace' do
+            expect(doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').xpath('regex:regexptest')).not_to be_nil
+          end
+
+          it 'adds java-checkstyle node with correct namespace' do
+            expect(doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').xpath('check:java-checkstyle')).not_to be_nil
+          end
         end
       end
     end

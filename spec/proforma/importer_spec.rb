@@ -188,6 +188,58 @@ RSpec.describe Proforma::Importer do
         it 'successfully imports the task' do
           expect(imported_task).to be_an_equal_task_as ref_task
         end
+
+        context 'with multiple custom data entries' do
+          let(:configuration) do
+            {
+              'unit:unittest' => {
+                '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+                '@version' => '4.10',
+                '@framework' => 'JUnit',
+                'unit:entry-point' => {
+                  '$1' => 'HelloWorldTest',
+                  '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+                },
+              },
+              'regex:regexptest' =>
+                {
+                  '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                  'regex:entry-point' => {
+                    '$1' => 'HelloWorldTest',
+                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                  },
+                  'regex:parameter' => {
+                    '$1' => 'gui',
+                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                  },
+                  'regex:regular-expressions' => {
+                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                    'regex:regexp-disallow' => {
+                      '$1' => 'foobar',
+                      '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                      '@dotall' => 'true',
+                      '@multiline' => 'true',
+                      '@free-spacing' => 'true',
+                      '@case-insensitive' => 'true',
+                    },
+                  },
+                },
+              'check:java-checkstyle' => {
+                '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
+                '@version' => '3.14',
+                'check:max-checkstyle-warnings' => {
+                  '$1' => '4',
+                  '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
+                },
+              },
+            }
+          end
+          let(:custom_namespaces) { [{prefix: 'test', uri: 'test.com'}, {prefix: 'unit', uri: 'urn:proforma:tests:unittest:v1.1'}, {prefix: 'regex', uri: 'urn:proforma:tests:regexptest:v0.9'}, {prefix: 'check', uri: 'urn:proforma:tests:java-checkstyle:v1.1'}] }
+
+          it 'successfully imports the task' do
+            expect(imported_task).to be_an_equal_task_as ref_task
+          end
+        end
       end
     end
 
