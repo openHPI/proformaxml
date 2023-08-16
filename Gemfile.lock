@@ -8,7 +8,7 @@ GIT
 PATH
   remote: .
   specs:
-    proforma (0.9.0)
+    proforma (0.9.1)
       activemodel (>= 5.2.3, < 8.0.0)
       activesupport (>= 5.2.3, < 8.0.0)
       nokogiri (>= 1.10.2, < 2.0.0)
