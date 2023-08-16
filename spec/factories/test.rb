@@ -105,5 +105,52 @@ FactoryBot.define do
         }
       end
     end
+
+    trait(:with_multiple_custom_configurations) do
+      configuration do
+        {
+          'unit:unittest' => {
+            '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+            '@version' => '4.10',
+            '@framework' => 'JUnit',
+            'unit:entry-point' => {
+              '$1' => 'HelloWorldTest',
+              '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
+            },
+          },
+          'regex:regexptest' =>
+            {
+              '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+              'regex:entry-point' => {
+                '$1' => 'HelloWorldTest',
+                '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+              },
+              'regex:parameter' => {
+                '$1' => 'gui',
+                '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+              },
+              'regex:regular-expressions' => {
+                '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                'regex:regexp-disallow' => {
+                  '$1' => 'foobar',
+                  '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
+                  '@dotall' => 'true',
+                  '@multiline' => 'true',
+                  '@free-spacing' => 'true',
+                  '@case-insensitive' => 'true',
+                },
+              },
+            },
+          'check:java-checkstyle' => {
+            '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
+            '@version' => '3.14',
+            'check:max-checkstyle-warnings' => {
+              '$1' => '4',
+              '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
+            },
+          },
+        }
+      end
+    end
   end
 end

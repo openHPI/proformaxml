@@ -362,21 +362,10 @@ RSpec.describe Proforma::Exporter do
         end
       end
 
-      context 'when test has is unittest and has extra test-configuration' do
-        let(:task) do
-          build(:task, tests: build_list(:test, 1, test_type: 'unittest', configuration:))
-        end
+      context 'when test is unittest and has extra test-configuration' do
+        let(:task) { build(:task, tests:) }
+        let(:tests) { build_list(:test, 1, :with_unittest) }
 
-        let(:configuration) do
-          {
-            'unit:unittest' => {
-              '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
-              '@framework' => 'JUnit',
-              '@version' => '4.10',
-              'unit:entry-point' => {'@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'}, '$1' => 'HelloWorldTest'},
-            },
-          }
-        end
         let(:unittest_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').xpath('unit:unittest') }
 
         it 'adds namespace to task' do
@@ -400,50 +389,7 @@ RSpec.describe Proforma::Exporter do
         end
 
         context 'with multiple custom data entries' do
-          let(:configuration) do
-            {
-              'unit:unittest' => {
-                '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
-                '@version' => '4.10',
-                '@framework' => 'JUnit',
-                'unit:entry-point' => {
-                  '$1' => 'HelloWorldTest',
-                  '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
-                },
-              },
-              'regex:regexptest' =>
-                {
-                  '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-                  'regex:entry-point' => {
-                    '$1' => 'HelloWorldTest',
-                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-                  },
-                  'regex:parameter' => {
-                    '$1' => 'gui',
-                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-                  },
-                  'regex:regular-expressions' => {
-                    '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-                    'regex:regexp-disallow' => {
-                      '$1' => 'foobar',
-                      '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
-                      '@dotall' => 'true',
-                      '@multiline' => 'true',
-                      '@free-spacing' => 'true',
-                      '@case-insensitive' => 'true',
-                    },
-                  },
-                },
-              'check:java-checkstyle' => {
-                '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
-                '@version' => '3.14',
-                'check:max-checkstyle-warnings' => {
-                  '$1' => '4',
-                  '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
-                },
-              },
-            }
-          end
+          let(:tests) { build_list(:test, 1, :with_multiple_custom_configurations) }
 
           it 'adds all namespaces to task' do
             expect(doc.xpath('/xmlns:task').first.namespaces).to include(
