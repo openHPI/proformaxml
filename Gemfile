@@ -5,8 +5,6 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in proforma.gemspec
 gemspec
 
-gem 'dachsfisch', github: 'openHPI/dachsfisch'
-
 gem 'bundler'
 gem 'factory_bot'
 gem 'guard'

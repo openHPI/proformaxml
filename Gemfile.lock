@@ -1,16 +1,10 @@
-GIT
-  remote: https://github.com/openHPI/dachsfisch.git
-  revision: a167274cf4480de84ac41fb38c5006ae60c0ac1b
-  specs:
-    dachsfisch (0.1.0)
-      nokogiri (>= 1.14.1, < 1.16.0)
-
 PATH
   remote: .
   specs:
     proforma (0.9.1)
       activemodel (>= 5.2.3, < 8.0.0)
       activesupport (>= 5.2.3, < 8.0.0)
+      dachsfisch (>= 0.1.0, < 1.0.0)
       nokogiri (>= 1.10.2, < 2.0.0)
       rubyzip (>= 1.2.2, < 3.0.0)
 
@@ -29,6 +23,8 @@ GEM
     byebug (11.1.3)
     coderay (1.1.3)
     concurrent-ruby (1.2.2)
+    dachsfisch (0.1.0)
+      nokogiri (>= 1.14.1, < 2.0.0)
     diff-lcs (1.5.0)
     docile (1.4.0)
     factory_bot (6.2.1)
@@ -151,7 +147,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler
-  dachsfisch!
   factory_bot
   guard
   guard-rspec
