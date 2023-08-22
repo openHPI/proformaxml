@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Proforma
+module ProformaXML
   module Helpers
     module ImportHelpers
       CONFIGURATION_NODES = %w[filerefs timeout externalresourcerefs test-meta-data].freeze

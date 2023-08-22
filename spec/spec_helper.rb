@@ -6,7 +6,7 @@ SimpleCov.start do
 end
 
 require 'bundler/setup'
-require 'proforma'
+require 'proformaxml'
 require 'rspec/collection_matchers'
 require 'factory_bot'
 require 'pry-byebug'

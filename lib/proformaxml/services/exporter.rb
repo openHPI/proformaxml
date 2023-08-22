@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'proforma/helpers/export_helpers'
+require 'proformaxml/helpers/export_helpers'
 
-module Proforma
+module ProformaXML
   class Exporter
-    include Proforma::Helpers::ExportHelpers
+    include ProformaXML::Helpers::ExportHelpers
 
     def initialize(task:, custom_namespaces: [], version: nil)
       @files = {}
@@ -120,7 +120,7 @@ module Proforma
     end
 
     def validate(doc)
-      validator = Proforma::Validator.new doc, @version
+      validator = ProformaXML::Validator.new doc, @version
       validator.perform
     end
 

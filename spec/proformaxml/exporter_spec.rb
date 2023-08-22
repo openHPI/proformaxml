@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Proforma::Exporter do
+RSpec.describe ProformaXML::Exporter do
   describe '.new' do
     subject(:exporter) { described_class.new(task:) }
 
@@ -73,7 +73,7 @@ RSpec.describe Proforma::Exporter do
     end
 
     it 'contains through schema validatable xml' do
-      validator = Proforma::Validator.new(doc)
+      validator = ProformaXML::Validator.new(doc)
       expect(validator.perform).to be_empty
     end
 
@@ -428,7 +428,7 @@ RSpec.describe Proforma::Exporter do
       let(:task) { build(:task, :invalid) }
 
       it 'raises an error' do
-        expect { perform }.to raise_error Proforma::PostGenerateValidationError
+        expect { perform }.to raise_error ProformaXML::PostGenerateValidationError
       end
     end
 
@@ -510,7 +510,7 @@ RSpec.describe Proforma::Exporter do
         let(:version) { '1.0' }
 
         it 'raises an error' do
-          expect { perform }.to raise_error Proforma::PostGenerateValidationError
+          expect { perform }.to raise_error ProformaXML::PostGenerateValidationError
         end
       end
     end

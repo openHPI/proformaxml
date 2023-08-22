@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Proforma
+module ProformaXML
   class Base
     include ActiveModel::AttributeAssignment
 

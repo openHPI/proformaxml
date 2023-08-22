@@ -8,7 +8,7 @@ Metrics/BlockLength:
     - "Rakefile"
     - "Guardfile"
     - "**/*/Rakefile"
-    - 'proforma.gemspec'
+    - 'proformaxml.gemspec'
   Max: 50
 
 Metrics/ClassLength:

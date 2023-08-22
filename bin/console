@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require "proforma"
+require "proformaxml"
 require 'securerandom'
 
 # You can add fixtures and/or initialization code here to make experimenting
@@ -15,9 +15,9 @@ Pry.start
 # IRB.start(__FILE__)
 
 # Examples:
-# Proforma::Importer.new(zip: File.open('../testfiles/helloWorld.zip')).perform
+# ProformaXML::Importer.new(zip: File.open('../testfiles/helloWorld.zip')).perform
 #
-# task = Proforma::Task.new(
+# task = ProformaXML::Task.new(
 #   title: 't',
 #   description: 'd',
 #   internal_description:'id',
@@ -35,7 +35,7 @@ Pry.start
 #     }
 #   },
 #   files: [
-#     Proforma::TaskFile.new(
+#     ProformaXML::TaskFile.new(
 #       id: 'file1',
 #       content: 'c',
 #       used_by_grader: true,
@@ -44,12 +44,12 @@ Pry.start
 #     )
 #   ],
 #   model_solutions: [
-#     Proforma::ModelSolution.new(
+#     ProformaXML::ModelSolution.new(
 #       id: 'ms1',
 #       description: 'd',
 #       internal_description:'id',
 #       files: [
-#         Proforma::TaskFile.new(
+#         ProformaXML::TaskFile.new(
 #           id: 'ms-file1',
 #           content: 'ms-c',
 #           used_by_grader: true,
@@ -60,11 +60,11 @@ Pry.start
 #     )
 #   ],
 #   tests: [
-#     Proforma::Test.new(
+#     ProformaXML::Test.new(
 #       id: 'test1',
 #       test_type: 'type',
 #       files: [
-#         Proforma::TaskFile.new(
+#         ProformaXML::TaskFile.new(
 #           id: 'testfile1',
 #           content: 'testc',
 #           used_by_grader: true,
@@ -81,7 +81,7 @@ Pry.start
 #   ]
 # )
 
-# task = Proforma::Task.new(title: 't', description: 'd', internal_description:'id', proglang: { name: 'Ruby', version: '1' }, uuid: SecureRandom.uuid, language: 'de', meta_data: { CodeOcean: { metao: 'datao', bla: 'bloo', secrets: { server_key: 'asdf', other_key: 'fdsa' } } }, files: [Proforma::TaskFile.new(id: 'file1', content: 'c', used_by_grader: true, visible: 'yes', binary: false)], model_solutions: [Proforma::ModelSolution.new(id: 'ms1', description: 'd', internal_description:'id', files: [Proforma::TaskFile.new(id: 'ms-file1', content: 'ms-c', used_by_grader: true, visible: 'yes', binary: false)])], tests: [Proforma::Test.new(id: 'test1', test_type: 'type', files: [Proforma::TaskFile.new(id: 'testfile1', content: 'testc', used_by_grader: true, visible: 'yes', binary: false)], meta_data: { CodeOcean: { meta: 'data' } })])
+# task = ProformaXML::Task.new(title: 't', description: 'd', internal_description:'id', proglang: { name: 'Ruby', version: '1' }, uuid: SecureRandom.uuid, language: 'de', meta_data: { CodeOcean: { metao: 'datao', bla: 'bloo', secrets: { server_key: 'asdf', other_key: 'fdsa' } } }, files: [ProformaXML::TaskFile.new(id: 'file1', content: 'c', used_by_grader: true, visible: 'yes', binary: false)], model_solutions: [ProformaXML::ModelSolution.new(id: 'ms1', description: 'd', internal_description:'id', files: [ProformaXML::TaskFile.new(id: 'ms-file1', content: 'ms-c', used_by_grader: true, visible: 'yes', binary: false)])], tests: [ProformaXML::Test.new(id: 'test1', test_type: 'type', files: [ProformaXML::TaskFile.new(id: 'testfile1', content: 'testc', used_by_grader: true, visible: 'yes', binary: false)], meta_data: { CodeOcean: { meta: 'data' } })])
 
-# File.open('../testfiles/testfile.zip', 'wb') { |file| file.write(Proforma::Exporter.new(task: task, custom_namespaces: [{prefix: 'CodeOcean', uri: 'codeocean.openhpi.de'}]).perform.string) }
+# File.open('../testfiles/testfile.zip', 'wb') { |file| file.write(ProformaXML::Exporter.new(task: task, custom_namespaces: [{prefix: 'CodeOcean', uri: 'codeocean.openhpi.de'}]).perform.string) }
 #

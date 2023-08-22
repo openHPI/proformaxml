@@ -12,7 +12,7 @@ RSpec::Matchers.define :be_an_equal_task_as do |task2|
 
   def equal?(object, other)
     return false unless object.class == other.class
-    return proforma_base_equal?(object, other) if object.is_a?(Proforma::Base)
+    return proforma_base_equal?(object, other) if object.is_a?(ProformaXML::Base)
     return array_equal?(object, other) if object.is_a?(Array)
     return object.stringify_keys == other.stringify_keys if object.is_a?(Hash)
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Proforma::Importer do
+RSpec.describe ProformaXML::Importer do
   describe '.new' do
     subject(:importer) { described_class.new(zip: zip_file) }
 
@@ -8,7 +8,7 @@ RSpec.describe Proforma::Importer do
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
 
     before do
-      zip_file.write(Proforma::Exporter.new(task:).perform.string.force_encoding('UTF-8'))
+      zip_file.write(ProformaXML::Exporter.new(task:).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 
@@ -21,7 +21,7 @@ RSpec.describe Proforma::Importer do
     end
 
     it 'assigns task' do
-      expect(importer.instance_variable_get(:@task)).to be_a Proforma::Task
+      expect(importer.instance_variable_get(:@task)).to be_a ProformaXML::Task
     end
 
     it 'does not assign expected_version' do
@@ -52,7 +52,7 @@ RSpec.describe Proforma::Importer do
     let(:export_namespaces) { [] }
 
     before do
-      zip_file.write(Proforma::Exporter.new(task:, custom_namespaces: export_namespaces,
+      zip_file.write(ProformaXML::Exporter.new(task:, custom_namespaces: export_namespaces,
         version: export_version).perform.string.force_encoding('UTF-8'))
       zip_file.rewind
     end
@@ -233,7 +233,7 @@ RSpec.describe Proforma::Importer do
         let(:export_version) { '2.1' }
 
         it 'raises an error' do
-          expect { perform }.to raise_error Proforma::PreImportValidationError
+          expect { perform }.to raise_error ProformaXML::PreImportValidationError
         end
       end
     end

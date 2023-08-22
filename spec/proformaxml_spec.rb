@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Proforma do
+RSpec.describe ProformaXML do
   it 'has a version number' do
-    expect(Proforma::VERSION).not_to be_nil
+    expect(ProformaXML::VERSION).not_to be_nil
   end
 
   # it 'does something useful' do

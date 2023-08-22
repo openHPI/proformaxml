@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Proforma
+module ProformaXML
   module Helpers
     module ExportHelpers
       def attach_file(xml, file)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :task, class: 'Proforma::Task' do
+  factory :task, class: 'ProformaXML::Task' do
     trait(:populated) do
       title { 'title' }
       description { 'description' }
