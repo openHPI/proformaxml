@@ -2,8 +2,8 @@
 
 ## Supported Versions
 
-To receive fixes for security vulnerabilities it is required to always upgrade to the latest version of proforma. 
-See https://github.com/openHPI/proforma/releases for the latest version.
+To receive fixes for security vulnerabilities it is required to always upgrade to the latest version of proformaxml. 
+See https://github.com/openHPI/proformaxml/releases for the latest version.
 
 ## Reporting a Vulnerability
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :test, class: 'Proforma::Test' do
+  factory :test, class: 'ProformaXML::Test' do
     sequence(:files) {|n| build_list(:task_file, 1, id: "test_file_#{n}") }
     sequence(:id) {|n| "test_#{n}" }
     title { 'title' }

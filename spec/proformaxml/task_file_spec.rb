@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Proforma::TaskFile do
+RSpec.describe ProformaXML::TaskFile do
   it_behaves_like 'mass assignable', %i[id content filename used_by_grader visible usage_by_lms binary internal_description mimetype]
 
   describe '#embed?' do

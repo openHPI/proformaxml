@@ -11,4 +11,4 @@ Lint/AmbiguousBlockAssociation:
 Lint/EmptyBlock:
   Exclude:
     - 'spec/**/*'
-    - 'lib/proforma/services/exporter.rb'
+    - 'lib/proformaxml/services/exporter.rb'

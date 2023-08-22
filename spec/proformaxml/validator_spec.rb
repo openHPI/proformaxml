@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe Proforma::Validator do
+RSpec.describe ProformaXML::Validator do
   describe '.new' do
     subject(:validator) { described_class.new(doc) }
 
-    let(:zip_file) { Proforma::Exporter.new(task: build(:task)).perform }
+    let(:zip_file) { ProformaXML::Exporter.new(task: build(:task)).perform }
     let(:zip_content) do
       {}.tap do |hash|
         Zip::InputStream.open(zip_file) do |io|
@@ -38,7 +38,7 @@ RSpec.describe Proforma::Validator do
   describe '#perform' do
     subject(:perform) { validator.perform }
 
-    let(:zip_file) { Proforma::Exporter.new(task:, version: export_version).perform }
+    let(:zip_file) { ProformaXML::Exporter.new(task:, version: export_version).perform }
     let(:zip_content) do
       {}.tap do |hash|
         Zip::InputStream.open(zip_file) do |io|
@@ -55,12 +55,12 @@ RSpec.describe Proforma::Validator do
 
     it { is_expected.to be_empty }
 
-    context 'when input is not a proforma xml' do
+    context 'when input is not a proformaxml xml' do
       let(:doc) do
         Nokogiri::XML('<root><aliens><alien><name>Alf</name></alien></aliens></root>')
       end
 
-      it { is_expected.to include 'no proforma version found' }
+      it { is_expected.to include 'no proformaxml version found' }
     end
 
     context 'with expected_version' do

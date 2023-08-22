@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/string'
-require 'proforma/helpers/import_helpers'
+require 'proformaxml/helpers/import_helpers'
 
-module Proforma
+module ProformaXML
   class Importer
-    include Proforma::Helpers::ImportHelpers
+    include ProformaXML::Helpers::ImportHelpers
 
     def initialize(zip:, expected_version: nil)
       @zip = zip
@@ -128,7 +128,7 @@ module Proforma
     end
 
     def validate
-      validator = Proforma::Validator.new @doc, @expected_version
+      validator = ProformaXML::Validator.new @doc, @expected_version
       validator.perform
     end
   end

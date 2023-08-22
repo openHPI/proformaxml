@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :task_file, class: 'Proforma::TaskFile' do
+  factory :task_file, class: 'ProformaXML::TaskFile' do
     sequence(:id) {|n| "file_#{n}" }
     content { '' }
     used_by_grader { true }

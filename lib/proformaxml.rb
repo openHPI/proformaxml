@@ -7,14 +7,14 @@ require 'base64'
 require 'securerandom'
 require 'dachsfisch'
 
-require 'proforma/version'
+require 'proformaxml/version'
 
-require 'proforma/services/importer'
-require 'proforma/services/exporter'
-require 'proforma/services/validator'
-require 'proforma/models/task'
+require 'proformaxml/services/importer'
+require 'proformaxml/services/exporter'
+require 'proformaxml/services/validator'
+require 'proformaxml/models/task'
 
-module Proforma
+module ProformaXML
   SCHEMA_PATH = File.join(File.dirname(File.expand_path(__FILE__)), '../assets/schemas')
   SCHEMA_FORMAT_PATH = "#{SCHEMA_PATH}/proforma-%s.xsd".freeze
   SCHEMA_VERSIONS = %w[2.1 2.0].freeze

@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative 'lib/proforma/version'
+require_relative 'lib/proformaxml/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'proforma'
-  spec.version       = Proforma::VERSION
+  spec.name          = 'proformaxml'
+  spec.version       = ProformaXML::VERSION
   spec.authors       = ['Karol']
   spec.email         = ['git@koehn.pro']
 
   spec.summary       = 'Implements parts of ProFormA-XML specification'
   spec.description   = 'Offers datastructure and (de)serializer according to ProFormA-XML specification.'
-  spec.homepage      = 'https://github.com/openHPI/proforma'
+  spec.homepage      = 'https://github.com/openHPI/proformaxml'
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 3.2'

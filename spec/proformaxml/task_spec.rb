@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Proforma::Task do
+RSpec.describe ProformaXML::Task do
   it_behaves_like 'mass assignable',
     %i[title description internal_description proglang files tests uuid parent_uuid language model_solutions]
   it_behaves_like 'collections mass assignable', %i[files tests model_solutions]

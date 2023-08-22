@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Proforma
+module ProformaXML
   class Validator
     def initialize(doc, expected_version = nil)
       @doc = doc
@@ -24,7 +24,7 @@ module Proforma
     end
 
     def validate
-      return ['no proforma version found'] if doc_schema_version.nil?
+      return ['no proformaxml version found'] if doc_schema_version.nil?
 
       version = @expected_version || doc_schema_version
       return ['version not supported'] unless SCHEMA_VERSIONS.include? version

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'proforma/models/base'
-require 'proforma/models/task_file'
-require 'proforma/models/test'
-require 'proforma/models/model_solution'
-require 'proforma/errors'
+require 'proformaxml/models/base'
+require 'proformaxml/models/task_file'
+require 'proformaxml/models/test'
+require 'proformaxml/models/model_solution'
+require 'proformaxml/errors'
 
-module Proforma
+module ProformaXML
   class Task < Base
     attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid,
       :language, :model_solutions, :files, :tests, :meta_data

@@ -4,7 +4,7 @@ RSpec:
   Include:
     - "spec/**/*_spec.rb"
     - "spec/spec_helper.rb"
-    - "spec/proforma_spec.rb"
+    - "spec/proformaxml_spec.rb"
 
 #
 # Too stupid. There are also views, templates, request specs etc.

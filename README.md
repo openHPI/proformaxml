@@ -1,7 +1,7 @@
-# Proforma
+# ProformaXML
 
-[![Build Status](https://github.com/openHPI/proforma/workflows/CI/badge.svg)](https://github.com/openHPI/proforma/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/openHPI/proforma/branch/main/graph/badge.svg?token=n1rDXnCezH)](https://codecov.io/gh/openHPI/proforma)
+[![Build Status](https://github.com/openHPI/proformaxml/workflows/CI/badge.svg)](https://github.com/openHPI/proformaxml/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/openHPI/proformaxml/branch/main/graph/badge.svg?token=n1rDXnCezH)](https://codecov.io/gh/openHPI/proformaxml)
 
 This gem offers a Ruby implementation of the [ProFormA XML standard](https://github.com/ProFormA/proformaxml), an XML exchange format for programming exercises. This gem includes a datastructure and XML-(de)serializer.
 
@@ -10,8 +10,7 @@ This gem offers a Ruby implementation of the [ProFormA XML standard](https://git
 Add these lines to your application's Gemfile:
 
 ```ruby
-gem 'proforma', github: 'openHPI/proforma', tag: 'v0.9'
-gem 'dachsfisch', github: 'openHPI/dachsfisch' # this is needed until we publish dachsfisch on rubygems
+gem 'proformaxml'
 ```
 
 And then execute:
@@ -25,33 +24,37 @@ Note: Removing support for ancient Ruby or Rails versions will not result in a n
 ## Usage
 
 Create Task
+
 ```ruby
-task = Proforma::Task.new(title: 'title')
+task = ProformaXML::Task.new(title: 'title')
 ```
 Call Exporter to serialize to XML.
+
 ```ruby
-Proforma::Exporter.new(task: task).perform
+ProformaXML::Exporter.new(task: task).perform
 ```
 It returns a StringIO of a zip-file which includes the XML and any external files (TaskFiles will be saved in the XML up to a size of 50kb, anything larger will be its own file in the zip)
-`Proforma::Exporter` has the following optional parameters:
+`ProformaXML::Exporter` has the following optional parameters:
 - `custom_namespaces`: expects an array with hashes with the following attributes:
     - `prefix`
     - `uri`
 - `version`: sets the ProFormA version of the generated XML
 
 Call Importer to deserialize from XML
+
 ```ruby
-result = Proforma::Importer.new(zip: zip_file).perform
+result = ProformaXML::Importer.new(zip: zip_file).perform
 task = result[:task]
 custom_namespaces = result[:custom_namespaces]
 ```
-the `zip_file` has to be openable by `Zip::File.open(zip: zip.path)`, otherwise `Proforma::InvalidZip` will be raised
-`Proforma::Importer` has the following optional parameter:
-- `expected_version`: if the version of the XML doesn't match this value `Proforma::InvalidZip` will be raised
+the `zip_file` has to be openable by `Zip::File.open(zip: zip.path)`, otherwise `ProformaXML::InvalidZip` will be raised
+`ProformaXML::Importer` has the following optional parameter:
+- `expected_version`: if the version of the XML doesn't match this value `ProformaXML::InvalidZip` will be raised
 
 ## Example
+
 ```ruby
-Proforma::Task.new(
+ProformaXML::Task.new(
   title: 'title',
   description: 'description',
   internal_description: 'internal_description',
@@ -66,7 +69,7 @@ Proforma::Task.new(
     }
   },
   files: [
-    Proforma::TaskFile.new(
+    ProformaXML::TaskFile.new(
       id: 'file_id_1',
       content: 'public static fileContent(){}',
       filename: 'file_content.java',
@@ -77,7 +80,7 @@ Proforma::Task.new(
       internal_description: 'internal_description',
       mimetype: 'text/plain'
     ),
-    Proforma::TaskFile.new(
+    ProformaXML::TaskFile.new(
       id: 'file_id_2',
       content: 'BINARY IMAGE CONTENT',
       filename: 'image.jpg',
@@ -90,11 +93,11 @@ Proforma::Task.new(
     )
   ],
   tests: [
-    Proforma::Test.new(
+    ProformaXML::Test.new(
       id: 'test_id_1',
       title: 'test title',
       files: [
-        Proforma::TaskFile.new(
+        ProformaXML::TaskFile.new(
           id: 'test_file_1',
           content: 'public static assert123(){}',
           filename: 'junit/assert123.java',
@@ -115,10 +118,10 @@ Proforma::Task.new(
   parent_uuid: 'abf097f5-0df0-468d-8ce4-13460c34cd3b',
   language: 'de',
   model_solutions: [
-    Proforma::ModelSolution.new(
+    ProformaXML::ModelSolution.new(
       id: 'model_solution_id_1',
       files: [
-        Proforma::TaskFile.new(
+        ProformaXML::TaskFile.new(
           id: 'model_solution_test_id_1',
           content: 'public static fileContent(){ syso("A"); }',
           filename: 'this_is_how_its_done.java',
@@ -132,7 +135,6 @@ Proforma::Task.new(
     )
   ],
 )
-
 ```
 Generated XML from task above with `custom_namespaces: [{prefix: 'CodeOcean', uri: 'codeocean.openhpi.de'}]`
 ```xml
@@ -199,7 +201,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/openHPI/proforma. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/openHPI/proforma/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/openHPI/proformaxml. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/openHPI/proformaxml/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -207,4 +209,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in this project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/openHPI/proforma/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in this project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/openHPI/proformaxml/blob/main/CODE_OF_CONDUCT.md).
