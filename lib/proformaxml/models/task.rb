@@ -8,8 +8,8 @@ require 'proformaxml/errors'
 
 module ProformaXML
   class Task < Base
-    attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid,
-      :language, :model_solutions, :files, :tests, :meta_data
+    attr_accessor :title, :description, :internal_description, :proglang, :uuid, :parent_uuid, :language,
+      :model_solutions, :files, :tests, :meta_data, :submission_restrictions, :external_resources, :grading_hints
 
     def initialize(attributes = {})
       super

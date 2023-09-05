@@ -97,7 +97,10 @@ module ProformaXML
 
       def convert_xml_node_to_json(any_node)
         xml_snippet = Nokogiri::XML::DocumentFragment.new(Nokogiri::XML::Document.new, any_node)
-        xml_snippet.children.first.add_namespace_definition(any_node.namespace.prefix, any_node.namespace.href)
+        unless any_node.namespace.prefix.nil?
+          xml_snippet.children.first.add_namespace_definition(any_node.namespace.prefix,
+            any_node.namespace.href)
+        end
         JSON.parse(Dachsfisch::XML2JSONConverter.perform(xml: xml_snippet.to_xml))
       end
 
