@@ -26,7 +26,7 @@ module ProformaXML
       def add_test_configuration(xml, test)
         xml.send(:'test-configuration') do
           add_filerefs(xml, test) if test.files
-          add_configuration(xml, test.configuration) unless test.configuration.nil?
+          add_dachsfisch_node(xml, test.configuration)
           if test.meta_data
             xml.send(:'test-meta-data') do
               meta_data(xml, test.meta_data)
@@ -55,10 +55,12 @@ module ProformaXML
         end
       end
 
-      def add_configuration(xml, configuration)
-        xml_snippet = Dachsfisch::JSON2XMLConverter.perform(json: configuration.to_json)
-        configuration.flat_map {|_, val| val['@xmlns'].to_a }.uniq.each do |namespace|
-          xml.doc.root.add_namespace(namespace[0], namespace[1])
+      def add_dachsfisch_node(xml, dachsfisch_node)
+        return if dachsfisch_node.nil?
+
+        xml_snippet = Dachsfisch::JSON2XMLConverter.perform(json: dachsfisch_node.to_json)
+        dachsfisch_node.flat_map {|_, val| val['@xmlns'].to_a }.uniq.each do |namespace|
+          xml.doc.root.add_namespace(namespace[0], namespace[1]) unless namespace[0] == '$'
         end
 
         xml << xml_snippet

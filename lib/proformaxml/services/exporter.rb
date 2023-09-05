@@ -24,7 +24,7 @@ module ProformaXML
 
       raise PostGenerateValidationError.new(errors) if errors.any?
 
-      # File.open('../testfile.zip', 'wb') { |file| file.write(write_to_zip(xmldoc).string) }
+      # File.binwrite('../testfile.zip', write_to_zip(xmldoc).string)
       write_to_zip(xmldoc)
     end
 
@@ -51,9 +51,12 @@ module ProformaXML
     end
 
     def add_objects_to_xml(xml)
+      add_dachsfisch_node(xml, @task.submission_restrictions)
       xml.files { files(xml) }
+      add_dachsfisch_node(xml, @task.external_resources)
       xml.send(:'model-solutions') { model_solutions(xml) } if @task.model_solutions.any? || @version == '2.0'
       xml.tests { tests(xml) }
+      add_dachsfisch_node(xml, @task.grading_hints)
     end
 
     def files(xml)
