@@ -424,6 +424,52 @@ RSpec.describe ProformaXML::Exporter do
       end
     end
 
+    context 'with submission_restrictions' do
+      let(:task) { build(:task, :with_submission_restrictions) }
+
+      it 'add submission-restrictions' do
+        expect(xml.xpath('/task/submission-restrictions')).to have(1).items
+      end
+
+      it 'add file-restrictions to submission-restrictions' do
+        expect(xml.xpath('/task/submission-restrictions/file-restriction')).to have(2).items
+      end
+    end
+
+    context 'with external-resources' do
+      subject(:exporter) { described_class.new(task:, custom_namespaces: [{prefix: 'foo', uri: 'urn:custom:foobar'}]) }
+
+      let(:task) { build(:task, :with_external_resources) }
+
+      it 'add external-resources' do
+        expect(xml.xpath('/task/external-resources')).to have(1).items
+      end
+
+      it 'add external-resources to external-resources' do
+        expect(xml.xpath('/task/external-resources/external-resource')).to have(2).items
+      end
+
+      it 'add custom node to external-resource' do
+        expect(doc.xpath('/xmlns:task/xmlns:external-resources/xmlns:external-resource/foo:bar').last.text).to eql 'barfoo'
+      end
+    end
+
+    context 'with grading-hints' do
+      let(:task) { build(:task, :with_grading_hints) }
+
+      it 'add grading-hints' do
+        expect(xml.xpath('/task/grading-hints')).to have(1).items
+      end
+
+      it 'add root to grading-hints' do
+        expect(xml.xpath('/task/grading-hints/root')).to have(1).items
+      end
+
+      it 'add test-refs to root' do
+        expect(xml.xpath('/task/grading-hints/root/test-ref')).to have(2).items
+      end
+    end
+
     context 'when task is invalid' do
       let(:task) { build(:task, :invalid) }
 
