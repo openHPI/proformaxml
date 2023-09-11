@@ -90,7 +90,7 @@ module ProformaXML
     def set_extra_data
       submission_restrictions_node = @task_node.xpath('xmlns:submission-restrictions').first
       @task.submission_restrictions = convert_xml_node_to_json(submission_restrictions_node) unless submission_restrictions_node.nil?
-      external_resources_node = @task_node.xpath('xmlns:external_resources').first
+      external_resources_node = @task_node.xpath('xmlns:external-resources').first
       @task.external_resources = convert_xml_node_to_json(external_resources_node) unless external_resources_node.nil?
       grading_hints_node = @task_node.xpath('xmlns:grading-hints').first
       @task.grading_hints = convert_xml_node_to_json(grading_hints_node) unless grading_hints_node.nil?
