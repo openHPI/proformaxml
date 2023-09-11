@@ -24,7 +24,3 @@ AllCops:
     - 'tmp/**/*'
     - 'out/**/*'
     - 'coverage/**/*'
-
-RSpec/FilePath:
-  CustomTransform:
-    ProformaXML: proformaxml
