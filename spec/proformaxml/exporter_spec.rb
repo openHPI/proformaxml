@@ -436,7 +436,7 @@ RSpec.describe ProformaXML::Exporter do
       end
     end
 
-    context 'with external-resources' do
+    context 'with external_resources' do
       subject(:exporter) { described_class.new(task:, custom_namespaces: [{prefix: 'foo', uri: 'urn:custom:foobar'}]) }
 
       let(:task) { build(:task, :with_external_resources) }
@@ -454,7 +454,7 @@ RSpec.describe ProformaXML::Exporter do
       end
     end
 
-    context 'with grading-hints' do
+    context 'with grading_hints' do
       let(:task) { build(:task, :with_grading_hints) }
 
       it 'add grading-hints' do

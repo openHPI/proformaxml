@@ -98,6 +98,30 @@ RSpec.describe ProformaXML::Importer do
       end
     end
 
+    context 'when task has submission_restrictions' do
+      let(:task) { build(:task, :with_submission_restrictions) }
+
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
+    end
+
+    context 'when task has external_resources' do
+      let(:task) { build(:task, :with_external_resources) }
+
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
+    end
+
+    context 'when task has grading_hints' do
+      let(:task) { build(:task, :with_grading_hints) }
+
+      it 'successfully imports the task' do
+        expect(imported_task).to be_an_equal_task_as ref_task
+      end
+    end
+
     context 'when task has an embedded text file' do
       let(:task) { build(:task, :with_embedded_txt_file) }
 
