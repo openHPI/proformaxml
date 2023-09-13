@@ -83,8 +83,8 @@ module ProformaXML
     end
 
     def set_meta_data
-      meta_data_node = @task_node.xpath('xmlns:meta-data')
-      @task.meta_data = meta_data(meta_data_node, use_namespace: true) if meta_data_node.text.present?
+      meta_data_node = @task_node.xpath('xmlns:meta-data').first
+      @task.meta_data = convert_xml_node_to_json(meta_data_node) if meta_data_node.text.present?
     end
 
     def set_extra_data

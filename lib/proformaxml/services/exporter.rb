@@ -22,9 +22,9 @@ module ProformaXML
       doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
 
+      File.binwrite('../testfile.zip', write_to_zip(xmldoc).string)
       raise PostGenerateValidationError.new(errors) if errors.any?
 
-      # File.binwrite('../testfile.zip', write_to_zip(xmldoc).string)
       write_to_zip(xmldoc)
     end
 
@@ -38,16 +38,12 @@ module ProformaXML
         xml.proglang({version: @task.proglang&.dig(:version)}, @task.proglang&.dig(:name))
 
         add_objects_to_xml(xml)
-        add_meta_data(xml)
+        add_dachsfisch_node(xml, @task.meta_data, 'meta-data')
       end
     end
 
     def add_internal_description_to_xml(xml, internal_description)
       xml.send(:'internal-description', internal_description) if internal_description.present?
-    end
-
-    def add_meta_data(xml)
-      xml.send(:'meta-data') { meta_data(xml, @task.meta_data) }
     end
 
     def add_objects_to_xml(xml)
