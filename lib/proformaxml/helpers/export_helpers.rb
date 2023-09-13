@@ -27,11 +27,7 @@ module ProformaXML
         xml.send(:'test-configuration') do
           add_filerefs(xml, test) if test.files
           add_dachsfisch_node(xml, test.configuration)
-          if test.meta_data
-            xml.send(:'test-meta-data') do
-              meta_data(xml, test.meta_data)
-            end
-          end
+          add_dachsfisch_node(xml, test.meta_data)
         end
       end
 
@@ -49,19 +45,13 @@ module ProformaXML
         end
       end
 
-      def meta_data(xml, meta_data)
-        meta_data.each do |namespace, data|
-          inner_meta_data(xml, namespace, data)
+      def add_dachsfisch_node(xml, dachsfisch_node, node_name_fallback = nil)
+        if dachsfisch_node.blank?
+          xml.send(node_name_fallback, '') if node_name_fallback.present?
+          return
         end
-      end
-
-      def add_dachsfisch_node(xml, dachsfisch_node)
-        return if dachsfisch_node.nil?
-
         xml_snippet = Dachsfisch::JSON2XMLConverter.perform(json: dachsfisch_node.to_json)
-        dachsfisch_node.flat_map {|_, val| val['@xmlns'].to_a }.uniq.each do |namespace|
-          xml.doc.root.add_namespace(namespace[0], namespace[1]) unless namespace[0] == '$'
-        end
+        add_namespaces_for_dachsfisch_node(dachsfisch_node, xml)
 
         xml << xml_snippet
       end
@@ -75,6 +65,12 @@ module ProformaXML
       def add_parent_uuid_and_lang_to_header(header)
         header['lang'] = @task.language if @task.language.present?
         header['parent-uuid'] = @task.parent_uuid if @task.parent_uuid.present?
+      end
+
+      def add_namespaces_for_dachsfisch_node(dachsfisch_node, xml)
+        dachsfisch_node.flat_map {|_, val| val['@xmlns'].to_a }.uniq.each do |namespace|
+          xml.doc.root.add_namespace(namespace[0], namespace[1]) unless namespace[0] == '$'
+        end
       end
     end
   end

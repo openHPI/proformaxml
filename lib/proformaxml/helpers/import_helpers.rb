@@ -60,7 +60,7 @@ module ProformaXML
         test.files = test_files_from_test_configuration(test_configuration_node)
         test.configuration = extra_configuration_from_test_configuration(test_configuration_node)
         meta_data_node = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
-        test.meta_data = meta_data(meta_data_node, use_namespace: true) if meta_data_node.present?
+        test.meta_data = convert_xml_node_to_json(meta_data_node) if meta_data_node.present?
       end
 
       def extra_configuration_from_test_configuration(test_configuration_node)
@@ -78,28 +78,28 @@ module ProformaXML
         files_from_filerefs(test_configuration_node.search('filerefs'))
       end
 
-      def meta_data(any_data_node, use_namespace: false)
-        # use_namespace forces the use of the namespace as hash key - it should only be used at the entry of the recursion
-        {}.tap do |any_data|
-          any_data_node.children.each do |node|
-            key = (use_namespace ? node.namespace.prefix : any_data_node.name).to_sym
-            any_data[key] = if node.node_type == Nokogiri::XML::Node::TEXT_NODE
-                              node.text
-                            else
-                              # preserve any existing data in the nested hash
-                              (any_data[key] || {}).merge meta_data(node)
-                            end
-          end
-        end
-      end
+      # def meta_data(any_data_node, use_namespace: false)
+      #   # use_namespace forces the use of the namespace as hash key - it should only be used at the entry of the recursion
+      #   {}.tap do |any_data|
+      #     any_data_node.children.each do |node|
+      #       key = (use_namespace ? node.namespace.prefix : any_data_node.name).to_sym
+      #       any_data[key] = if node.node_type == Nokogiri::XML::Node::TEXT_NODE
+      #                         node.text
+      #                       else
+      #                         # preserve any existing data in the nested hash
+      #                         (any_data[key] || {}).merge meta_data(node)
+      #                       end
+      #     end
+      #   end
+      # end
 
       private
 
       def convert_xml_node_to_json(any_node)
         xml_snippet = Nokogiri::XML::DocumentFragment.new(Nokogiri::XML::Document.new, any_node)
-        unless any_node.namespace.prefix.nil?
-          xml_snippet.children.first.add_namespace_definition(any_node.namespace.prefix,
-            any_node.namespace.href)
+        namespaces = any_node.xpath('.|.//*').map(&:namespace).reject {|ns| ns.prefix.nil?}.map{|ns|{prefix: ns.prefix, href: ns.href}}.uniq
+        namespaces.each do |namespace|
+          xml_snippet.children.first.add_namespace_definition(namespace[:prefix], namespace[:href])
         end
         JSON.parse(Dachsfisch::XML2JSONConverter.perform(xml: xml_snippet.to_xml))
       end
