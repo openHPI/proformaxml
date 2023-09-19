@@ -1,0 +1,5 @@
+# factory bot cop settings
+
+# We need to define own IDs, since we do not store objects in a database with ActiveRecord.
+FactoryBot/IdSequence:
+  Enabled: false

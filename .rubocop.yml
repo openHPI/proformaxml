@@ -5,6 +5,7 @@ require:
   - rubocop-rspec
 
 inherit_from:
+  - .rubocop/factory-bot.yml
   - .rubocop/layout.yml
   - .rubocop/lint.yml
   - .rubocop/metrics.yml
