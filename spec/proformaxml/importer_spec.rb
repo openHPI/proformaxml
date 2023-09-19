@@ -91,7 +91,7 @@ RSpec.describe ProformaXML::Importer do
 
     context 'when task has meta-data' do
       let(:export_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
-      let(:task) { build(:task, meta_data: {"meta-data"=>{"@xmlns"=>{"namespace"=>"custom_namespace.org"}, "namespace:meta"=>{"@xmlns"=>{"namespace"=>"custom_namespace.org"}, "namespace:nested"=>{"$1"=>"data", "@xmlns"=>{"namespace"=>"custom_namespace.org"}}}}}) }
+      let(:task) { build(:task, :with_meta_data) }
 
       it 'successfully imports the task' do
         expect(imported_task).to be_an_equal_task_as ref_task
@@ -185,7 +185,7 @@ RSpec.describe ProformaXML::Importer do
       context 'when test has meta-data' do
         let(:export_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
         let(:task) do
-          build(:task, tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}))
+          build(:task, tests: build_list(:test, 1, :with_meta_data))
         end
 
         it 'successfully imports the task' do

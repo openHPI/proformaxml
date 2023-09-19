@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activemodel', '>= 5.2.3', '< 8.0.0'
   spec.add_dependency 'activesupport', '>= 5.2.3', '< 8.0.0'
-  spec.add_dependency 'dachsfisch', '>= 0.1.0', '< 1.0.0'
+  spec.add_dependency 'dachsfisch', '>= 0.1.1', '< 1.0.0'
   spec.add_dependency 'nokogiri', '>= 1.10.2', '< 2.0.0'
   spec.add_dependency 'rubyzip', '>= 1.2.2', '< 3.0.0'
 

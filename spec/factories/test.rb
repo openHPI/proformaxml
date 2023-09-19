@@ -20,7 +20,43 @@ FactoryBot.define do
     end
 
     trait(:with_meta_data) do
-      meta_data { {namespace: {test_meta: 'data', test: 'test_data'}} }
+      meta_data do
+        {
+          'test-meta-data' => {
+            '@xmlns' => {
+              'namespace' => 'custom_namespace.org',
+            },
+            'namespace:meta' => {
+              '$1' => 'data',
+              '@xmlns' => {
+                'namespace' => 'custom_namespace.org',
+              },
+            },
+            'namespace:nested' => {
+              '@xmlns' => {
+                'namespace' => 'custom_namespace.org',
+              },
+              'namespace:foo' => {
+                '$1' => 'bar',
+                '@xmlns' => {
+                  'namespace' => 'custom_namespace.org',
+                },
+              },
+              'namespace:test' => {
+                '@xmlns' => {
+                  'namespace' => 'custom_namespace.org',
+                },
+                'namespace:abc' => {
+                  '$1' => '123',
+                  '@xmlns' => {
+                    'namespace' => 'custom_namespace.org',
+                  },
+                },
+              },
+            },
+          },
+        }
+      end
     end
 
     trait(:with_multiple_files) do

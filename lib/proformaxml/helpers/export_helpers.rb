@@ -31,20 +31,6 @@ module ProformaXML
         end
       end
 
-      def inner_meta_data(xml, namespace, data)
-        data.each do |key, value|
-          case value.class.name
-            when 'Hash'
-              # underscore is used to disambiguate tag names from ruby methods
-              xml[namespace].send("#{key}_") do |meta_data_xml|
-                inner_meta_data(meta_data_xml, namespace, value)
-              end
-            else
-              xml[namespace].send("#{key}_", value)
-          end
-        end
-      end
-
       def add_dachsfisch_node(xml, dachsfisch_node, node_name_fallback = nil)
         if dachsfisch_node.blank?
           xml.send(node_name_fallback, '') if node_name_fallback.present?
