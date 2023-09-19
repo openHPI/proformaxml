@@ -135,7 +135,7 @@ RSpec.describe ProformaXML::Exporter do
     context 'when task has meta_data' do
       let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
       let(:task) do
-        build(:task, :populated, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}})
+        build(:task, :populated, :with_meta_data)
       end
       let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:meta-data') }
 
@@ -146,7 +146,7 @@ RSpec.describe ProformaXML::Exporter do
         expect(meta_data_node).to have(1).items
       end
 
-      it 'adds two children nodes to meta-data node' do
+      it 'adds a child nodes to meta-data node' do
         expect(meta_data_node.children).to have(2).items
       end
 
@@ -319,7 +319,7 @@ RSpec.describe ProformaXML::Exporter do
         let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
         let(:task) do
           build(:task, :populated,
-            tests: build_list(:test, 1, meta_data: {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}}))
+            tests: build_list(:test, 1, :with_meta_data))
         end
         let(:meta_data_node) { doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration/xmlns:test-meta-data') }
 

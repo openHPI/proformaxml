@@ -61,7 +61,7 @@ RSpec.describe 'equal_task matcher' do
     end
 
     context 'with a tiny change in the meta_data' do
-      before { task.meta_data[:namespace][:meta] = 'doto' }
+      before { task.meta_data['meta-data']['namespace:meta']['$1'] = 'doto' }
 
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2
@@ -73,7 +73,7 @@ RSpec.describe 'equal_task matcher' do
     end
 
     context 'with a tiny change in the nested meta_data' do
-      before { task.meta_data[:namespace][:nested][:test] = 'doto' }
+      before { task.meta_data['meta-data']['namespace:nested']['namespace:test']['namespace:abc']['$1'] = 'doto' }
 
       it 'fails' do
         expect(task).not_to be_an_equal_task_as task2

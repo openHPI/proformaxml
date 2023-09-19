@@ -17,7 +17,6 @@ FactoryBot.define do
     trait(:with_embedded_bin_file) { files { build_list(:task_file, 1, :populated, :small_content, :binary) } }
     trait(:with_attached_txt_file) { files { build_list(:task_file, 1, :populated, :large_content, :text) } }
     trait(:with_attached_bin_file) { files { build_list(:task_file, 1, :populated, :large_content, :binary) } }
-    trait(:with_meta_data) { meta_data { {namespace: {meta: 'data', nested: {test: {abc: '123'}, foo: 'bar'}}} } }
 
     trait(:with_model_solution) { model_solutions { build_list(:model_solution, 1, :populated) } }
     trait(:with_test) { tests { build_list(:test, 1, :populated) } }
@@ -62,46 +61,45 @@ FactoryBot.define do
       external_resources do
         {
           'external-resources' => {
+            '@xmlns' => {'foo' => 'urn:custom:foobar'},
             'external-resource' => [
               {
+                '@xmlns' => {'foo' => 'urn:custom:foobar'},
                 '@id' => 'external-resource 1',
                 '@reference' => '1',
                 '@used-by-grader' => 'true',
                 '@visible' => 'delayed',
                 '@usage-by-lms' => 'download',
                 'internal-description' => {
+                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '$1' => 'internal-desc',
                 },
                 'foo:bar' => {
-                  '@xmlns' => {
-                    'foo' => 'urn:custom:foobar',
-                  },
+                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '@version' => '4',
                   'foo:content' => {
-                    '@xmlns' => {
-                      'foo' => 'urn:custom:foobar',
-                    }, '$1' => 'foobar'
+                    '@xmlns' => {'foo' => 'urn:custom:foobar'},
+                    '$1' => 'foobar',
                   },
                 },
               },
               {
+                '@xmlns' => {'foo' => 'urn:custom:foobar'},
                 '@id' => 'external-resource 2',
                 '@reference' => '2',
                 '@used-by-grader' => 'false',
                 '@visible' => 'no',
                 '@usage-by-lms' => 'edit',
                 'internal-description' => {
+                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '$1' => 'internal-desc',
                 },
                 'foo:bar' => {
-                  '@xmlns' => {
-                    'foo' => 'urn:custom:foobar',
-                  },
+                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '@version' => '5',
                   'foo:content' => {
-                    '@xmlns' => {
-                      'foo' => 'urn:custom:foobar',
-                    }, '$1' => 'barfoo'
+                    '@xmlns' => {'foo' => 'urn:custom:foobar'},
+                    '$1' => 'barfoo',
                   },
                 },
               },
@@ -127,6 +125,33 @@ FactoryBot.define do
                   '@weight' => '1',
                 },
               ],
+            },
+          },
+        }
+      end
+    end
+    trait(:with_meta_data) do
+      meta_data do
+        {
+          'meta-data' => {
+            '@xmlns' => {'namespace' => 'custom_namespace.org'},
+            'namespace:meta' => {
+              '$1' => 'data',
+               '@xmlns' => {'namespace' => 'custom_namespace.org'},
+            },
+            'namespace:nested' => {
+              '@xmlns' => {'namespace' => 'custom_namespace.org'},
+              'namespace:foo' => {
+                '$1' => 'bar',
+                 '@xmlns' => {'namespace' => 'custom_namespace.org'},
+              },
+              'namespace:test' => {
+                '@xmlns' => {'namespace' => 'custom_namespace.org'},
+                'namespace:abc' => {
+                  '$1' => '123',
+                   '@xmlns' => {'namespace' => 'custom_namespace.org'},
+                },
+              },
             },
           },
         }

@@ -4,7 +4,7 @@ PATH
     proformaxml (1.0.0)
       activemodel (>= 5.2.3, < 8.0.0)
       activesupport (>= 5.2.3, < 8.0.0)
-      dachsfisch (>= 0.1.0, < 1.0.0)
+      dachsfisch (>= 0.1.1, < 1.0.0)
       nokogiri (>= 1.10.2, < 2.0.0)
       rubyzip (>= 1.2.2, < 3.0.0)
 
