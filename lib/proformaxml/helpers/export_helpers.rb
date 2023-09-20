@@ -42,12 +42,6 @@ module ProformaXML
         xml << xml_snippet
       end
 
-      def add_namespaces_to_header(header, custom_namespaces)
-        custom_namespaces.each do |namespace|
-          header["xmlns:#{namespace[:prefix]}"] = namespace[:uri]
-        end
-      end
-
       def add_parent_uuid_and_lang_to_header(header)
         header['lang'] = @task.language if @task.language.present?
         header['parent-uuid'] = @task.parent_uuid if @task.parent_uuid.present?

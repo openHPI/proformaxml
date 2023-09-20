@@ -18,10 +18,6 @@ RSpec.describe ProformaXML::Exporter do
       expect(exporter.instance_variable_get(:@version)).to eql '2.1'
     end
 
-    it 'assigns custom_namespaces' do
-      expect(exporter.instance_variable_get(:@custom_namespaces)).to be_empty
-    end
-
     context 'with specific version' do
       subject(:exporter) { described_class.new(task:, version:) }
 
@@ -31,23 +27,12 @@ RSpec.describe ProformaXML::Exporter do
         expect(exporter.instance_variable_get(:@version)).to eql '2.0'
       end
     end
-
-    context 'with a custom namespace' do
-      subject(:exporter) { described_class.new(task:, custom_namespaces:) }
-
-      let(:custom_namespaces) { [namespace] }
-      let(:namespace) { {prefix: 'test', uri: 'test.com'} }
-
-      it 'assigns custom_namespaces' do
-        expect(exporter.instance_variable_get(:@custom_namespaces)).to include(namespace)
-      end
-    end
   end
 
   describe '#perform' do
     subject(:perform) { exporter.perform }
 
-    let(:exporter) { described_class.new(task:, custom_namespaces:) }
+    let(:exporter) { described_class.new(task:) }
     let(:task) { build(:task) }
 
     let(:zip_files) do
@@ -62,7 +47,6 @@ RSpec.describe ProformaXML::Exporter do
 
     let(:doc) { Nokogiri::XML(zip_files['task.xml'], &:noblanks) }
     let(:xml) { doc.remove_namespaces! }
-    let(:custom_namespaces) { [] }
 
     it_behaves_like 'task node'
 
@@ -117,14 +101,6 @@ RSpec.describe ProformaXML::Exporter do
       end
     end
 
-    context 'with a custom namespace' do
-      let(:custom_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
-
-      it 'adds namespace to task' do
-        expect(doc.xpath('/xmlns:task').first.namespaces['xmlns:test']).to eql 'test.com'
-      end
-    end
-
     context 'when a populated task is supplied' do
       let(:task) { build(:task, :populated) }
 
@@ -133,7 +109,6 @@ RSpec.describe ProformaXML::Exporter do
     end
 
     context 'when task has meta_data' do
-      let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
       let(:task) do
         build(:task, :populated, :with_meta_data)
       end
@@ -265,7 +240,6 @@ RSpec.describe ProformaXML::Exporter do
       let(:task) { build(:task, :populated, :with_test) }
       let(:file) { task.all_files.find {|file| file.id != 'ms-placeholder-file' } }
       let(:test) { task.tests.first }
-      let(:custom_namespaces) { [{prefix: 'test', uri: 'test.com'}] }
 
       it_behaves_like 'task node'
       it_behaves_like 'populated task node'
@@ -316,7 +290,6 @@ RSpec.describe ProformaXML::Exporter do
       end
 
       context 'when test has meta-data' do
-        let(:custom_namespaces) { [{prefix: 'namespace', uri: 'custom_namespace.org'}] }
         let(:task) do
           build(:task, :populated,
             tests: build_list(:test, 1, :with_meta_data))
@@ -437,8 +410,6 @@ RSpec.describe ProformaXML::Exporter do
     end
 
     context 'with external_resources' do
-      subject(:exporter) { described_class.new(task:, custom_namespaces: [{prefix: 'foo', uri: 'urn:custom:foobar'}]) }
-
       let(:task) { build(:task, :with_external_resources) }
 
       it 'add external-resources' do
