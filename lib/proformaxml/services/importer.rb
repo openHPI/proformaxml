@@ -26,7 +26,7 @@ module ProformaXML
       @task_node = @doc.xpath('/xmlns:task')
 
       set_data
-      {task: @task, custom_namespaces: @custom_namespaces}
+      @task
     end
 
     private
@@ -38,17 +38,12 @@ module ProformaXML
     end
 
     def set_data
-      set_namespaces
       set_base_data
       set_files
       set_model_solutions
       set_tests
       set_meta_data
       set_extra_data
-    end
-
-    def set_namespaces
-      @custom_namespaces = @doc.namespaces.except('xmlns').map {|k, v| {prefix: k[6..], uri: v} }
     end
 
     def set_base_data
