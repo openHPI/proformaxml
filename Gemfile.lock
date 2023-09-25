@@ -29,7 +29,7 @@ GEM
     docile (1.4.0)
     factory_bot (6.3.0)
       activesupport (>= 5.0.0)
-    ffi (1.15.5)
+    ffi (1.16.1)
     formatador (1.1.0)
     guard (2.18.1)
       formatador (>= 0.2.4)
