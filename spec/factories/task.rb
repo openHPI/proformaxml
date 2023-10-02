@@ -137,19 +137,19 @@ FactoryBot.define do
             '@xmlns' => {'namespace' => 'custom_namespace.org'},
             'namespace:meta' => {
               '$1' => 'data',
-               '@xmlns' => {'namespace' => 'custom_namespace.org'},
+              '@xmlns' => {'namespace' => 'custom_namespace.org'},
             },
             'namespace:nested' => {
               '@xmlns' => {'namespace' => 'custom_namespace.org'},
               'namespace:foo' => {
                 '$1' => 'bar',
-                 '@xmlns' => {'namespace' => 'custom_namespace.org'},
+                '@xmlns' => {'namespace' => 'custom_namespace.org'},
               },
               'namespace:test' => {
                 '@xmlns' => {'namespace' => 'custom_namespace.org'},
                 'namespace:abc' => {
                   '$1' => '123',
-                   '@xmlns' => {'namespace' => 'custom_namespace.org'},
+                  '@xmlns' => {'namespace' => 'custom_namespace.org'},
                 },
               },
             },

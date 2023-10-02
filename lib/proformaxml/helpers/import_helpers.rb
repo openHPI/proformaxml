@@ -78,21 +78,6 @@ module ProformaXML
         files_from_filerefs(test_configuration_node.search('filerefs'))
       end
 
-      # def meta_data(any_data_node, use_namespace: false)
-      #   # use_namespace forces the use of the namespace as hash key - it should only be used at the entry of the recursion
-      #   {}.tap do |any_data|
-      #     any_data_node.children.each do |node|
-      #       key = (use_namespace ? node.namespace.prefix : any_data_node.name).to_sym
-      #       any_data[key] = if node.node_type == Nokogiri::XML::Node::TEXT_NODE
-      #                         node.text
-      #                       else
-      #                         # preserve any existing data in the nested hash
-      #                         (any_data[key] || {}).merge meta_data(node)
-      #                       end
-      #     end
-      #   end
-      # end
-
       private
 
       def convert_xml_node_to_json(any_node)

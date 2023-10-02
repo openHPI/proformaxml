@@ -21,7 +21,7 @@ module ProformaXML
       doc = Nokogiri::XML(xmldoc)
       errors = validate(doc)
 
-      File.binwrite('../testfile.zip', write_to_zip(xmldoc).string)
+      # File.binwrite('../testfile.zip', write_to_zip(xmldoc).string)
       raise PostGenerateValidationError.new(errors) if errors.any?
 
       write_to_zip(xmldoc)
