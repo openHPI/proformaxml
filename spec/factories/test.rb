@@ -28,29 +28,14 @@ FactoryBot.define do
             },
             'namespace:meta' => {
               '$1' => 'data',
-              '@xmlns' => {
-                'namespace' => 'custom_namespace.org',
-              },
             },
             'namespace:nested' => {
-              '@xmlns' => {
-                'namespace' => 'custom_namespace.org',
-              },
               'namespace:foo' => {
                 '$1' => 'bar',
-                '@xmlns' => {
-                  'namespace' => 'custom_namespace.org',
-                },
               },
               'namespace:test' => {
-                '@xmlns' => {
-                  'namespace' => 'custom_namespace.org',
-                },
                 'namespace:abc' => {
                   '$1' => '123',
-                  '@xmlns' => {
-                    'namespace' => 'custom_namespace.org',
-                  },
                 },
               },
             },
@@ -74,9 +59,7 @@ FactoryBot.define do
             '@framework' => 'JUnit',
             '@version' => '4.10',
             'unit:entry-point' => {
-              '@xmlns' => {
-                'unit' => 'urn:proforma:tests:unittest:v1.1',
-              }, '$1' => 'HelloWorldTest'
+              '$1' => 'HelloWorldTest',
             },
           },
         }
@@ -95,7 +78,8 @@ FactoryBot.define do
             'check:max-checkstyle-warnings' => {
               '@xmlns' => {
                 'unit' => 'urn:proforma:tests:java-checkstyle:v1.1',
-              }, '$1' => '4'
+              },
+              '$1' => '4',
             },
           },
         }
@@ -111,25 +95,13 @@ FactoryBot.define do
               'regex' => 'urn:proforma:tests:regexptest:v0.9',
             },
             'regex:entry-point' => {
-              '@xmlns' => {
-                'regex' => 'urn:proforma:tests:regexptest:v0.9',
-              },
               '$1' => 'HelloWorldTest',
             },
             'regex:parameter' => {
-              '@xmlns' => {
-                'regex' => 'urn:proforma:tests:regexptest:v0.9',
-              },
               '$1' => 'gui',
             },
             'regex:regular-expressions' => {
-              '@xmlns' => {
-                'regex' => 'urn:proforma:tests:regexptest:v0.9',
-              },
               'regex:regexp-disallow' => {
-                '@xmlns' => {
-                  'regex' => 'urn:proforma:tests:regexptest:v0.9',
-                },
                 '@case-insensitive' => 'true',
                 '@dotall' => 'true',
                 '@multiline' => 'true',
@@ -151,7 +123,6 @@ FactoryBot.define do
             '@framework' => 'JUnit',
             'unit:entry-point' => {
               '$1' => 'HelloWorldTest',
-              '@xmlns' => {'unit' => 'urn:proforma:tests:unittest:v1.1'},
             },
           },
           'regex:regexptest' =>
@@ -159,17 +130,13 @@ FactoryBot.define do
               '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
               'regex:entry-point' => {
                 '$1' => 'HelloWorldTest',
-                '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
               },
               'regex:parameter' => {
                 '$1' => 'gui',
-                '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
               },
               'regex:regular-expressions' => {
-                '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
                 'regex:regexp-disallow' => {
                   '$1' => 'foobar',
-                  '@xmlns' => {'regex' => 'urn:proforma:tests:regexptest:v0.9'},
                   '@dotall' => 'true',
                   '@multiline' => 'true',
                   '@free-spacing' => 'true',
@@ -182,7 +149,6 @@ FactoryBot.define do
             '@version' => '3.14',
             'check:max-checkstyle-warnings' => {
               '$1' => '4',
-              '@xmlns' => {'check' => 'urn:proforma:tests:java-checkstyle:v1.1'},
             },
           },
         }

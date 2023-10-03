@@ -64,41 +64,33 @@ FactoryBot.define do
             '@xmlns' => {'foo' => 'urn:custom:foobar'},
             'external-resource' => [
               {
-                '@xmlns' => {'foo' => 'urn:custom:foobar'},
                 '@id' => 'external-resource 1',
                 '@reference' => '1',
                 '@used-by-grader' => 'true',
                 '@visible' => 'delayed',
                 '@usage-by-lms' => 'download',
                 'internal-description' => {
-                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '$1' => 'internal-desc',
                 },
                 'foo:bar' => {
-                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '@version' => '4',
                   'foo:content' => {
-                    '@xmlns' => {'foo' => 'urn:custom:foobar'},
                     '$1' => 'foobar',
                   },
                 },
               },
               {
-                '@xmlns' => {'foo' => 'urn:custom:foobar'},
                 '@id' => 'external-resource 2',
                 '@reference' => '2',
                 '@used-by-grader' => 'false',
                 '@visible' => 'no',
                 '@usage-by-lms' => 'edit',
                 'internal-description' => {
-                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '$1' => 'internal-desc',
                 },
                 'foo:bar' => {
-                  '@xmlns' => {'foo' => 'urn:custom:foobar'},
                   '@version' => '5',
                   'foo:content' => {
-                    '@xmlns' => {'foo' => 'urn:custom:foobar'},
                     '$1' => 'barfoo',
                   },
                 },
@@ -137,19 +129,14 @@ FactoryBot.define do
             '@xmlns' => {'namespace' => 'custom_namespace.org'},
             'namespace:meta' => {
               '$1' => 'data',
-              '@xmlns' => {'namespace' => 'custom_namespace.org'},
             },
             'namespace:nested' => {
-              '@xmlns' => {'namespace' => 'custom_namespace.org'},
               'namespace:foo' => {
                 '$1' => 'bar',
-                '@xmlns' => {'namespace' => 'custom_namespace.org'},
               },
               'namespace:test' => {
-                '@xmlns' => {'namespace' => 'custom_namespace.org'},
                 'namespace:abc' => {
                   '$1' => '123',
-                  '@xmlns' => {'namespace' => 'custom_namespace.org'},
                 },
               },
             },
