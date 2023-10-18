@@ -69,7 +69,7 @@ module ProformaXML
 
         {}.tap do |config_hash|
           configuration_any_nodes.each do |config_node|
-            config_hash.merge! convert_xml_node_to_json(config_node)
+            config_hash.merge!(convert_xml_node_to_json(config_node)) {|key, oldval, newval| key == '@@order' ? oldval + newval : newval }
           end
         end
       end

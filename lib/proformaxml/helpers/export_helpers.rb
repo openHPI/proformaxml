@@ -48,7 +48,7 @@ module ProformaXML
       end
 
       def add_namespaces_for_dachsfisch_node(dachsfisch_node, xml)
-        dachsfisch_node.flat_map {|_, val| val['@xmlns'].to_a }.uniq.each do |namespace|
+        dachsfisch_node.reject {|k| k == '@@order' }.flat_map {|_, val| val['@xmlns'].to_a }.uniq.each do |namespace|
           xml.doc.root.add_namespace(namespace[0], namespace[1]) unless namespace[0] == '$'
         end
       end
