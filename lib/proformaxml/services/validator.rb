@@ -14,7 +14,14 @@ module ProformaXML
     private
 
     def doc_schema_version
-      @doc_schema_version ||= /^urn:proforma:v(.*)$/.match(@doc.namespaces['xmlns'])&.captures&.dig(0)
+      namespace_regex = /^urn:proforma:v(\d.*)$/
+      potential_namespaces = @doc.namespaces.filter do |_, href|
+        href.match? namespace_regex
+      end
+      return nil unless potential_namespaces.length == 1
+
+      @pro_ns = potential_namespaces.first[0].gsub('xmlns:', '')
+      @doc_schema_version ||= namespace_regex.match(potential_namespaces.first[1])&.captures&.dig(0)
     end
 
     def node_as_doc_with_namespace(config_node)
@@ -38,7 +45,7 @@ module ProformaXML
     end
 
     def validate_test_configuration
-      @doc.xpath('/xmlns:task/xmlns:tests/xmlns:test/xmlns:test-configuration').flat_map do |test_config|
+      @doc.xpath("/#{@pro_ns}:task/#{@pro_ns}:tests/#{@pro_ns}:test/#{@pro_ns}:test-configuration").flat_map do |test_config|
         test_config.children.flat_map do |config_node|
           next [] unless config_node.namespace&.href&.start_with?('urn:proforma:tests:')
           next [] unless TEST_TYPE_SCHEMA_NAMES.include? config_node.name

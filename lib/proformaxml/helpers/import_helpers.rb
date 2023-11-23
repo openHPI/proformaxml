@@ -56,10 +56,10 @@ module ProformaXML
       end
 
       def add_test_configuration(test, test_node)
-        test_configuration_node = test_node.xpath('xmlns:test-configuration')
+        test_configuration_node = test_node.xpath("#{@pro_ns}:test-configuration")
         test.files = test_files_from_test_configuration(test_configuration_node)
         test.configuration = extra_configuration_from_test_configuration(test_configuration_node)
-        meta_data_node = test_node.xpath('xmlns:test-configuration').xpath('xmlns:test-meta-data')
+        meta_data_node = test_node.xpath("#{@pro_ns}:test-configuration").xpath("#{@pro_ns}:test-meta-data")
         test.meta_data = convert_xml_node_to_json(meta_data_node) if meta_data_node.present?
       end
 
@@ -75,28 +75,35 @@ module ProformaXML
       end
 
       def test_files_from_test_configuration(test_configuration_node)
-        files_from_filerefs(test_configuration_node.search('filerefs'))
+        files_from_filerefs(test_configuration_node.xpath("#{@pro_ns}:filerefs"))
       end
 
       private
 
       def convert_xml_node_to_json(any_node)
         xml_snippet = Nokogiri::XML::DocumentFragment.new(Nokogiri::XML::Document.new, any_node)
-        all_namespaces(any_node).each do |namespace|
+        all_namespaces_without_default(any_node).each do |namespace|
           xml_snippet.children.first.add_namespace_definition(namespace[:prefix], namespace[:href])
         end
-        JSON.parse(Dachsfisch::XML2JSONConverter.perform(xml: xml_snippet.to_xml))
+        xml_without_custom_default_ns = xml_snippet.to_xml.gsub(%r{(</?)#{custom_default_namespace_prefix(any_node)}:}, '\1')
+        JSON.parse(Dachsfisch::XML2JSONConverter.perform(xml: xml_without_custom_default_ns))
       end
 
-      def all_namespaces(node)
+      def all_namespaces_without_default(node)
         node.xpath('.|.//*').map(&:namespace).reject do |ns|
-          ns.prefix.nil?
+          ns.prefix.nil? || ns.href.match?(/^urn:proforma:v\d.*$/)
         end.map {|ns| {prefix: ns.prefix, href: ns.href} }.uniq
+      end
+
+      def custom_default_namespace_prefix(node)
+        node.xpath('.|.//*').map(&:namespace).filter do |ns|
+          ns.href.match?(/^urn:proforma:v\d.*$/)
+        end.map(&:prefix).first
       end
 
       def value_from_node(name, node, attribute)
         xml_name = name.is_a?(Array) ? name[0] : name
-        attribute ? node.attribute(xml_name)&.value : node.xpath("xmlns:#{xml_name}").text
+        attribute ? node.attribute(xml_name)&.value : node.xpath("#{@pro_ns}:#{xml_name}").text
       end
 
       def content_from_file_tag(file_tag, binary)

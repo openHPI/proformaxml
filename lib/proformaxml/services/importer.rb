@@ -18,12 +18,21 @@ module ProformaXML
       @task = Task.new
     end
 
+    def proforma_namespace
+      namespace_regex = /^urn:proforma:v\d.*$/
+      namespaces = @doc.namespaces.filter do |_, href|
+        href.match? namespace_regex
+      end
+      namespaces.first.first.gsub('xmlns:', '')
+    end
+
     def perform
       errors = validate
 
       raise PreImportValidationError.new(errors) if errors.any?
 
-      @task_node = @doc.xpath('/xmlns:task')
+      @pro_ns = proforma_namespace
+      @task_node = @doc.xpath("/#{@pro_ns}:task")
 
       set_data
       @task
@@ -57,44 +66,44 @@ module ProformaXML
     end
 
     def set_proglang
-      return if @task_node.xpath('xmlns:proglang').text.blank?
+      return if @task_node.xpath("#{@pro_ns}:proglang").text.blank?
 
-      @task.proglang = {name: @task_node.xpath('xmlns:proglang').text,
-                        version: @task_node.xpath('xmlns:proglang').attribute('version').value.presence}.compact
+      @task.proglang = {name: @task_node.xpath("#{@pro_ns}:proglang").text,
+                        version: @task_node.xpath("#{@pro_ns}:proglang").attribute('version').value.presence}.compact
     end
 
     def set_files
-      @task_node.search('files//file').each {|file_node| add_file file_node }
+      @task_node.xpath("#{@pro_ns}:files//#{@pro_ns}:file").each {|file_node| add_file file_node }
     end
 
     def set_tests
-      @task_node.search('tests//test').each {|test_node| add_test test_node }
+      @task_node.xpath("#{@pro_ns}:tests//#{@pro_ns}:test").each {|test_node| add_test test_node }
     end
 
     def set_model_solutions
-      @task_node.search('model-solutions//model-solution').each do |model_solution_node|
+      @task_node.xpath("#{@pro_ns}:model-solutions//#{@pro_ns}:model-solution").each do |model_solution_node|
         add_model_solution model_solution_node
       end
     end
 
     def set_meta_data
-      meta_data_node = @task_node.xpath('xmlns:meta-data').first
+      meta_data_node = @task_node.xpath("#{@pro_ns}:meta-data").first
       @task.meta_data = convert_xml_node_to_json(meta_data_node) if meta_data_node.text.present?
     end
 
     def set_extra_data
-      submission_restrictions_node = @task_node.xpath('xmlns:submission-restrictions').first
+      submission_restrictions_node = @task_node.xpath("#{@pro_ns}:submission-restrictions").first
       @task.submission_restrictions = convert_xml_node_to_json(submission_restrictions_node) unless submission_restrictions_node.nil?
-      external_resources_node = @task_node.xpath('xmlns:external-resources').first
+      external_resources_node = @task_node.xpath("#{@pro_ns}:external-resources").first
       @task.external_resources = convert_xml_node_to_json(external_resources_node) unless external_resources_node.nil?
-      grading_hints_node = @task_node.xpath('xmlns:grading-hints').first
+      grading_hints_node = @task_node.xpath("#{@pro_ns}:grading-hints").first
       @task.grading_hints = convert_xml_node_to_json(grading_hints_node) unless grading_hints_node.nil?
     end
 
     def add_model_solution(model_solution_node)
       model_solution = ModelSolution.new
       model_solution.id = model_solution_node.attributes['id'].value
-      model_solution.files = files_from_filerefs(model_solution_node.search('filerefs'))
+      model_solution.files = files_from_filerefs(model_solution_node.xpath("#{@pro_ns}:filerefs"))
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'description')
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'internal-description')
       @task.model_solutions << model_solution unless model_solution.files.first&.id == 'ms-placeholder-file'
@@ -125,7 +134,7 @@ module ProformaXML
 
     def files_from_filerefs(filerefs_node)
       [].tap do |files|
-        filerefs_node.search('fileref').each do |fileref_node|
+        filerefs_node.xpath("#{@pro_ns}:fileref").each do |fileref_node|
           fileref = fileref_node.attributes['refid'].value
           files << @task.files.delete(@task.files.detect {|file| file.id == fileref })
         end

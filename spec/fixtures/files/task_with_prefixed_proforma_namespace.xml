@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:task xmlns:p="urn:proforma:v2.1" xmlns:foo="urn:custom:foobar" xmlns:CodeOcean="codeocean.openhpi.de" uuid="f15cb7a3-87eb-4c4c-a998-c33e25d44cdc" lang="en">
+  <p:title>Hello World</p:title>
+  <p:description>Write a simple program that prints “Hello World”.</p:description>
+  <p:internal-description>This is a simple exercise for your students to begin with Java.</p:internal-description>
+  <p:proglang version="17">Java</p:proglang>
+  <p:submission-restrictions max-size="1400">
+    <p:file-restriction>HelloWorld.java</p:file-restriction>
+  </p:submission-restrictions>
+  <p:files>
+    <p:file id="42" used-by-grader="true" visible="yes" usage-by-lms="edit">
+      <p:embedded-txt-file filename="HelloWorld.java">file-42</p:embedded-txt-file>
+      <p:internal-description>The main java file.</p:internal-description>
+    </p:file>
+    <p:file id="3" used-by-grader="true" visible="no" usage-by-lms="display">
+      <p:embedded-txt-file filename="Makefile">file-3</p:embedded-txt-file>
+    </p:file>
+    <p:file id="2" used-by-grader="true" visible="delayed" usage-by-lms="display">
+      <p:embedded-txt-file filename="HelloWorldSolution.java">file-2</p:embedded-txt-file>
+    </p:file>
+    <p:file id="1" used-by-grader="true" visible="no" usage-by-lms="display">
+      <p:embedded-txt-file filename="HelloWorldTest.java">file-1</p:embedded-txt-file>
+    </p:file>
+  </p:files>
+  <p:model-solutions>
+    <p:model-solution id="789">
+      <p:filerefs>
+        <p:fileref refid="2"/>
+      </p:filerefs>
+      <p:description>The most simple solution.</p:description>
+    </p:model-solution>
+  </p:model-solutions>
+  <p:tests>
+    <p:test id="123456">
+      <p:title>Output Test</p:title>
+      <p:description>This test checks the output.</p:description>
+      <p:test-type>Unit</p:test-type>
+      <p:test-configuration>
+        <p:filerefs>
+          <p:fileref refid="1"/>
+        </p:filerefs>
+      </p:test-configuration>
+    </p:test>
+  </p:tests>
+  <p:meta-data>
+    <CodeOcean:files>
+      <CodeOcean:CO-42>
+        <CodeOcean:role>main_file</CodeOcean:role>
+      </CodeOcean:CO-42>
+    </CodeOcean:files>
+  </p:meta-data>
+</p:task>
