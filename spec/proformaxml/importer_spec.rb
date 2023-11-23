@@ -49,9 +49,11 @@ RSpec.describe ProformaXML::Importer do
     let(:importer) { described_class.new(zip: zip_file) }
     let(:export_version) {}
 
-    before do
-      zip_file.write(ProformaXML::Exporter.new(task:, version: export_version).perform.string.force_encoding('UTF-8'))
-      zip_file.rewind
+    before do |test|
+      unless test.metadata[:skip_export]
+        zip_file.write(ProformaXML::Exporter.new(task:, version: export_version).perform.string.force_encoding('UTF-8'))
+        zip_file.rewind
+      end
     end
 
     it 'successfully imports the task' do
@@ -260,6 +262,50 @@ RSpec.describe ProformaXML::Importer do
         it 'does not raise an error' do
           expect { perform }.not_to raise_error
         end
+      end
+    end
+
+    context 'with prefixed ProFormA namespace' do
+      before do
+        zip_file.write(Zip::OutputStream.write_buffer do |zio|
+          zio.put_next_entry('task.xml')
+          zio.write xml_file.read
+        end.string.force_encoding('UTF-8'))
+        zip_file.rewind
+      end
+
+      let(:expected_meta_data) do
+        {
+          '@@order' => ['meta-data'],
+          'meta-data' => {
+            '@@order' => ['CodeOcean:files'],
+            '@xmlns' => {'CodeOcean' => 'codeocean.openhpi.de'},
+            'CodeOcean:files' => {
+              '@@order' => ['CodeOcean:CO-42'],
+              'CodeOcean:CO-42' => {
+                '@@order' => ['CodeOcean:role'],
+                'CodeOcean:role' => {
+                  '$1' => 'main_file', '@@order' => ['$1']
+                },
+              },
+            },
+          },
+        }
+      end
+
+      let(:xml_file) { file_fixture('task_with_prefixed_proforma_namespace.xml') }
+
+      it 'does not raise an error', :skip_export do
+        expect { perform }.not_to raise_error
+      end
+
+      it 'successfully imports the task' do # rubocop:disable RSpec/ExampleLength
+        expect(imported_task).to have_attributes(
+          files: have_exactly(2).items,
+          model_solutions: have_exactly(1).item,
+          tests: have_exactly(1).item,
+          meta_data: expected_meta_data
+        )
       end
     end
   end

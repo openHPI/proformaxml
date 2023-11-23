@@ -113,6 +113,17 @@ RSpec.describe ProformaXML::Validator do
           end
         end
       end
+
+      context 'with prefixed ProFormA namespace' do
+        let(:xml_file) { file_fixture("#{filename}.xml") }
+        let(:doc) { Nokogiri::XML xml_file.read }
+
+        context 'without errors' do
+          let(:filename) { 'task_with_prefixed_proforma_namespace' }
+
+          it { is_expected.to be_empty }
+        end
+      end
     end
   end
 end
