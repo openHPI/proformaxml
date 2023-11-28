@@ -13,6 +13,9 @@ require 'pry-byebug'
 
 Dir['./spec/support/**/*.rb'].each {|f| require f }
 # RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 999_999_999
+
+RSpec::Matchers.define_negated_matcher :not_include, :include
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'

@@ -46,11 +46,17 @@ module ProformaXML
       end
     end
 
+    def remove_referenced_files
+      referenced_files = (@task.tests.map(&:files) + @task.model_solutions.map(&:files)).flatten
+      @task.files.reject! {|f| referenced_files.include? f }
+    end
+
     def set_data
       set_base_data
       set_files
       set_model_solutions
       set_tests
+      remove_referenced_files
       set_meta_data
       set_extra_data
     end
@@ -136,7 +142,7 @@ module ProformaXML
       [].tap do |files|
         filerefs_node.xpath("#{@pro_ns}:fileref").each do |fileref_node|
           fileref = fileref_node.attributes['refid'].value
-          files << @task.files.delete(@task.files.detect {|file| file.id == fileref })
+          files << @task.files.detect {|file| file.id == fileref }
         end
       end
     end
