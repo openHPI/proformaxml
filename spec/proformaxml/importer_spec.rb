@@ -308,5 +308,33 @@ RSpec.describe ProformaXML::Importer do
         )
       end
     end
+
+    context 'with file referenced in multiple tests' do
+      before do
+        zip_file.write(Zip::OutputStream.write_buffer do |zio|
+          zio.put_next_entry('task.xml')
+          zio.write xml_file.read
+        end.string.force_encoding('UTF-8'))
+        zip_file.rewind
+      end
+
+      let(:xml_file) { file_fixture('task_with_referenced_file_in_multiple_tests.xml') }
+
+      it 'does not raise an error', :skip_export do
+        expect { perform }.not_to raise_error
+      end
+
+      it 'successfully imports the task' do
+        expect(imported_task).to have_attributes(
+          files: have_exactly(1).items,
+          model_solutions: have_exactly(0).items,
+          tests: have_exactly(2).items
+        )
+      end
+
+      it 'imports test-files correctly' do
+        expect(imported_task.tests.map(&:files).flatten).to have_exactly(2).items.and(not_include(nil))
+      end
+    end
   end
 end

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task xmlns="urn:proforma:v2.1" xmlns:CodeOcean="codeocean.openhpi.de" uuid="a85825d4-397b-4c65-8550-ae607f0a70e9" lang="en">
+  <title>Minimal Hello World</title>
+  <description>Write a simple program that prints “Hello World”.</description>
+  <internal-description>This is a simple exercise for your students to begin with Python.</internal-description>
+  <proglang version="3.8">Python</proglang>
+  <files>
+    <file id="1337" used-by-grader="true" visible="yes" usage-by-lms="edit">
+      <embedded-txt-file filename="hello_world.py"># print("Hello World")</embedded-txt-file>
+      <internal-description>The main Python file.</internal-description>
+    </file>
+    <file id="t-0-0" used-by-grader="false" visible="yes">
+      <embedded-txt-file filename="bla">foobar</embedded-txt-file>
+    </file>
+  </files>
+  <tests>
+    <test id="0">
+      <title>Test1</title>
+      <test-type/>
+      <test-configuration>
+        <filerefs>
+          <fileref refid="t-0-0"/>
+        </filerefs>
+      </test-configuration>
+    </test>
+    <test id="1">
+      <title>Test2</title>
+      <test-type/>
+      <test-configuration>
+        <filerefs>
+          <fileref refid="t-0-0"/>
+        </filerefs>
+      </test-configuration>
+    </test>
+  </tests>
+  <meta-data/>
+</task>
