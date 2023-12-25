@@ -13,7 +13,7 @@ inherit_from:
   - .rubocop/style.yml
 
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.3
   TargetRailsVersion: 7.0 # for ActiveSupport
   UseCache: True
   NewCops: enable
