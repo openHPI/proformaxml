@@ -23,7 +23,7 @@ module ProformaXML
         if object.is_a? Hash
           object[name] = value
         else
-          object.send("#{name}=", value)
+          object.send(:"#{name}=", value)
         end
       end
 
