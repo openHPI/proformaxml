@@ -29,7 +29,7 @@ RSpec.describe ProformaXML::Validator do
 
       let(:expected_version) { '2.0' }
 
-      it 'does not assign expected_version' do
+      it 'assigns expected_version' do
         expect(validator.instance_variable_get(:@expected_version)).to eql '2.0'
       end
     end

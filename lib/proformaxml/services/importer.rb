@@ -16,24 +16,22 @@ module ProformaXML
 
       @doc = Nokogiri::XML(xml, &:noblanks)
       @task = Task.new
-    end
 
-    def proforma_namespace
-      namespace_regex = /^urn:proforma:v\d.*$/
-      namespaces = @doc.namespaces.filter do |_, href|
-        href.match? namespace_regex
-      end
-      namespaces.first.first.gsub('xmlns:', '')
     end
 
     def perform
+      version_name_extractor = VersionAndNamespaceExtractor.new doc: @doc
+      @pro_ns, @doc_schema_version = version_name_extractor.perform&.values_at(:namespace, :version)
+
       errors = validate
       raise PreImportValidationError.new(errors.map(&:message)) if errors.any?
 
-      @pro_ns = proforma_namespace
       @task_node = @doc.xpath("/#{@pro_ns}:task")
 
       set_data
+      # if version != latest_version
+      #   transform_proforma(version, latest_version)
+      # end
       @task
     end
 
