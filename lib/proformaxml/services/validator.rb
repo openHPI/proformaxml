@@ -8,21 +8,13 @@ module ProformaXML
     end
 
     def perform
+      version_name_extractor = VersionAndNamespaceExtractor.new doc: @doc
+      @pro_ns, @doc_schema_version = version_name_extractor.perform&.values_at(:namespace, :version)
+
       validate
     end
 
     private
-
-    def doc_schema_version
-      namespace_regex = /^urn:proforma:v(\d.*)$/
-      potential_namespaces = @doc.namespaces.filter do |_, href|
-        href.match? namespace_regex
-      end
-      return nil unless potential_namespaces.length == 1
-
-      @pro_ns = potential_namespaces.first[0].gsub('xmlns:', '')
-      @doc_schema_version ||= namespace_regex.match(potential_namespaces.first[1])&.captures&.dig(0)
-    end
 
     def node_as_doc_with_namespace(config_node)
       doc = Nokogiri::XML::Document.new
@@ -31,9 +23,9 @@ module ProformaXML
     end
 
     def validate
-      return ['no proformaxml version found'] if doc_schema_version.nil?
+      return ['no proformaxml version found'] if @doc_schema_version.nil?
 
-      version = @expected_version || doc_schema_version
+      version = @expected_version || @doc_schema_version
       return ['version not supported'] unless SCHEMA_VERSIONS.include? version
 
       # Both validations return an array of errors, which are empty if the validation was successful.
