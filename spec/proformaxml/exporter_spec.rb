@@ -30,9 +30,8 @@ RSpec.describe ProformaXML::Exporter do
   end
 
   describe '#perform' do
-    subject(:perform) { exporter.perform }
+    subject(:perform) { described_class.call(task:) }
 
-    let(:exporter) { described_class.new(task:) }
     let(:task) { build(:task) }
 
     let(:zip_files) do
@@ -57,8 +56,7 @@ RSpec.describe ProformaXML::Exporter do
     end
 
     it 'contains through schema validatable xml' do
-      validator = ProformaXML::Validator.new(doc)
-      expect(validator.perform).to be_empty
+      expect(ProformaXML::Validator.call(doc:)).to be_empty
     end
 
     it 'adds version attribute to proglang node' do
@@ -74,7 +72,8 @@ RSpec.describe ProformaXML::Exporter do
     end
 
     context 'with file refs (ProFormA 2.0)' do
-      let(:exporter) { described_class.new(task:, version: '2.0') }
+      subject(:perform) { described_class.call(task:, version: '2.0') }
+
       let(:placeholder_file) { task.all_files.find {|file| file.id == 'ms-placeholder-file' } }
       let(:model_solution) { task.model_solutions.first }
 
@@ -493,6 +492,8 @@ RSpec.describe ProformaXML::Exporter do
     end
 
     context 'when a specific version is supplied' do
+      subject(:perform) { exporter.perform }
+
       let(:exporter) { described_class.new(task:, version:) }
 
       context 'when version is 2.1' do

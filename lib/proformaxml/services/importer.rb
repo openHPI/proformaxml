@@ -4,10 +4,11 @@ require 'active_support/core_ext/string'
 require 'proformaxml/helpers/import_helpers'
 
 module ProformaXML
-  class Importer
+  class Importer < ServiceBase
     include ProformaXML::Helpers::ImportHelpers
 
     def initialize(zip:, expected_version: nil)
+      super()
       @zip = zip
       @expected_version = expected_version
 
@@ -145,8 +146,7 @@ module ProformaXML
     end
 
     def validate
-      validator = ProformaXML::Validator.new @doc, @expected_version
-      validator.perform
+      validator = ProformaXML::Validator.call(doc: @doc, expected_version:@expected_version)
     end
   end
 end
