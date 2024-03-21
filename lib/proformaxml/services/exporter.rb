@@ -3,10 +3,11 @@
 require 'proformaxml/helpers/export_helpers'
 
 module ProformaXML
-  class Exporter
+  class Exporter < ServiceBase
     include ProformaXML::Helpers::ExportHelpers
 
     def initialize(task:, version: nil)
+      super()
       @files = {}
       @task = task
       @version = version || SCHEMA_VERSIONS.first
@@ -117,8 +118,7 @@ module ProformaXML
     end
 
     def validate(doc)
-      validator = ProformaXML::Validator.new doc, @version
-      validator.perform
+      validator = ProformaXML::Validator.call(doc:, expected_version: @version)
     end
 
     def write_to_zip(xmldoc)

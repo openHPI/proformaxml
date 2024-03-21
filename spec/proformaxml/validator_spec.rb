@@ -2,9 +2,9 @@
 
 RSpec.describe ProformaXML::Validator do
   describe '.new' do
-    subject(:validator) { described_class.new(doc) }
+    subject(:validator) { described_class.new(doc:) }
 
-    let(:zip_file) { ProformaXML::Exporter.new(task: build(:task)).perform }
+    let(:zip_file) { ProformaXML::Exporter.call(task: build(:task)) }
     let(:zip_content) do
       {}.tap do |hash|
         Zip::InputStream.open(zip_file) do |io|
@@ -25,7 +25,7 @@ RSpec.describe ProformaXML::Validator do
     end
 
     context 'with a specific expected_version' do
-      subject(:validator) { described_class.new(zip_file, expected_version) }
+      subject(:validator) { described_class.new(doc: zip_file, expected_version:) }
 
       let(:expected_version) { '2.0' }
 
@@ -36,9 +36,9 @@ RSpec.describe ProformaXML::Validator do
   end
 
   describe '#perform' do
-    subject(:perform) { validator.perform }
+    subject(:perform) { described_class.call(doc:) }
 
-    let(:zip_file) { ProformaXML::Exporter.new(task:, version: export_version).perform }
+    let(:zip_file) { ProformaXML::Exporter.call(task:, version: export_version) }
     let(:zip_content) do
       {}.tap do |hash|
         Zip::InputStream.open(zip_file) do |io|
@@ -49,7 +49,6 @@ RSpec.describe ProformaXML::Validator do
       end
     end
     let(:doc) { Nokogiri::XML(zip_content['task.xml'], &:noblanks) }
-    let(:validator) { described_class.new(doc) }
     let(:task) { build(:task) }
     let(:export_version) {}
 
@@ -64,7 +63,8 @@ RSpec.describe ProformaXML::Validator do
     end
 
     context 'with expected_version' do
-      let(:validator) { described_class.new(doc, expected_version) }
+      subject(:perform) { described_class.call(doc:, expected_version:) }
+
       let(:expected_version) { '2.0' }
 
       context 'when export_version is the same' do
@@ -105,7 +105,7 @@ RSpec.describe ProformaXML::Validator do
           let(:filename) { 'task_with_invalid_test_config' }
 
           it 'returns the correct errors' do
-            expect(validator.perform).to contain_exactly(
+            expect(perform).to contain_exactly(
               an_object_having_attributes(message: a_string_including("Element '{urn:proforma:tests:unittest:v1.1}entry-ploint': This element is not expected.")),
               an_object_having_attributes(message: a_string_including("Element '{urn:proforma:tests:java-checkstyle:v1.1}max-checkstyle-wlarnings': This element is not expected.")),
               an_object_having_attributes(message: a_string_including("Element '{urn:proforma:tests:regexptest:v0.9}regular-espresso': This element is not expected."))

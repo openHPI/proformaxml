@@ -3,8 +3,9 @@
 require 'proformaxml/helpers/export_helpers'
 
 module ProformaXML
-  class VersionAndNamespaceExtractor
+  class VersionAndNamespaceExtractor < ServiceBase
     def initialize(doc:)
+      super()
       @doc = doc
     end
 

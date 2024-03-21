@@ -149,7 +149,7 @@ RSpec.shared_examples 'task node with test' do
 end
 
 RSpec.shared_examples 'task node with test in ProFormA 2.0' do
-  let(:exporter) { described_class.new(task:, version: '2.0') }
+  subject(:perform) { described_class.call(task:, version: '2.0') }
 
   it_behaves_like 'task node with test'
 

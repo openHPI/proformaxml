@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module ProformaXML
-  class Validator
-    def initialize(doc, expected_version = nil)
+  class Validator < ServiceBase
+    def initialize(doc:, expected_version: nil)
+      super()
       @doc = doc
       @expected_version = expected_version
     end
