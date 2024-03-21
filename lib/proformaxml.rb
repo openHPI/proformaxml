@@ -12,6 +12,7 @@ require 'proformaxml/version'
 require 'proformaxml/services/importer'
 require 'proformaxml/services/exporter'
 require 'proformaxml/services/validator'
+require 'proformaxml/services/version_and_namespace_extractor'
 require 'proformaxml/models/task'
 
 module ProformaXML
