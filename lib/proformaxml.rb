@@ -9,6 +9,7 @@ require 'dachsfisch'
 
 require 'proformaxml/version'
 
+require 'proformaxml/services/service_base'
 require 'proformaxml/services/importer'
 require 'proformaxml/services/exporter'
 require 'proformaxml/services/validator'

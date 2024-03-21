@@ -8,7 +8,7 @@ RSpec.describe ProformaXML::Importer do
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
 
     before do
-      zip_file.write(ProformaXML::Exporter.new(task:).perform.string.force_encoding('UTF-8'))
+      zip_file.write(ProformaXML::Exporter.call(task:).string.force_encoding('UTF-8'))
       zip_file.rewind
     end
 
@@ -51,18 +51,17 @@ RSpec.describe ProformaXML::Importer do
   end
 
   describe '#perform' do
-    subject(:perform) { importer.perform }
+    subject(:perform) { described_class.call(zip: zip_file) }
 
     let(:imported_task) { perform }
     let(:task) { build(:task) }
     let!(:ref_task) { task.dup }
     let(:zip_file) { Tempfile.new('proforma_test_zip_file') }
-    let(:importer) { described_class.new(zip: zip_file) }
     let(:export_version) {}
 
     before do |test|
       unless test.metadata[:skip_export]
-        zip_file.write(ProformaXML::Exporter.new(task:, version: export_version).perform.string.force_encoding('UTF-8'))
+        zip_file.write(ProformaXML::Exporter.call(task:, version: export_version).string.force_encoding('UTF-8'))
         zip_file.rewind
       end
     end
@@ -238,7 +237,8 @@ RSpec.describe ProformaXML::Importer do
     end
 
     context 'with a specific expected_version' do
-      let(:importer) { described_class.new(zip: zip_file, expected_version:) }
+      subject(:perform) { described_class.call(zip: zip_file, expected_version:) }
+
       let(:expected_version) { '2.0' }
 
       context 'when export_version is the same as expected_version' do
