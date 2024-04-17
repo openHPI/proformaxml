@@ -11,7 +11,6 @@ module ProformaXML
       @files = {}
       @task = task
       @version = version || SCHEMA_VERSIONS.first
-      add_placeholders if @version == '2.0'
     end
 
     def perform
@@ -50,7 +49,7 @@ module ProformaXML
       add_dachsfisch_node(xml, @task.submission_restrictions)
       xml.files { files(xml) }
       add_dachsfisch_node(xml, @task.external_resources)
-      xml.send(:'model-solutions') { model_solutions(xml) } if @task.model_solutions.any? || @version == '2.0'
+      xml.send(:'model-solutions') { model_solutions(xml) } if @task.model_solutions.any?
       xml.tests { tests(xml) }
       add_dachsfisch_node(xml, @task.grading_hints)
     end
@@ -99,15 +98,6 @@ module ProformaXML
       end
     end
 
-    # ms-placeholder only necessary for version 2.0 where model-solutions were mandatory
-    def add_placeholders
-      return if @task.model_solutions&.any?
-
-      file = TaskFile.new(content: '', id: 'ms-placeholder-file', used_by_grader: false, visible: 'no', binary: false)
-      model_solution = ModelSolution.new(id: 'ms-placeholder', files: [file])
-      @task.model_solutions = [model_solution]
-    end
-
     def headers
       {
         'xmlns' => "urn:proforma:v#{@version}",
@@ -118,7 +108,7 @@ module ProformaXML
     end
 
     def validate(doc)
-      validator = ProformaXML::Validator.call(doc:, expected_version: @version)
+      ProformaXML::Validator.call(doc:, expected_version: @version)
     end
 
     def write_to_zip(xmldoc)

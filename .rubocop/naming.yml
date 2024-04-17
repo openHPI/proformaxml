@@ -1,0 +1,4 @@
+# factory bot cop settings
+
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
