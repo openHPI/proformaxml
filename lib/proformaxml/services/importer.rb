@@ -17,7 +17,6 @@ module ProformaXML
 
       @doc = Nokogiri::XML(xml, &:noblanks)
       @task = Task.new
-
     end
 
     def perform
@@ -30,9 +29,9 @@ module ProformaXML
       @task_node = @doc.xpath("/#{@pro_ns}:task")
 
       set_data
-      # if version != latest_version
-      #   transform_proforma(version, latest_version)
-      # end
+      if @doc_schema_version != SCHEMA_VERSION_LATEST
+        ProformaXML::TransformTask.call(task: @task, from_version: @doc_schema_version, to_version: SCHEMA_VERSION_LATEST)
+      end
       @task
     end
 
@@ -110,7 +109,7 @@ module ProformaXML
       model_solution.files = files_from_filerefs(model_solution_node.xpath("#{@pro_ns}:filerefs"))
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'description')
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'internal-description')
-      @task.model_solutions << model_solution unless model_solution.files.first&.id == 'ms-placeholder-file'
+      @task.model_solutions << model_solution
     end
 
     def add_file(file_node)
@@ -146,7 +145,7 @@ module ProformaXML
     end
 
     def validate
-      validator = ProformaXML::Validator.call(doc: @doc, expected_version:@expected_version)
+      ProformaXML::Validator.call(doc: @doc, expected_version: @expected_version)
     end
   end
 end

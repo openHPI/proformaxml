@@ -18,6 +18,14 @@ FactoryBot.define do
     trait(:with_attached_txt_file) { files { build_list(:task_file, 1, :populated, :large_content, :text) } }
     trait(:with_attached_bin_file) { files { build_list(:task_file, 1, :populated, :large_content, :binary) } }
 
+    trait(:with_placeholder_model_solution) do
+      model_solutions do
+        build_list(
+          :model_solution, 1, id: 'ms-placeholder',
+          files: build_list(:task_file, 1, id: 'ms-placeholder-file', used_by_grader: false, visible: 'no', binary: false)
+        )
+      end
+    end
     trait(:with_model_solution) { model_solutions { build_list(:model_solution, 1, :populated) } }
     trait(:with_test) { tests { build_list(:test, 1, :populated) } }
     trait(:with_test_with_meta_data) { tests { build_list(:test, 1, :populated, :with_meta_data) } }
@@ -58,6 +66,25 @@ FactoryBot.define do
               '@@order' => %w[$1],
               '$1' => 'int-desc',
             },
+          },
+        }
+      end
+    end
+    trait(:with_2_0_file_restrictions) do
+      submission_restrictions do
+        {
+          '@@order' => %w[submission-restrictions],
+          'submission-restrictions' => {
+            '@@order' => %w[file-restriction description internal-description],
+            '@max-size' => '50',
+            'file-restriction' => [
+              {
+                '@@order' => %w[$1],
+                '@required' => 'true',
+                '@pattern-format' => 'none',
+                '$1' => 'restriction1',
+              },
+            ],
           },
         }
       end
