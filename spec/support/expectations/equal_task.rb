@@ -2,12 +2,12 @@
 
 require 'rspec/expectations'
 
-RSpec::Matchers.define :be_an_equal_task_as do |task2|
-  match do |task1|
-    equal?(task1, task2)
+RSpec::Matchers.define :be_an_equal_task_as do |task_2|
+  match do |task_1|
+    equal?(task_1, task_2)
   end
   failure_message do |actual|
-    "#{actual.inspect} is not equal to \n#{task2.inspect}. \nLast checked attribute: #{@last_checked}"
+    "#{actual.inspect} is not equal to \n#{task_2.inspect}. \nLast checked attribute: #{@last_checked}"
   end
 
   def equal?(object, other)
