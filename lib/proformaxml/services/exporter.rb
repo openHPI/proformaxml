@@ -11,6 +11,9 @@ module ProformaXML
       @files = {}
       @task = task
       @version = version || SCHEMA_VERSIONS.first
+      if @version != SCHEMA_VERSION_LATEST
+        ProformaXML::TransformTask.call(task: @task, from_version: SCHEMA_VERSION_LATEST, to_version: @version)
+      end
     end
 
     def perform

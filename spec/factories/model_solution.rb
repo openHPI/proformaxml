@@ -14,5 +14,10 @@ FactoryBot.define do
     trait(:with_multiple_files) do
       files { build_list(:task_file, 2, :populated, :small_content, :text) }
     end
+
+    trait(:as_2_0_placeholder) do
+      id { 'ms-placeholder' }
+      files { build_list(:task_file, 1, id: 'ms-placeholder-file') }
+    end
   end
 end
