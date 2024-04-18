@@ -21,6 +21,7 @@ module ProformaXML
   SCHEMA_PATH = File.join(File.dirname(File.expand_path(__FILE__)), '../assets/schemas')
   SCHEMA_FORMAT_PATH = "#{SCHEMA_PATH}/proforma-%s.xsd".freeze
   SCHEMA_VERSIONS = %w[2.1 2.0].freeze
+  SCHEMA_VERSION_LATEST = '2.1'
 
   TEST_TYPE_SCHEMA_NAMES = %w[java-checkstyle regexptest unittest].freeze
   MAX_EMBEDDED_FILE_SIZE_KB = 50
