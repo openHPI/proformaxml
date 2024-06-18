@@ -12,7 +12,7 @@ module ProformaXML
       @expected_version = expected_version
 
       xml = filestring_from_zip('task.xml')
-      raise PreImportValidationError if xml.nil?
+      raise PreImportValidationError.new(['no task_xml found']) if xml.blank?
 
       @doc = Nokogiri::XML(xml, &:noblanks)
       @task = Task.new
@@ -28,8 +28,7 @@ module ProformaXML
 
     def perform
       errors = validate
-
-      raise PreImportValidationError.new(errors) if errors.any?
+      raise PreImportValidationError.new(errors.map(&:message)) if errors.any?
 
       @pro_ns = proforma_namespace
       @task_node = @doc.xpath("/#{@pro_ns}:task")
