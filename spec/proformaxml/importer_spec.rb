@@ -37,6 +37,17 @@ RSpec.describe ProformaXML::Importer do
         expect(importer.instance_variable_get(:@expected_version)).to eql '2.0'
       end
     end
+
+    context 'when zip-file does not contain task.xml' do
+      before do
+        zip_file.write('Foobar')
+        zip_file.rewind
+      end
+
+      it 'raises correct error' do
+        expect { importer }.to raise_error(ProformaXML::PreImportValidationError, /no task_xml found/)
+      end
+    end
   end
 
   describe '#perform' do
@@ -242,7 +253,7 @@ RSpec.describe ProformaXML::Importer do
         let(:export_version) { '2.1' }
 
         it 'raises an error' do
-          expect { perform }.to raise_error ProformaXML::PreImportValidationError
+          expect { perform }.to raise_error ProformaXML::PreImportValidationError, /No matching global declaration available for the validation root/
         end
       end
     end
