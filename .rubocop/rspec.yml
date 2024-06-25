@@ -26,10 +26,6 @@ RSpec/NestedGroups:
 RSpec/IndexedLet:
   Max: 2
 
-RSpec/FilePath:
-  CustomTransform:
-    ProformaXML: proformaxml
-
 RSpec/SpecFilePathFormat:
   CustomTransform:
     ProformaXML: proformaxml
