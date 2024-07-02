@@ -4,10 +4,11 @@ require 'active_support/core_ext/string'
 require 'proformaxml/helpers/import_helpers'
 
 module ProformaXML
-  class Importer
+  class Importer < ServiceBase
     include ProformaXML::Helpers::ImportHelpers
 
     def initialize(zip:, expected_version: nil)
+      super()
       @zip = zip
       @expected_version = expected_version
 
@@ -18,22 +19,19 @@ module ProformaXML
       @task = Task.new
     end
 
-    def proforma_namespace
-      namespace_regex = /^urn:proforma:v\d.*$/
-      namespaces = @doc.namespaces.filter do |_, href|
-        href.match? namespace_regex
-      end
-      namespaces.first.first.gsub('xmlns:', '')
-    end
-
     def perform
+      version_name_extractor = VersionAndNamespaceExtractor.new doc: @doc
+      @pro_ns, @doc_schema_version = version_name_extractor.perform&.values_at(:namespace, :version)
+
       errors = validate
       raise PreImportValidationError.new(errors.map(&:message)) if errors.any?
 
-      @pro_ns = proforma_namespace
       @task_node = @doc.xpath("/#{@pro_ns}:task")
 
       set_data
+      if @doc_schema_version != SCHEMA_VERSION_LATEST
+        ProformaXML::TransformTask.call(task: @task, from_version: @doc_schema_version, to_version: SCHEMA_VERSION_LATEST)
+      end
       @task
     end
 
@@ -111,7 +109,7 @@ module ProformaXML
       model_solution.files = files_from_filerefs(model_solution_node.xpath("#{@pro_ns}:filerefs"))
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'description')
       set_value_from_xml(object: model_solution, node: model_solution_node, name: 'internal-description')
-      @task.model_solutions << model_solution unless model_solution.files.first&.id == 'ms-placeholder-file'
+      @task.model_solutions << model_solution
     end
 
     def add_file(file_node)
@@ -147,8 +145,7 @@ module ProformaXML
     end
 
     def validate
-      validator = ProformaXML::Validator.new @doc, @expected_version
-      validator.perform
+      ProformaXML::Validator.call(doc: @doc, expected_version: @expected_version)
     end
   end
 end
