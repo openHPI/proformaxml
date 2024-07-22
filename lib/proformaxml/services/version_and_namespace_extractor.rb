@@ -20,7 +20,7 @@ module ProformaXML
       potential_namespaces = @doc.namespaces.filter do |_, href|
         href.match? namespace_regex
       end
-      return nil unless potential_namespaces.length == 1
+      return unless potential_namespaces.length == 1
 
       {
         namespace: potential_namespaces.first[0].gsub('xmlns:', ''),
