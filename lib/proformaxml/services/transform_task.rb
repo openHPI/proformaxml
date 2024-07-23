@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'proformaxml/helpers/export_helpers'
+require 'active_support/core_ext/array/wrap'
 
 module ProformaXML
   class TransformTask < ServiceBase
@@ -23,24 +23,58 @@ module ProformaXML
     private
 
     def transform_from_2_0_to_2_1
-      if @task.submission_restrictions.present?
-        @task.submission_restrictions['submission-restrictions']['file-restriction'].each do |fr|
-          fr['@use'] = fr.delete('@required') == 'true' ? 'required' : 'optional'
-        end
-      end
+      transform_submission_restrictions_from_2_0_to_2_1 unless @task.submission_restrictions.nil?
+      transform_external_resources_from_2_0_to_2_1 unless @task.external_resources.nil?
 
       @task.model_solutions.filter! {|model_solution| model_solution.id != 'ms-placeholder' }
     end
 
-    def transform_from_2_1_to_2_0
-      unless @task.submission_restrictions.nil?
-        @task.submission_restrictions['submission-restrictions']['file-restriction'].each do |fr|
-          fr['@required'] = (fr.delete('@use') == 'required').to_s
-        end
-        @task.submission_restrictions['submission-restrictions'].delete('description')
-        @task.submission_restrictions['submission-restrictions'].delete('internal-description')
+    def transform_external_resources_from_2_0_to_2_1
+      ensure_array(@task.external_resources['external-resources']['external-resource']).each do |external_resource|
+        external_resource['@used-by-grader'] = external_resource['@used-by-grader'] || 'false'
+        external_resource['@visible'] = external_resource['@visible'] || 'no'
       end
+    end
+
+    def transform_submission_restrictions_from_2_0_to_2_1
+      ensure_array(@task.submission_restrictions['submission-restrictions']['file-restriction']).each do |fr|
+        fr['@use'] = if fr['@required'].nil? || fr.delete('@required') == 'true'
+                       'required'
+                     else
+                       'optional'
+                     end
+      end
+    end
+
+    def transform_from_2_1_to_2_0
+      transform_submission_restrictions_from_2_1_to_2_0 unless @task.submission_restrictions.nil?
+      transform_external_resources_from_2_1_to_2_0 unless @task.external_resources.nil?
       add_model_solution_placeholder
+    end
+
+    def transform_external_resources_from_2_1_to_2_0
+      ensure_array(@task.external_resources['external-resources']['external-resource']).each do |external_resource|
+        external_resource.delete('@visible')
+        external_resource.delete('@usage-by-lms')
+        external_resource.delete('@used-by-grader')
+      end
+    end
+
+    def transform_submission_restrictions_from_2_1_to_2_0
+      transform_file_restrictions_from_2_1_to_2_0
+      @task.submission_restrictions['submission-restrictions'].delete('description')
+      @task.submission_restrictions['submission-restrictions'].delete('internal-description')
+    end
+
+    def transform_file_restrictions_from_2_1_to_2_0
+      ensure_array(@task.submission_restrictions['submission-restrictions']['file-restriction']).each do |file_restriction|
+        file_restriction['@required'] = (file_restriction['@use'].nil? || file_restriction.delete('@use') == 'required').to_s
+      end
+    end
+
+    # when only one field is present, dachsfisch does not create an array. This method ensure, that we can work with an array
+    def ensure_array(data)
+      Array.wrap(data)
     end
 
     def add_model_solution_placeholder

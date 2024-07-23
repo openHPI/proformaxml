@@ -404,7 +404,7 @@ RSpec.describe ProformaXML::Exporter do
       end
 
       it 'add file-restrictions to submission-restrictions' do
-        expect(xml.xpath('/task/submission-restrictions/file-restriction')).to have(2).items
+        expect(xml.xpath('/task/submission-restrictions/file-restriction')).to have(3).items
       end
     end
 

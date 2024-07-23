@@ -50,13 +50,39 @@ RSpec.describe ProformaXML::TransformTask do
       let(:to_version) { '2.1' }
       let(:task) { build(:task, :with_2_0_file_restrictions) }
 
-      it 'transforms file_restriction' do
+      it_behaves_like 'validatable task'
+
+      it 'transforms file_restriction required -> true to required' do
         expect { call }.to change { task.submission_restrictions['submission-restrictions']['file-restriction'][0] }
           .from({'$1' => 'restriction1', '@@order' => ['$1'], '@pattern-format' => 'none', '@required' => 'true'})
           .to({'$1' => 'restriction1', '@@order' => ['$1'], '@pattern-format' => 'none', '@use' => 'required'})
       end
 
-      context 'with model solution placehoder' do
+      it 'transforms file_restriction required -> false to optional' do
+        expect { call }.to change { task.submission_restrictions['submission-restrictions']['file-restriction'][1] }
+          .from({'$1' => 'restriction2', '@@order' => ['$1'], '@pattern-format' => 'none', '@required' => 'false'})
+          .to({'$1' => 'restriction2', '@@order' => ['$1'], '@pattern-format' => 'none', '@use' => 'optional'})
+      end
+
+      it 'transforms file_restriction with default values' do
+        expect { call }.to change { task.submission_restrictions['submission-restrictions']['file-restriction'][2] }
+          .from({'$1' => 'restriction3', '@@order' => ['$1']})
+          .to({'$1' => 'restriction3', '@@order' => ['$1'], '@use' => 'required'})
+      end
+
+      context 'with single file_restriction' do
+        let(:task) { build(:task, :with_2_0_file_restrictions_with_single_file_restriction) }
+
+        it 'transforms file_restriction' do
+          expect { call }.to change { task.submission_restrictions['submission-restrictions']['file-restriction'] }
+            .from({'$1' => 'restriction1', '@@order' => ['$1'], '@pattern-format' => 'none', '@required' => 'true'})
+            .to({'$1' => 'restriction1', '@@order' => ['$1'], '@pattern-format' => 'none', '@use' => 'required'})
+        end
+
+        it_behaves_like 'validatable task'
+      end
+
+      context 'with model solution placeholder' do
         let(:task) { build(:task, :with_placeholder_model_solution) }
 
         it 'removes model solution placeholder' do
@@ -66,7 +92,27 @@ RSpec.describe ProformaXML::TransformTask do
         end
       end
 
-      it_behaves_like 'validatable task'
+      context 'with external-resources' do
+        let(:task) { build(:task, :with_2_0_external_resources) }
+
+        it 'transforms external_resource' do
+          expect { call }.to change { task.external_resources['external-resources']['external-resource'][0].slice('@visible', '@usage-by-lms', '@used-by-grader') }
+            .from({})
+            .to({'@used-by-grader' => 'false', '@visible' => 'no'})
+        end
+
+        context 'with single external-resource' do
+          let(:task) { build(:task, :with_2_0_external_resources_with_single_external_resource) }
+
+          it 'transforms external_resource' do
+            expect { call }.to change { task.external_resources['external-resources']['external-resource'].slice('@visible', '@usage-by-lms', '@used-by-grader') }
+              .from({})
+              .to({'@used-by-grader' => 'false', '@visible' => 'no'})
+          end
+        end
+
+        it_behaves_like 'validatable task'
+      end
     end
 
     context 'with from 2.1 to 2.0' do
@@ -80,10 +126,26 @@ RSpec.describe ProformaXML::TransformTask do
           .to({'$1' => 'restriction1', '@@order' => ['$1'], '@pattern-format' => 'none', '@required' => 'true'})
       end
 
+      it 'transforms file_restriction without attributes' do
+        expect { call }.to change { task.submission_restrictions['submission-restrictions']['file-restriction'][2] }
+          .from({'$1' => 'restriction3', '@@order' => ['$1']})
+          .to({'$1' => 'restriction3', '@@order' => ['$1'], '@required' => 'true'})
+      end
+
       it 'removes description and internal-description from submission-restrictions' do
         expect { call }.to change { task.submission_restrictions['submission-restrictions'].keys }
           .from(include('description', 'internal-description'))
           .to(not_include('description', 'internal-description'))
+      end
+
+      context 'when submission_restriction has only one file_restriction' do
+        let(:task) { build(:task, :with_submission_restrictions_with_single_file_restriction) }
+
+        it 'transforms file_restriction' do
+          expect { call }.to change { task.submission_restrictions['submission-restrictions']['file-restriction'] }
+            .from({'$1' => 'restriction1', '@@order' => ['$1']})
+            .to({'$1' => 'restriction1', '@@order' => ['$1'], '@required' => 'true'})
+        end
       end
 
       context 'without model_solutions' do
@@ -100,6 +162,32 @@ RSpec.describe ProformaXML::TransformTask do
         it 'does not adds a model solution placeholder' do
           expect { call }.not_to change(task, :model_solutions)
         end
+      end
+
+      context 'with external_resources' do
+        let(:task) { build(:task, :with_external_resources) }
+
+        it 'transforms external_resource' do
+          expect { call }.to change { task.external_resources['external-resources']['external-resource'][0].slice('@visible', '@usage-by-lms', '@used-by-grader') }
+            .from({'@usage-by-lms' => 'download', '@used-by-grader' => 'true', '@visible' => 'delayed'})
+            .to({})
+        end
+
+        context 'with external_resources with single external_resource' do
+          let(:task) { build(:task, :with_external_resources_with_single_external_resource) }
+
+          it 'transforms external_resource' do
+            expect { call }.to change { task.external_resources['external-resources']['external-resource'].slice('@visible', '@usage-by-lms', '@used-by-grader') }
+              .from({'@usage-by-lms' => 'download', '@used-by-grader' => 'true', '@visible' => 'delayed'})
+              .to({})
+          end
+        end
+      end
+
+      context 'with everything' do
+        let(:task) { build(:task, :with_everything) }
+
+        it_behaves_like 'validatable task'
       end
 
       it_behaves_like 'validatable task'
