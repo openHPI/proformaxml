@@ -57,6 +57,10 @@ FactoryBot.define do
                 '@pattern-format' => 'posix-ere',
                 '$1' => 'restriction2',
               },
+              {
+                '@@order' => %w[$1],
+                '$1' => 'restriction3',
+              },
             ],
             'description' => {
               '@@order' => %w[$1],
@@ -70,6 +74,40 @@ FactoryBot.define do
         }
       end
     end
+
+    trait(:with_submission_restrictions_with_single_file_restriction) do
+      submission_restrictions do
+        {
+          '@@order' => %w[submission-restrictions],
+          'submission-restrictions' => {
+            '@@order' => %w[file-restriction description internal-description],
+            'file-restriction' => {
+              '@@order' => %w[$1],
+              '$1' => 'restriction1',
+            },
+          },
+        }
+      end
+    end
+
+    trait(:with_2_0_file_restrictions_with_single_file_restriction) do
+      submission_restrictions do
+        {
+          '@@order' => %w[submission-restrictions],
+          'submission-restrictions' => {
+            '@@order' => %w[file-restriction description internal-description],
+            '@max-size' => '50',
+            'file-restriction' => {
+              '@@order' => %w[$1],
+              '@required' => 'true',
+              '@pattern-format' => 'none',
+              '$1' => 'restriction1',
+            },
+          },
+        }
+      end
+    end
+
     trait(:with_2_0_file_restrictions) do
       submission_restrictions do
         {
@@ -83,6 +121,16 @@ FactoryBot.define do
                 '@required' => 'true',
                 '@pattern-format' => 'none',
                 '$1' => 'restriction1',
+              },
+              {
+                '@@order' => %w[$1],
+                '@required' => 'false',
+                '@pattern-format' => 'none',
+                '$1' => 'restriction2',
+              },
+              {
+                '@@order' => %w[$1],
+                '$1' => 'restriction3',
               },
             ],
           },
@@ -139,6 +187,82 @@ FactoryBot.define do
                 },
               },
             ],
+          },
+        }
+      end
+    end
+    trait(:with_2_0_external_resources) do
+      external_resources do
+        {
+          '@@order' => %w[external-resources],
+          'external-resources' => {
+            '@@order' => %w[external-resource],
+            '@xmlns' => {'foo' => 'urn:custom:foobar'},
+            'external-resource' => [
+              {
+                '@@order' => %w[internal-description foo:bar],
+                '@id' => 'external-resource 1',
+              },
+              {
+                '@@order' => %w[internal-description foo:bar],
+                '@id' => 'external-resource 2',
+                '@reference' => '2',
+                'internal-description' => {
+                  '@@order' => %w[$1],
+                  '$1' => 'internal-desc',
+                },
+                'foo:bar' => {
+                  '@version' => '5',
+                  '@@order' => %w[foo:content],
+                  'foo:content' => {
+                    '@@order' => %w[$1],
+                    '$1' => 'barfoo',
+                  },
+                },
+              },
+            ],
+          },
+        }
+      end
+    end
+    trait(:with_2_0_external_resources_with_single_external_resource) do
+      external_resources do
+        {
+          '@@order' => %w[external-resources],
+          'external-resources' => {
+            '@@order' => %w[external-resource],
+            '@xmlns' => {'foo' => 'urn:custom:foobar'},
+            'external-resource' => {
+              '@@order' => %w[internal-description foo:bar],
+              '@id' => 'external-resource 1',
+            },
+          },
+        }
+      end
+    end
+    trait(:with_external_resources_with_single_external_resource) do
+      external_resources do
+        {
+          '@@order' => %w[external-resources],
+          'external-resources' => {
+            '@@order' => %w[external-resource],
+            'external-resource' => {
+              '@@order' => %w[foobar],
+              '@id' => 'external-resource 1',
+              '@reference' => '1',
+              '@used-by-grader' => 'true',
+              '@visible' => 'delayed',
+              '@usage-by-lms' => 'download',
+              'foobar' => {
+                '@@order' => %w[content],
+                '@version' => '4',
+                'content' => {
+                  '@@order' => %w[$1],
+                  '$1' => 'foobar',
+                },
+              },
+            },
+
           },
         }
       end
