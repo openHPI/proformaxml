@@ -46,12 +46,12 @@ RSpec.describe ProformaXML::Task do
       let(:model_solution_files) { build_list(:task_file, 2) }
       let(:test_files) { build_list(:task_file, 2) }
 
-      it { is_expected.to match_array((task_files + model_solution_files + test_files)) }
+      it { is_expected.to match_array(task_files + model_solution_files + test_files) }
 
       context 'when a file is assigned multiple times' do
         let(:task_files) { model_solution_files + test_files }
 
-        it { is_expected.to match_array((model_solution_files + test_files)) }
+        it { is_expected.to match_array(model_solution_files + test_files) }
       end
     end
   end
