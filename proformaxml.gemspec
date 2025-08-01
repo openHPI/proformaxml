@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activesupport', '>= 5.2.3', '< 9.0.0'
   spec.add_dependency 'dachsfisch', '~> 1.0.0'
   spec.add_dependency 'nokogiri', '>= 1.10.2', '< 2.0.0'
-  spec.add_dependency 'rubyzip', '>= 1.2.2', '< 3.0.0'
+  spec.add_dependency 'rubyzip', '>= 1.2.2', '< 4.0.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
